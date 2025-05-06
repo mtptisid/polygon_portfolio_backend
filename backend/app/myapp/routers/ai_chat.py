@@ -10,9 +10,9 @@ import logging
 import re
 from fastapi.responses import JSONResponse
 
-# Set up logging
+# Set up #logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = #logging.get#logger(__name__)
 
 router = APIRouter(
     prefix="/api/ai_chat",
@@ -56,7 +56,7 @@ async def search_web(query: str, model: str = "groq") -> str:
     
     site_queries = [f"site:{site}" for site in sites]
     full_query = f"{query} {' OR '.join(site_queries)}"
-    logger.info(f"Performing search with query: {full_query}")
+    #logger.info(f"Performing search with query: {full_query}")
     
     try:
         # Run synchronous search in a separate thread to avoid blocking
@@ -70,10 +70,10 @@ async def search_web(query: str, model: str = "groq") -> str:
             if line.strip():
                 formatted_results += f"{line.strip()}\n"
         formatted_results += "\nNote: Format these URLs in Markdown as `[name](link)` in the final response."
-        logger.info(f"Formatted search results: {formatted_results}")
+        #logger.info(f"Formatted search results: {formatted_results}")
         return formatted_results
     except Exception as e:
-        logger.error(f"Search failed: {str(e)}")
+        #logger.error(f"Search failed: {str(e)}")
         return f"Web Search Results: Search failed: {str(e)}"
 
 def clean_text(text: str) -> str:
@@ -89,7 +89,7 @@ async def send_message(request: Request, message: MessageCreate):
     """Send a message to the selected AI model, optionally using tools."""
     # Log raw request payload for debugging
     raw_body = await request.body()
-    logger.info(f"Raw request payload: {raw_body.decode('utf-8')}")
+    #logger.info(f"Raw request payload: {raw_body.decode('utf-8')}")
     
     if not message.content.strip():
         raise HTTPException(status_code=400, detail="Message content cannot be empty")
