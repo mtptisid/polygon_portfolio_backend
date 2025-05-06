@@ -1,0 +1,39 @@
+# === FASTAPI / PYTHON ===
+__pycache__/
+*.py[cod]
+*.log
+*.sqlite3
+*.db
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Python tools
+.pytest_cache/
+.coverage
+.mypy_cache/
+
+# === VITE / REACT ===
+node_modules/
+dist/
+*.log
+.vite/
+
+# Environment files
+.env
+.env.*.local
+
+# === IDE / SYSTEM FILES ===
+.DS_Store
+.vscode/
+*.swp
