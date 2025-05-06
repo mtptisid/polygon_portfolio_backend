@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 
 # Set up #logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getlogger(__name__)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api/ai_chat",
