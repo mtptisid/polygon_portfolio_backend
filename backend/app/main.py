@@ -11,7 +11,7 @@ app = FastAPI()
 origins = [
       # For local development (uncommented and included)
     #"https://improved-spork-pjwxw7vj9545f6p4p-3000.app.github.dev/", 
-    "http://localhost:5173", 
+    "https://siddharamayya.in", 
 ]
 
 # Add CORS middleware with specific origins
