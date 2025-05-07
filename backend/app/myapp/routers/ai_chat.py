@@ -1029,7 +1029,7 @@ async def send_message(request: Request, message: MessageCreate):
         "**Tech Stack**:\n" +
         "\n".join([f"- {t}" for t in PROFILE_DATA['tech_stack']]) + "\n\n"
         "**Few-Shot Examples**:\n" +
-        "\n".join([f"**Q**: {ex['content']}\n**A**: {ex['response']}" for ex in FEW_SHOT_EXAMPLES]) + "\n\n"
+        "\n".join([f"**Q**: {ex['content']}\n  {ex['response']}" for ex in FEW_SHOT_EXAMPLES]) + "\n\n"
         "**Instructions**:\n"
         "- Always respond in **Markdown format** with proper spacing and structure.\n"
         "- Use **bold** for key terms (e.g., names, roles, technologies).\n"
