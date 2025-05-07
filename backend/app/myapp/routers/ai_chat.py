@@ -52,18 +52,15 @@ SESSIONS = {}
 
 async def search_web(query: str, model: str = "groq") -> str:
     """Perform a web search using DuckDuckGo via LangChain with fixed site-specific query."""
-    sites = ["github.com", "linkedin.com"]  # Fixed sites
-    
+    sites = ["github.com", "linkedin.com"]
     site_queries = [f"site:{site}" for site in sites]
     full_query = f"{query} {' OR '.join(site_queries)}"
     logger.info(f"Performing search with query: {full_query}")
     
     try:
-        # Run synchronous search in a separate thread to avoid blocking
         search_results = await asyncio.to_thread(search.run, full_query)
         if not search_results:
             return "Web Search Results: No results found."
-        # Format search results as plain text
         formatted_results = "Web Search Results:\n"
         result_lines = search_results.split("\n")
         for line in result_lines:
@@ -78,28 +75,22 @@ async def search_web(query: str, model: str = "groq") -> str:
 
 def clean_text(text: str) -> str:
     """Clean text by removing excessive newlines and unwanted characters."""
-    # Replace 3+ newlines with double newline
     text = re.sub(r'\n{3,}', '\n\n', text)
-    # Remove unwanted control characters
     text = re.sub(r'[\r\t]', '', text)
-    # Trim leading/trailing whitespace
     text = text.strip()
     return text
 
 @router.post("/request", response_model=MessageResponse)
 async def send_message(request: Request, message: MessageCreate):
     """Send a message to the selected AI model, optionally using tools."""
-    # Log raw request payload for debugging
     raw_body = await request.body()
     logger.info(f"Raw request payload: {raw_body.decode('utf-8')}")
     
     if not message.content.strip():
         raise HTTPException(status_code=400, detail="Message content cannot be empty")
 
-    # Assign session_id if not provided (use UUID)
     session_id = message.session_id or str(uuid4())
 
-    # Initialize session if new
     if session_id not in SESSIONS:
         SESSIONS[session_id] = {
             "session_id": session_id,
@@ -107,7 +98,6 @@ async def send_message(request: Request, message: MessageCreate):
             "created_at": datetime.utcnow()
         }
 
-    # Store user message
     user_message = SessionMessage(
         content=message.content,
         is_bot=False,
@@ -116,7 +106,6 @@ async def send_message(request: Request, message: MessageCreate):
     )
     SESSIONS[session_id]["messages"].append(user_message)
 
-    # Structured profile data about Siddharamayya
     PROFILE_DATA = {
         "about": {
             "full_name": "Siddharamayya Mathapati",
@@ -126,23 +115,22 @@ async def send_message(request: Request, message: MessageCreate):
             "phone": "+91 97406 71620",
             "location": "Yadur, Chikodi, Belagavi, Karnataka, India",
             "description": (
-                "Siddharamayya Mathapati is a seasoned **AI/ML Engineer** and **Senior Software Engineer** with a passion for leveraging cutting-edge technologies to solve complex problems. "
-                "With over **4 years** of experience, he specializes in **large language models (LLMs)**, **generative AI**, **MLOps**, and **DevOps**, delivering scalable and innovative solutions. "
-                "His expertise spans **cloud platforms** (AWS, GCP, Azure), **containerization** (Docker, Kubernetes), and **automation**, ensuring high-performance deployments. "
-                "Siddharamayya is committed to continuous learning, as evidenced by his **Udemy certifications** in **LLM Engineering**, **MLOps**, and **Deep Learning**. "
-                "He thrives in collaborative environments, mentoring junior engineers and driving process optimization."
+                "**Siddharamayya Mathapati** is a seasoned **AI/ML Engineer** and **Senior Software Engineer** with over **4 years** of experience in **AI**, **MLOps**, **DevOps**, and **web development**. "
+                "He excels in **large language models (LLMs)**, **generative AI**, and **cloud-native solutions**, delivering scalable systems for industries like **finance**, **healthcare**, and **cybersecurity**. "
+                "At **Capgemini**, he led **MLOps pipelines**, optimized **LLM fine-tuning**, and mentored teams. His **Udemy certifications** and diverse project portfolio, including **IoT** and **NLP** solutions, showcase his commitment to innovation."
             ),
             "availability": "Immediately available for new opportunities as of May 2025."
         },
         "skills": [
-            {"name": "Python", "proficiency": "90%", "description": "Expert in writing efficient, modular code for **AI/ML**, **web development**, and **automation**, using libraries like **TensorFlow**, **PyTorch**, **LangChain**, and **FastAPI**."},
-            {"name": "Deep Learning", "proficiency": "85%", "description": "Skilled in designing and training **neural networks** for tasks like **image analysis**, **NLP**, and **predictive modeling**, with tools like **TensorFlow** and **PyTorch**."},
-            {"name": "Machine Learning/AI", "proficiency": "85%", "description": "Proficient in building **predictive models**, **LLMs**, and **RAG applications**, with expertise in **fine-tuning** and **RLHF**."},
-            {"name": "Data Science", "proficiency": "85%", "description": "Experienced in **data preprocessing**, **visualization**, and **statistical analysis**, using tools like **Pandas**, **NumPy**, and **Matplotlib**."},
-            {"name": "DevOps", "tools": ["Docker", "Kubernetes", "Ansible", "Jenkins", "GitHub Actions"], "description": "Adept at automating **CI/CD pipelines**, managing **cloud infrastructure**, and optimizing deployments."},
-            {"name": "Web Development", "proficiency": "95%", "description": "Builds responsive, user-friendly applications using **React**, **Flask**, **Django**, and **Streamlit**, with a focus on scalability and UX."},
-            {"name": "DBMS & SQL", "proficiency": "80%", "description": "Proficient in managing **relational** (MySQL, PostgreSQL) and **NoSQL** (MongoDB, ChromaDB) databases, including **vector databases** for **RAG**."},
-            {"name": "Cloud Engineering", "proficiency": "85%", "description": "Experienced with **AWS** (SageMaker, EMR, Lambda), **GCP**, and **Azure**, optimizing costs and ensuring high availability."}
+            {"name": "Python", "proficiency": "90%", "description": "Expert in **AI/ML**, **web development**, and **automation** with **TensorFlow**, **PyTorch**, **LangChain**, and **FastAPI**."},
+            {"name": "Deep Learning", "proficiency": "85%", "description": "Designs **neural networks** for **NLP**, **computer vision**, and **predictive modeling** using **TensorFlow** and **PyTorch**."},
+            {"name": "Machine Learning/AI", "proficiency": "85%", "description": "Builds **LLMs**, **RAG applications**, and **predictive models** with **QLoRA** and **RLHF**."},
+            {"name": "Data Science", "proficiency": "85%", "description": "Skilled in **data preprocessing**, **visualization**, and **analysis** with **Pandas**, **NumPy**, and **Matplotlib**."},
+            {"name": "DevOps", "tools": ["Docker", "Kubernetes", "Ansible", "Jenkins", "GitHub Actions"], "description": "Automates **CI/CD pipelines** and manages **cloud infrastructure**."},
+            {"name": "Web Development", "proficiency": "95%", "description": "Develops responsive applications with **React**, **Flask**, **Django**, and **Streamlit**."},
+            {"name": "DBMS & SQL", "proficiency": "80%", "description": "Manages **MySQL**, **PostgreSQL**, **MongoDB**, and **vector databases** (FAISS, ChromaDB)."},
+            {"name": "Cloud Engineering", "proficiency": "85%", "description": "Optimizes **AWS**, **GCP**, and **Azure** for cost and performance."},
+            {"name": "IoT", "proficiency": "80%", "description": "Builds real-time systems with **Raspberry Pi**, **ESP32**, **RFID**, and **GPS**."}
         ],
         "experience": [
             {
@@ -151,12 +139,13 @@ async def send_message(request: Request, message: MessageCreate):
                 "location": "Navi Mumbai, India",
                 "duration": "May 2021 - April 2025",
                 "description": (
-                    "Led **AI/ML** initiatives, focusing on **LLM fine-tuning** using **QLoRA** and **LoRA**, optimizing model efficiency and reducing computational overhead. "
-                    "Designed and deployed **RAG applications** with **vector databases** (FAISS, ChromaDB) for domain-specific use cases in **finance**, **healthcare**, and **cybersecurity**. "
-                    "Spearheaded **MLOps** pipelines, automating model training, deployment, and monitoring using **Kubernetes**, **Docker**, and **AWS SageMaker**. "
-                    "Developed **real-time inference pipelines** with **TensorRT** and **ONNX**, achieving low-latency deployments. "
-                    "Mentored junior engineers, supervised research internships, and optimized legacy ML workloads by migrating to **Spark** and **Kubernetes**, improving scalability by **40%**. "
-                    "Built **model retraining pipelines** with **drift detection**, reducing prediction errors by **30%**."
+                    "Spearheaded **AI/ML** projects, fine-tuning **LLMs** with **QLoRA** and **LoRA** for **finance**, **healthcare**, and **cybersecurity**, reducing memory usage by **30%**. "
+                    "Designed **RAG applications** with **FAISS** and **ChromaDB**, improving response accuracy by **25%**. "
+                    "Automated **MLOps pipelines** using **Kubernetes**, **Docker**, and **AWS SageMaker**, cutting deployment time by **50%**. "
+                    "Developed **real-time inference pipelines** with **TensorRT** and **ONNX** for low-latency applications. "
+                    "Migrated legacy ML workloads to **Spark** and **Kubernetes**, enhancing scalability by **40%**. "
+                    "Built **model retraining pipelines** with **drift detection**, reducing errors by **30%**. "
+                    "Mentored junior engineers and led research internships."
                 )
             },
             {
@@ -165,10 +154,10 @@ async def send_message(request: Request, message: MessageCreate):
                 "location": "Bengaluru, India",
                 "duration": "February 2020 - April 2021",
                 "description": (
-                    "Developed **computer vision models** using **TensorFlow** for real-time applications. "
-                    "Supported **NLP research** by tuning **Word2Vec** models for recommendation systems. "
-                    "Designed **IoT-based solutions**, including a **smart school bus tracking system** using **RFID**, **GPS**, and **Raspberry Pi**, and a **real-time car security system** with **facial recognition**. "
-                    "Built **automated data pipelines** for processing sensor data, enhancing system efficiency."
+                    "Developed **computer vision models** with **TensorFlow** for real-time applications. "
+                    "Tuned **Word2Vec** models for **recommendation systems**. "
+                    "Built **IoT solutions**, including a **smart school bus tracking system** with **RFID** and **GPS**, and a **car security system** with **facial recognition**. "
+                    "Designed **automated data pipelines** for **sensor data** processing."
                 )
             }
         ],
@@ -190,59 +179,67 @@ async def send_message(request: Request, message: MessageCreate):
             {
                 "category": "LinkedIn Activity Scraper",
                 "description": (
-                    "Developed a **Python-based automation tool** using **Selenium** and **BeautifulSoup** to extract user activity data (posts, likes, shares, comments) from **LinkedIn**. "
-                    "Implemented **dynamic content handling** and **error management** for robust scraping, ensuring ethical practices. "
-                    "The tool supports **data analysis** for social media insights."
+                    "A **Python-based tool** using **Selenium** and **BeautifulSoup** to extract **LinkedIn** activity data (posts, likes, shares, comments). "
+                    "Features **dynamic content handling** and **ethical scraping**, supporting **social media analytics**."
                 ),
                 "link": "[LinkedIn Comment Poster](https://github.com/mtptisid/linkedin-comment-poster)"
             },
             {
                 "category": "Recruitment Automation",
                 "description": (
-                    "Created an **AI-driven solution** to automate job data extraction from career pages and generate personalized **cold emails** for outreach. "
-                    "Leveraged **NLP** and **web scraping** to enhance efficiency, reducing manual effort by **80%**."
+                    "An **AI-driven solution** for extracting job data from career pages and generating personalized **cold emails**. "
+                    "Uses **NLP** and **web scraping**, reducing manual effort by **80%**."
                 ),
                 "link": "[Recruitment Solution](https://github.com/mtptisid/recruitment-solution)"
             },
             {
                 "category": "Stock Price Prediction",
                 "description": (
-                    "Built an **AI-powered finance agent** using **LLMs** to predict stock prices and analyze market trends. "
-                    "Integrated **Yahoo Finance** for stock data and **NewsAPI** for sentiment analysis, improving prediction accuracy by **25%**."
+                    "An **AI-powered finance agent** using **LLMs** to predict stock prices, integrating **Yahoo Finance** and **NewsAPI** for **25%** improved accuracy."
                 ),
                 "link": "[Stock Price Prediction](https://github.com/mtptisid/stock-price-prediction)"
             },
             {
                 "category": "Credit Risk Analysis",
                 "description": (
-                    "Developed a **machine learning model** using **CatBoostClassifier** to predict credit card defaults. "
-                    "Achieved **90% accuracy** in assessing creditworthiness, supporting financial institutions in risk management."
+                    "A **machine learning model** with **CatBoostClassifier** to predict credit card defaults, achieving **90% accuracy**."
                 ),
                 "link": "[Credit Risk Analysis](https://github.com/mtptisid/credit-risk-analysis)"
             },
             {
                 "category": "Medical Assistant AI",
                 "description": (
-                    "Created a **web application** using **Google Generative AI** to analyze medical images and provide diagnostic insights. "
-                    "Features a **chat interface** for user interaction, enhancing support for medical professionals."
+                    "A **web application** using **Google Generative AI** for **medical image analysis** with a **chat interface** for diagnostic insights."
                 ),
                 "link": "[Medical Assistant AI](https://github.com/mtptisid/medical-assistant-ai)"
             },
             {
                 "category": "SQL Query Generator",
                 "description": (
-                    "Built a **Jupyter Notebook-based tool** integrating **Google Gemini LLM** with **MySQL** using **LangChain**. "
-                    "Generates accurate **SQL queries** from natural language inputs, leveraging **few-shot learning** for precision."
+                    "A **Jupyter Notebook-based tool** integrating **Google Gemini LLM** with **MySQL** using **LangChain** for natural language **SQL query** generation."
                 ),
                 "link": "[Simple SQL with Gemini](https://github.com/mtptisid/simple-sql-gemini)"
             },
             {
                 "category": "Student Study Assistant",
                 "description": (
-                    "Developed a **chatbot** using **LangChain**, **Gemini LLM**, and **PDF processing** to answer student queries based on uploaded documents. "
-                    "Improves study efficiency by providing context-aware responses."
+                    "A **chatbot** using **LangChain**, **Gemini LLM**, and **PDF processing** to answer student queries from uploaded documents."
                 ),
                 "link": "[Student Study Assistant](https://github.com/mtptisid/student-study-assistant)"
+            },
+            {
+                "category": "Smart School Bus Tracking",
+                "description": (
+                    "An **IoT-based system** using **RFID**, **GPS**, and **Raspberry Pi** for real-time student location monitoring."
+                ),
+                "link": "[Smart Bus Tracking](https://github.com/mtptisid/smart-bus-tracking)"
+            },
+            {
+                "category": "Car Security System",
+                "description": (
+                    "A **real-time AI-based system** using **IoT**, **facial recognition**, and **RFID** for vehicle security."
+                ),
+                "link": "[Car Security System](https://github.com/mtptisid/car-security-system)"
             }
         ],
         "contact": {
@@ -258,9 +255,9 @@ async def send_message(request: Request, message: MessageCreate):
         "interests": [
             "Generative AI & LLM Development",
             "AI-Powered Financial Modeling",
-            "Natural Language Processing & Chatbots",
+            "NLP & Chatbots",
             "Cloud-Native MLOps & DevOps",
-            "IoT and Real-Time Systems"
+            "IoT & Real-Time Systems"
         ],
         "tech_stack": [
             "Python", "C++", "Ruby", "JavaScript", "Golang", "Bash",
@@ -278,32 +275,48 @@ async def send_message(request: Request, message: MessageCreate):
         ]
     }
 
-    # Enhanced few-shot examples with detailed, Markdown-formatted answers
     FEW_SHOT_EXAMPLES = [
         {
             "content": "What is the total experience of Siddharamayya?",
             "response": (
-                "**Siddharamayya Mathapati** has accumulated over **4 years** of professional experience as a **Senior Software Engineer** and **AI/ML Engineer**, delivering innovative solutions in **AI**, **MLOps**, and **DevOps**.\n\n"
+                "**Siddharamayya Mathapati** has over **4 years** of professional experience as a **Senior Software Engineer** and **AI/ML Engineer**, delivering cutting-edge solutions in **AI**, **MLOps**, **DevOps**, and **IoT**.\n\n"
                 "- **Senior Software Engineer** at **Capgemini Technology Service Limited India** (May 2021 - April 2025):\n"
-                "  - Led **AI/ML** projects, including **LLM fine-tuning** with **QLoRA** and **LoRA**, optimizing model performance for **finance**, **healthcare**, and **cybersecurity** applications.\n"
-                "  - Designed **RAG applications** with **vector databases** (FAISS, ChromaDB), enhancing response accuracy for domain-specific tasks.\n"
-                "  - Automated **MLOps pipelines** using **Kubernetes**, **Docker**, and **AWS SageMaker**, reducing deployment time by **50%**.\n"
-                "  - Developed **real-time inference pipelines** with **TensorRT** and **ONNX**, achieving **low-latency** model deployments.\n"
-                "  - Mentored junior engineers and optimized legacy ML workloads, improving scalability by **40%**.\n"
+                "  - Led **AI/ML** initiatives, fine-tuning **LLMs** with **QLoRA** and **LoRA** for **finance**, **healthcare**, and **cybersecurity**, reducing computational overhead by **30%**.\n"
+                "  - Designed **RAG applications** using **FAISS** and **ChromaDB**, improving response accuracy by **25%**.\n"
+                "  - Automated **MLOps pipelines** with **Kubernetes**, **Docker**, and **AWS SageMaker**, cutting deployment time by **50%**.\n"
+                "  - Developed **real-time inference pipelines** with **TensorRT** and **ONNX** for low-latency applications.\n"
+                "  - Optimized legacy ML workloads with **Spark** and **Kubernetes**, enhancing scalability by **40%**.\n"
+                "  - Mentored junior engineers and led research internships.\n"
                 "- **Project Intern** at **X-Cencia Technology Solution Limited India** (February 2020 - April 2021):\n"
-                "  - Built **computer vision models** using **TensorFlow** for real-time applications.\n"
-                "  - Developed **IoT-based solutions**, including a **smart school bus tracking system** and a **car security system** with **facial recognition**.\n"
-                "  - Supported **NLP research** by tuning **Word2Vec** models for recommendation systems.\n\n"
-                "This extensive experience highlights his ability to bridge **development** and **operations**, delivering high-impact solutions."
+                "  - Built **computer vision models** with **TensorFlow** for real-time applications.\n"
+                "  - Developed **IoT solutions**, including a **smart school bus tracking system** with **RFID** and **GPS**, and a **car security system** with **facial recognition**.\n"
+                "  - Tuned **Word2Vec** models for **recommendation systems**.\n\n"
+                "His extensive experience underscores his ability to deliver **scalable**, **innovative** solutions across diverse domains."
+            )
+        },
+        {
+            "content": "When will Siddharamayya be available to join?",
+            "response": (
+                "**Siddharamayya Mathapati** is **immediately available** to join new opportunities starting **May 2025**, following his tenure at **Capgemini Technology Service Limited India**.\n\n"
+                "- **Availability Details**:\n"
+                "  - Ready for roles in **AI/ML**, **MLOps**, **DevOps**, or **web development**.\n"
+                "  - Brings **4+ years** of experience, including **LLM fine-tuning**, **RAG applications**, **cloud-native deployments**, and **IoT systems**.\n"
+                "  - Proven expertise at **Capgemini** (May 2021 - April 2025), where he led **AI-driven projects**, automated **MLOps pipelines**, and mentored teams.\n"
+                "- **Ideal Roles**:\n"
+                "  - **AI/ML Engineer**: Developing **generative AI** or **predictive models**.\n"
+                "  - **MLOps Engineer**: Automating **CI/CD pipelines** for ML deployments.\n"
+                "  - **DevOps Engineer**: Managing **Kubernetes** and **AWS**-based infrastructure.\n"
+                "  - **IoT Developer**: Building real-time systems with **Raspberry Pi** and **RFID**.\n\n"
+                "Contact him via **[Email](mailto:msidrm455@gmail.com)** or **Phone** (+91 97406 71620) to discuss opportunities."
             )
         },
         {
             "content": "What is Siddharamayya great at technically?",
             "response": (
-                "**Siddharamayya Mathapati** is a versatile technologist with exceptional skills across **AI/ML**, **DevOps**, **web development**, and **cloud engineering**, enabling him to build end-to-end solutions.\n\n"
+                "**Siddharamayya Mathapati** is a versatile technologist with exceptional expertise in **AI/ML**, **DevOps**, **web development**, **cloud engineering**, and **IoT**, enabling him to build end-to-end solutions.\n\n"
                 "- **Python** (90%):\n"
                 "  - Writes clean, modular code for **AI/ML**, **web development**, and **automation**.\n"
-                "  - Leverages libraries like **TensorFlow**, **PyTorch**, **LangChain**, and **FastAPI** for scalable applications.\n"
+                "  - Leverages **TensorFlow**, **PyTorch**, **LangChain**, and **FastAPI**.\n"
                 "  - Example:\n"
                 "    ```python\n"
                 "    from langchain import LLMChain\n"
@@ -314,9 +327,9 @@ async def send_message(request: Request, message: MessageCreate):
                 "    ```\n"
                 "- **Deep Learning** & **Machine Learning/AI** (85%):\n"
                 "  - Designs **neural networks** for **NLP**, **computer vision**, and **predictive modeling**.\n"
-                "  - Fine-tunes **LLMs** with **QLoRA** and **RLHF**, optimizing for domain-specific tasks.\n"
+                "  - Fine-tunes **LLMs** with **QLoRA** and **RLHF** for domain-specific tasks.\n"
                 "- **Web Development** (95%):\n"
-                "  - Builds responsive applications with **React**, **Flask**, **Django**, and **Streamlit**, ensuring seamless UX.\n"
+                "  - Builds responsive applications with **React**, **Flask**, **Django**, and **Streamlit**.\n"
                 "  - Example:\n"
                 "    ```python\n"
                 "    from flask import Flask, render_template\n"
@@ -326,145 +339,442 @@ async def send_message(request: Request, message: MessageCreate):
                 "        return render_template('index.html')\n"
                 "    ```\n"
                 "- **DevOps**:\n"
-                "  - Automates **CI/CD pipelines** using **Docker**, **Kubernetes**, **Ansible**, and **GitHub Actions**.\n"
-                "  - Optimizes **cloud infrastructure** on **AWS**, **GCP**, and **Azure** for cost and performance.\n"
+                "  - Automates **CI/CD pipelines** with **Docker**, **Kubernetes**, **Ansible**, and **GitHub Actions**.\n"
+                "  - Manages **AWS**, **GCP**, and **Azure** infrastructure.\n"
                 "- **DBMS & SQL** (80%):\n"
-                "  - Manages **relational** (MySQL, PostgreSQL) and **NoSQL** (MongoDB, ChromaDB) databases.\n"
-                "  - Implements **vector databases** for **RAG** applications.\n\n"
-                "His technical prowess is complemented by **Udemy certifications** in **LLM Engineering**, **MLOps**, and **Deep Learning**, ensuring he stays at the forefront of technology."
+                "  - Manages **MySQL**, **PostgreSQL**, **MongoDB**, and **vector databases** (FAISS, ChromaDB).\n"
+                "- **IoT** (80%):\n"
+                "  - Develops real-time systems with **Raspberry Pi**, **ESP32**, **RFID**, and **GPS**.\n\n"
+                "His **Udemy certifications** in **LLM Engineering**, **MLOps**, and **Deep Learning** keep him at the forefront of technology."
+            )
+        },
+        {
+            "content": "How good is Siddharamayya in AI/ML?",
+            "response": (
+                "**Siddharamayya Mathapati** is highly proficient in **AI/ML** (85%), with extensive experience in **large language models (LLMs)**, **deep learning**, **generative AI**, and **MLOps**, making him a standout in the field.\n\n"
+                "- **LLM Expertise**:\n"
+                "  - Fine-tuned **LLMs** using **QLoRA** and **LoRA** at **Capgemini**, optimizing efficiency for **finance**, **healthcare**, and **cybersecurity**.\n"
+                "  - Implemented **RLHF** to align models with human feedback, improving contextual accuracy by **20%**.\n"
+                "  - Example: Developed **Stock Price Prediction** using **LLMs** with **Yahoo Finance** and **NewsAPI**.\n"
+                "- **Deep Learning**:\n"
+                "  - Designed **neural networks** for **NLP**, **computer vision**, and **predictive modeling** using **TensorFlow** and **PyTorch**.\n"
+                "  - Built **Medical Assistant AI** for **medical image analysis** with **Google Generative AI**.\n"
+                "- **RAG Applications**:\n"
+                "  - Deployed **Retrieval-Augmented Generation** systems with **FAISS** and **ChromaDB**, enhancing response accuracy by **25%**.\n"
+                "  - Example: **Student Study Assistant** chatbot using **LangChain** and **Gemini LLM**.\n"
+                "- **MLOps**:\n"
+                "  - Automated **model training**, **deployment**, and **monitoring** with **Kubernetes**, **Docker**, and **AWS SageMaker**.\n"
+                "  - Built **retraining pipelines** with **drift detection**, reducing errors by **30%**.\n"
+                "- **Certifications**:\n"
+                "  - **LLM Engineering** and **Deep Learning Masterclass** (Udemy) validate his expertise.\n\n"
+                "His work on projects like **Credit Risk Analysis** (90% accuracy with **CatBoostClassifier**) and **SQL Query Generator** demonstrates his ability to apply **AI/ML** to real-world problems."
             )
         },
         {
             "content": "What are Siddharamayya's projects?",
             "response": (
-                "**Siddharamayya Mathapati** has an impressive portfolio of projects showcasing his expertise in **AI/ML**, **web development**, **NLP**, and **IoT**. Below is a detailed overview:\n\n"
+                "**Siddharamayya Mathapati** has a diverse portfolio of projects showcasing his expertise in **AI/ML**, **web development**, **NLP**, **IoT**, and **DevOps**. Below is a comprehensive overview:\n\n"
                 "- **LinkedIn Activity Scraper** ([GitHub](https://github.com/mtptisid/linkedin-comment-poster)):\n"
-                "  - A **Python-based tool** using **Selenium** and **BeautifulSoup** to extract **LinkedIn** user activity (posts, likes, shares, comments).\n"
-                "  - Features **dynamic content handling** and **error management**, ensuring ethical scraping for **social media analytics**.\n"
+                "  - A **Python-based tool** using **Selenium** and **BeautifulSoup** to extract **LinkedIn** activity (posts, likes, shares, comments).\n"
+                "  - Features **dynamic content handling** and **ethical scraping** for **social media analytics**.\n"
                 "- **Recruitment Automation** ([GitHub](https://github.com/mtptisid/recruitment-solution)):\n"
-                "  - An **AI-driven solution** for extracting job data from career pages and generating personalized **cold emails**.\n"
-                "  - Uses **NLP** and **web scraping**, reducing manual effort by **80%**.\n"
+                "  - An **AI-driven solution** for extracting job data and generating **cold emails** using **NLP** and **web scraping**, reducing effort by **80%**.\n"
                 "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
-                "  - An **AI-powered finance agent** using **LLMs** to predict stock prices.\n"
-                "  - Integrates **Yahoo Finance** and **NewsAPI**, improving accuracy by **25%** through sentiment analysis.\n"
+                "  - An **AI-powered finance agent** using **LLMs**, integrating **Yahoo Finance** and **NewsAPI** for **25%** improved accuracy.\n"
                 "- **Credit Risk Analysis** ([GitHub](https://github.com/mtptisid/credit-risk-analysis)):\n"
-                "  - A **machine learning model** using **CatBoostClassifier** to predict credit card defaults.\n"
-                "  - Achieves **90% accuracy**, supporting **financial risk management**.\n"
+                "  - A **machine learning model** with **CatBoostClassifier** for credit card default prediction, achieving **90% accuracy**.\n"
                 "- **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)):\n"
-                "  - A **web application** using **Google Generative AI** for **medical image analysis** and diagnostic insights.\n"
-                "  - Features a **chat interface** for seamless user interaction.\n"
+                "  - A **web application** using **Google Generative AI** for **medical image analysis** with a **chat interface**.\n"
                 "- **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)):\n"
-                "  - A **Jupyter Notebook-based tool** integrating **Google Gemini LLM** with **MySQL**.\n"
-                "  - Generates **SQL queries** from natural language using **LangChain** and **few-shot learning**.\n"
+                "  - A **Jupyter Notebook-based tool** using **Google Gemini LLM** and **LangChain** for natural language **SQL query** generation.\n"
                 "- **Student Study Assistant** ([GitHub](https://github.com/mtptisid/student-study-assistant)):\n"
-                "  - A **chatbot** built with **LangChain**, **Gemini LLM**, and **PDF processing**.\n"
-                "  - Answers student queries based on uploaded documents, enhancing study efficiency.\n\n"
+                "  - A **chatbot** with **LangChain**, **Gemini LLM**, and **PDF processing** for student queries.\n"
+                "- **Smart School Bus Tracking** ([GitHub](https://github.com/mtptisid/smart-bus-tracking)):\n"
+                "  - An **IoT system** using **RFID**, **GPS**, and **Raspberry Pi** for real-time student tracking.\n"
+                "- **Car Security System** ([GitHub](https://github.com/mtptisid/car-security-system)):\n"
+                "  - A **real-time AI system** with **IoT**, **facial recognition**, and **RFID** for vehicle security.\n\n"
                 "Explore more on his **[GitHub](https://github.com/mtptisid)** and **[Portfolio](https://mtptisid.github.io)**."
             )
         },
         {
             "content": "What is Siddharamayya's GitHub page?",
             "response": (
-                "**Siddharamayya Mathapati**’s **GitHub** profile is a rich repository of his technical contributions, showcasing his expertise in **AI/ML**, **web development**, and **DevOps**.\n\n"
+                "**Siddharamayya Mathapati**’s **GitHub** profile showcases his technical expertise in **AI/ML**, **web development**, **DevOps**, and **IoT**.\n\n"
                 "- **[GitHub](https://github.com/mtptisid)**:\n"
-                "  - Features projects like **LinkedIn Activity Scraper**, **Stock Price Prediction**, and **Medical Assistant AI**, demonstrating proficiency in **Python**, **LLMs**, and **web scraping**.\n"
-                "  - Includes **DevOps** workflows with **Docker**, **Kubernetes**, and **GitHub Actions** for automated deployments.\n"
-                "  - Showcases **open-source contributions**, reflecting his commitment to collaborative development.\n\n"
-                "Visit his **[Portfolio](https://mtptisid.github.io)** for a curated overview of his work."
+                "  - Features projects like **Stock Price Prediction**, **Medical Assistant AI**, **Smart School Bus Tracking**, and **LinkedIn Activity Scraper**.\n"
+                "  - Demonstrates proficiency in **Python**, **LLMs**, **IoT**, and **web scraping**.\n"
+                "  - Includes **DevOps** workflows with **Docker**, **Kubernetes**, and **GitHub Actions**.\n"
+                "  - Reflects **open-source contributions** and collaborative development.\n\n"
+                "Visit his **[Portfolio](https://mtptisid.github.io)** for a curated overview."
             )
         },
         {
-            "content": "How can I contact Siddharamayya?",
+            "content": "What is Siddharamayya's portfolio page?",
             "response": (
-                "**Siddharamayya Mathapati** is readily accessible for professional inquiries, collaborations, or opportunities.\n\n"
-                "- **[Email](mailto:msidrm455@gmail.com)**:\n"
-                "  - Preferred for formal communication, project proposals, or job opportunities.\n"
-                "  - Example: Reach out for **AI/ML** consulting or **DevOps** pipeline optimization.\n"
-                "- **Phone**: +91 97406 71620\n"
-                "  - Available for direct calls or messages to discuss technical projects or collaborations.\n"
-                "  - Best for urgent or real-time discussions.\n"
-                "- **Address**: #372, Ward No. 3, Yadur, Chikodi, Belagavi, Karnataka, India\n"
-                "  - Suitable for official correspondence or in-person meetings (by appointment).\n"
-                "- **[LinkedIn](https://linkedin.com/in/siddharamayya)**:\n"
-                "  - Ideal for professional networking and viewing his latest updates or endorsements.\n\n"
-                "Siddharamayya is responsive and open to discussing **AI**, **MLOps**, or **web development** opportunities."
+                "**Siddharamayya Mathapati**’s **portfolio** is a professional showcase of his work in **AI/ML**, **web development**, **DevOps**, and **IoT**.\n\n"
+                "- **[Portfolio](https://mtptisid.github.io)**:\n"
+                "  - Highlights projects like **Stock Price Prediction**, **Medical Assistant AI**, and **Smart School Bus Tracking**.\n"
+                "  - Showcases **technical skills** in **Python**, **React**, **Kubernetes**, and **AWS**.\n"
+                "  - Provides insights into his **Udemy certifications** and **4+ years** of experience.\n"
+                "- **Complementary Links**:\n"
+                "  - **[GitHub](https://github.com/mtptisid)**: Detailed project repositories.\n"
+                "  - **[LinkedIn](https://linkedin.com/in/siddharamayya)**: Professional achievements and endorsements.\n\n"
+                "The portfolio is an excellent resource for exploring his **innovative solutions** and **technical expertise**."
+            )
+        },
+        {
+            "content": "What are Siddharamayya's key skills?",
+            "response": (
+                "**Siddharamayya Mathapati** possesses a robust skill set across **AI/ML**, **DevOps**, **web development**, **cloud engineering**, and **IoT**, enabling him to deliver **scalable**, **innovative** solutions.\n\n"
+                "- **Python** (90%):\n"
+                "  - Expert in **AI/ML**, **web development**, and **automation** with **TensorFlow**, **PyTorch**, **LangChain**, and **FastAPI**.\n"
+                "- **Deep Learning** & **Machine Learning/AI** (85%):\n"
+                "  - Designs **neural networks** and **LLMs** for **NLP**, **computer vision**, and **predictive modeling**.\n"
+                "- **Web Development** (95%):\n"
+                "  - Builds responsive applications with **React**, **Flask**, **Django**, and **Streamlit**.\n"
+                "- **DevOps**:\n"
+                "  - Automates **CI/CD pipelines** with **Docker**, **Kubernetes**, **Ansible**, and **GitHub Actions**.\n"
+                "- **Cloud Engineering** (85%):\n"
+                "  - Optimizes **AWS** (SageMaker, EMR, Lambda), **GCP**, and **Azure** for performance.\n"
+                "- **DBMS & SQL** (80%):\n"
+                "  - Manages **MySQL**, **PostgreSQL**, **MongoDB**, and **vector databases** (FAISS, ChromaDB).\n"
+                "- **IoT** (80%):\n"
+                "  - Develops real-time systems with **Raspberry Pi**, **ESP32**, **RFID**, and **GPS**.\n"
+                "- **Other Languages**:\n"
+                "  - Proficient in **C++**, **Ruby**, **JavaScript**, **Golang**, and **Bash**.\n\n"
+                "His skills are validated by **Udemy certifications** and applied in projects like **Medical Assistant AI** and **Stock Price Prediction**."
+            )
+        },
+        {
+            "content": "What is Siddharamayya’s educational background?",
+            "response": (
+                "**Siddharamayya Mathapati** has a solid academic foundation in **computer applications**, equipping him for **AI/ML**, **software development**, and **DevOps**.\n\n"
+                "- **MCA - Master of Computer Applications**:\n"
+                "  - **Institution**: Acharya Institute of Technology, Bangalore\n"
+                "  - **Duration**: July 2018 - September 2020\n"
+                "  - **Score**: CGPA 7.2/10\n"
+                "  - Focused on **advanced programming**, **database systems**, and **software engineering**.\n"
+                "- **BCA - Bachelor of Computer Applications**:\n"
+                "  - **Institution**: B K College, Chikodi\n"
+                "  - **Duration**: July 2015 - June 2018\n"
+                "  - **Score**: CGPA 6.8/10\n"
+                "  - Covered **programming fundamentals**, **web development**, and **database management**.\n\n"
+                "His education, combined with **Udemy certifications** in **LLM Engineering**, **MLOps**, and **Deep Learning**, supports his technical expertise."
+            )
+        },
+        {
+            "content": "What is Siddharamayya’s current role at Capgemini?",
+            "response": (
+                "**Siddharamayya Mathapati** serves as a **Senior Software Engineer** at **Capgemini Technology Service Limited India** (May 2021 - April 2025), leading **AI/ML** and **MLOps** initiatives.\n\n"
+                "- **Responsibilities**:\n"
+                "  - Fine-tunes **LLMs** with **QLoRA** and **LoRA** for **finance**, **healthcare**, and **cybersecurity**, reducing memory usage by **30%**.\n"
+                "  - Designs **RAG applications** with **FAISS** and **ChromaDB**, improving accuracy by **25%**.\n"
+                "  - Automates **MLOps pipelines** using **Kubernetes**, **Docker**, and **AWS SageMaker**, cutting deployment time by **50%**.\n"
+                "  - Develops **real-time inference pipelines** with **TensorRT** and **ONNX** for low-latency applications.\n"
+                "  - Migrates legacy ML workloads to **Spark** and **Kubernetes**, enhancing scalability by **40%**.\n"
+                "  - Builds **retraining pipelines** with **drift detection**, reducing errors by **30%**.\n"
+                "  - Mentors junior engineers and supervises research internships.\n\n"
+                "His role showcases his ability to deliver **high-impact**, **scalable** solutions."
             )
         },
         {
             "content": "What languages does Siddharamayya speak?",
             "response": (
-                "**Siddharamayya Mathapati** is a multilingual professional, fluent in **seven languages**, which enhances his ability to collaborate across diverse teams and regions.\n\n"
+                "**Siddharamayya Mathapati** is fluent in **seven languages**, enhancing his ability to collaborate across diverse teams in **India** and beyond.\n\n"
                 "- **Kannada**:\n"
-                "  - Native language; fluent in speaking, reading, and writing, used in daily communication and professional settings in **Karnataka**.\n"
+                "  - Native language; fluent in speaking, reading, and writing, used in **Karnataka**.\n"
                 "- **English**:\n"
-                "  - Professional fluency; proficient in technical writing, presentations, and global collaboration, essential for **AI/ML** and **DevOps** projects.\n"
+                "  - Professional fluency; excels in technical writing, presentations, and global collaboration.\n"
                 "- **Hindi**:\n"
-                "  - Fluent; skilled in verbal and written communication, widely used in **India** for cross-regional interactions.\n"
+                "  - Fluent; skilled in verbal and written communication for cross-regional interactions.\n"
                 "- **Telugu**:\n"
-                "  - Conversational fluency; comfortable in professional and casual discussions, particularly in **South India**.\n"
+                "  - Conversational fluency; comfortable in professional and casual discussions.\n"
                 "- **Tamil**:\n"
-                "  - Conversational fluency; adept at understanding and communicating in everyday and technical contexts.\n"
+                "  - Conversational fluency; adept in everyday and technical contexts.\n"
                 "- **Marathi**:\n"
-                "  - Intermediate fluency; capable of effective communication in professional and social settings, especially in **Maharashtra**.\n"
+                "  - Intermediate fluency; effective in professional and social settings in **Maharashtra**.\n"
                 "- **Malayalam**:\n"
-                "  - Basic proficiency; can comprehend and engage in simple conversations, useful for interactions in **Kerala**.\n\n"
-                "This linguistic versatility supports his work in diverse industries like **finance**, **healthcare**, and **education**."
+                "  - Basic proficiency; can engage in simple conversations in **Kerala**.\n\n"
+                "His linguistic versatility supports his work in industries like **finance**, **healthcare**, and **education**."
             )
         },
         {
-            "content": "When will Siddharamayya be available to join?",
+            "content": "How can I contact Siddharamayya?",
             "response": (
-                "**Siddharamayya Mathapati** is **immediately available** to join new opportunities starting **May 2025**, following the completion of his role at **Capgemini Technology Service Limited India**.\n\n"
-                "- **Availability Details**:\n"
-                "  - Ready to take on roles in **AI/ML**, **MLOps**, **web development**, or **DevOps**.\n"
-                "  - Brings over **4 years** of experience, including **LLM fine-tuning**, **RAG applications**, and **cloud-native deployments**.\n"
-                "  - Proven track record at **Capgemini** (May 2021 - April 2025), where he led **AI-driven projects** and mentored teams.\n"
-                "- **Ideal Roles**:\n"
-                "  - **AI/ML Engineer**: Developing **generative AI** or **predictive models**.\n"
-                "  - **MLOps Engineer**: Automating **CI/CD pipelines** for ML deployments.\n"
-                "  - **DevOps Engineer**: Managing **Kubernetes** and **AWS**-based infrastructure.\n\n"
-                "Contact him at **[Email](mailto:msidrm455@gmail.com)** or **Phone** (+91 97406 71620) to discuss opportunities."
+                "**Siddharamayya Mathapati** is accessible for professional inquiries and collaborations.\n\n"
+                "- **[Email](mailto:msidrm455@gmail.com)**:\n"
+                "  - Preferred for formal communication, project proposals, or job opportunities.\n"
+                "- **Phone**: +91 97406 71620\n"
+                "  - Available for calls or messages to discuss **AI/ML**, **DevOps**, or **IoT** projects.\n"
+                "- **Address**: #372, Ward No. 3, Yadur, Chikodi, Belagavi, Karnataka, India\n"
+                "  - Suitable for official correspondence or in-person meetings (by appointment).\n"
+                "- **[LinkedIn](https://linkedin.com/in/siddharamayya)**:\n"
+                "  - Ideal for networking and viewing professional updates.\n\n"
+                "He is responsive and open to discussing **innovative** opportunities."
+            )
+        },
+        {
+            "content": "What are Siddharamayya’s interests in AI?",
+            "response": (
+                "**Siddharamayya Mathapati** is deeply passionate about **AI** and its transformative potential, with specific interests that drive his professional work.\n\n"
+                "- **Generative AI & LLM Development**:\n"
+                "  - Focuses on building and fine-tuning **LLMs** for applications like **text generation** and **image analysis** (e.g., **Medical Assistant AI**).\n"
+                "- **AI-Powered Financial Modeling**:\n"
+                "  - Develops **predictive models** for stock market analysis, as seen in **Stock Price Prediction** with **LLMs**.\n"
+                "- **NLP & Chatbots**:\n"
+                "  - Creates autonomous **AI agents** for natural language understanding, like the **Student Study Assistant** chatbot.\n"
+                "- **Cloud-Native MLOps**:\n"
+                "  - Integrates **AI** with **cloud platforms** (AWS, GCP, Azure) for scalable deployments, automating **MLOps pipelines**.\n"
+                "- **IoT & Real-Time AI**:\n"
+                "  - Combines **AI** with **IoT** for systems like **Smart School Bus Tracking** and **Car Security System**.\n\n"
+                "His interests align with his **4+ years** of experience and **Udemy certifications**, positioning him as a leader in **AI innovation**."
+            )
+        },
+        {
+            "content": "What generative AI projects has Siddharamayya worked on?",
+            "response": (
+                "**Siddharamayya Mathapati** has worked on several **generative AI** projects, leveraging **LLMs** and **deep learning** to create innovative solutions.\n\n"
+                "- **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)):\n"
+                "  - A **web application** using **Google Generative AI** to analyze **medical images** and provide diagnostic insights via a **chat interface**.\n"
+                "  - Enhances support for medical professionals with real-time analysis.\n"
+                "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "  - An **AI-powered finance agent** using **LLMs** to generate stock price predictions and market insights.\n"
+                "  - Integrates **Yahoo Finance** and **NewsAPI**, improving accuracy by **25%**.\n"
+                "- **Student Study Assistant** ([GitHub](https://github.com/mtptisid/student-study-assistant)):\n"
+                "  - A **chatbot** built with **LangChain** and **Gemini LLM** to generate context-aware responses from **PDF documents**.\n"
+                "  - Supports students with study-related queries.\n"
+                "- **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)):\n"
+                "  - A **Jupyter Notebook-based tool** using **Google Gemini LLM** to generate **SQL queries** from natural language inputs.\n"
+                "  - Employs **few-shot learning** for accuracy.\n\n"
+                "These projects highlight his expertise in **generative AI** and **NLP**, supported by his **Udemy certification** in **LLM Engineering**."
+            )
+        },
+        {
+            "content": "What DevOps tools does Siddharamayya use?",
+            "response": (
+                "**Siddharamayya Mathapati** is proficient in a wide range of **DevOps tools**, enabling him to automate **CI/CD pipelines**, manage **cloud infrastructure**, and optimize deployments.\n\n"
+                "- **Docker**:\n"
+                "  - Creates **containerized applications** for portability and scalability.\n"
+                "  - Used at **Capgemini** to deploy **ML models**.\n"
+                "- **Kubernetes**:\n"
+                "  - Orchestrates **containerized workloads** for high availability.\n"
+                "  - Migrated legacy ML models to **Kubernetes** at **Capgemini**, improving scalability by **40%**.\n"
+                "- **Ansible**:\n"
+                "  - Automates **configuration management** and **server provisioning**.\n"
+                "  - Streamlined **infrastructure setup** for **AI workloads**.\n"
+                "- **Jenkins**:\n"
+                "  - Builds **CI/CD pipelines** for automated testing and deployment.\n"
+                "  - Integrated with **GitHub Actions** for **ML model** deployments.\n"
+                "- **GitHub Actions**:\n"
+                "  - Automates **workflows** for building, testing, and deploying code.\n"
+                "  - Used in projects like **Stock Price Prediction**.\n"
+                "- **AWS SageMaker**:\n"
+                "  - Deploys and manages **ML models** in the cloud.\n"
+                "  - Automated **MLOps pipelines** at **Capgemini**.\n"
+                "- **MLflow**:\n"
+                "  - Tracks **ML experiments** and manages model lifecycles.\n"
+                "- **Airflow**:\n"
+                "  - Schedules and monitors **data pipelines** for **ML workflows**.\n\n"
+                "His **Udemy certification** in **MLOps** enhances his ability to leverage these tools effectively."
+            )
+        },
+        {
+            "content": "What is Siddharamayya’s experience with LLMs?",
+            "response": (
+                "**Siddharamayya Mathapati** has extensive experience with **large language models (LLMs)**, focusing on **fine-tuning**, **deployment**, and **application development**.\n\n"
+                "- **Fine-Tuning**:\n"
+                "  - At **Capgemini**, fine-tuned **LLMs** using **QLoRA** and **LoRA** for **finance**, **healthcare**, and **cybersecurity**, reducing memory usage by **30%**.\n"
+                "  - Applied **RLHF** to align models with human feedback, improving accuracy by **20%**.\n"
+                "- **RAG Applications**:\n"
+                "  - Designed **Retrieval-Augmented Generation** systems with **FAISS** and **ChromaDB** for domain-specific tasks, enhancing response accuracy by **25%**.\n"
+                "  - Example: **Student Study Assistant** chatbot.\n"
+                "- **Project Highlights**:\n"
+                "  - **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)): Used **LLMs** for market trend analysis.\n"
+                "  - **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)): Integrated **Google Gemini LLM** for **SQL query** generation.\n"
+                "  - **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)): Leveraged **Google Generative AI** for diagnostic insights.\n"
+                "- **Tools & Frameworks**:\n"
+                "  - Proficient in **LangChain**, **Hugging Face**, and **PyTorch** for **LLM** development.\n"
+                "  - Uses **AWS SageMaker** and **Kubernetes** for **LLM** deployments.\n"
+                "- **Certifications**:\n"
+                "  - **LLM Engineering** (Udemy) validates his expertise in **LLM** workflows.\n\n"
+                "His work demonstrates a deep understanding of **LLM** optimization and real-world applications."
+            )
+        },
+        {
+            "content": "What AI-powered finance projects has Siddharamayya built?",
+            "response": (
+                "**Siddharamayya Mathapati** has developed impactful **AI-powered finance projects**, leveraging **LLMs** and **machine learning** for financial decision-making.\n\n"
+                "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "  - An **AI-powered finance agent** using **LLMs** to predict stock prices and analyze market trends.\n"
+                "  - Integrates **Yahoo Finance** for stock data and **NewsAPI** for sentiment analysis, improving accuracy by **25%**.\n"
+                "  - Supports investors with data-driven insights.\n"
+                "- **Credit Risk Analysis** ([GitHub](https://github.com/mtptisid/credit-risk-analysis)):\n"
+                "  - A **machine learning model** using **CatBoostClassifier** to predict credit card defaults.\n"
+                "  - Achieves **90% accuracy**, aiding financial institutions in **risk management**.\n"
+                "  - Features **data preprocessing** and **feature engineering** for robust predictions.\n"
+                "- **Capgemini Finance Projects**:\n"
+                "  - Fine-tuned **LLMs** for **financial analytics**, optimizing models for **contextual accuracy** in budgeting and forecasting.\n"
+                "  - Deployed **RAG applications** with **vector databases** for financial document retrieval, enhancing efficiency by **30%**.\n\n"
+                "These projects highlight his ability to apply **AI/ML** to solve complex financial challenges."
+            )
+        },
+        {
+            "content": "What is Siddharamayya’s tech stack?",
+            "response": (
+                "**Siddharamayya Mathapati**’s **tech stack** is comprehensive, covering **AI/ML**, **web development**, **DevOps**, **cloud engineering**, and **IoT**.\n\n"
+                "- **Programming Languages**:\n"
+                "  - **Python**, **C++**, **Ruby**, **JavaScript**, **Golang**, **Bash**.\n"
+                "- **AI/ML Frameworks**:\n"
+                "  - **TensorFlow**, **PyTorch**, **LangChain**, **Hugging Face**, **PySpark**.\n"
+                "- **Web Development**:\n"
+                "  - **Flask**, **Django**, **FastAPI**, **React**, **Streamlit**.\n"
+                "- **DevOps Tools**:\n"
+                "  - **Docker**, **Kubernetes**, **Ansible**, **Jenkins**, **GitHub Actions**, **MLflow**, **Airflow**.\n"
+                "- **Cloud Platforms**:\n"
+                "  - **AWS** (SageMaker, EMR, Lambda), **GCP**, **Azure**.\n"
+                "- **Databases**:\n"
+                "  - **MySQL**, **PostgreSQL**, **MongoDB**, **ChromaDB**, **FAISS**.\n"
+                "- **IoT Technologies**:\n"
+                "  - **Raspberry Pi**, **ESP32**, **RFID**, **GPS**.\n"
+                "- **Other Tools**:\n"
+                "  - **Git**, **VS Code**, **RabbitMQ**, **Postman**, **LangGraph**, **Firebase**.\n\n"
+                "His **tech stack** supports his work on projects like **Medical Assistant AI**, **Stock Price Prediction**, and **Smart School Bus Tracking**."
+            )
+        },
+        {
+            "content": "How does Siddharamayya use Docker and Kubernetes?",
+            "response": (
+                "**Siddharamayya Mathapati** leverages **Docker** and **Kubernetes** to automate **CI/CD pipelines**, deploy **ML models**, and manage **cloud-native** applications.\n\n"
+                "- **Docker**:\n"
+                "  - Creates **containerized environments** for **AI/ML** and **web applications**, ensuring portability.\n"
+                "  - Packages **ML models** with dependencies for consistent deployments.\n"
+                "  - Example at **Capgemini**: Containerized **LLM inference pipelines** for **low-latency** applications.\n"
+                "- **Kubernetes**:\n"
+                "  - Orchestrates **containerized workloads** for scalability and high availability.\n"
+                "  - Migrated legacy ML models to **Kubernetes** at **Capgemini**, improving scalability by **40%**.\n"
+                "  - Manages **MLOps pipelines**, automating **model training** and **deployment**.\n"
+                "  - Example: Deployed **RAG applications** with **vector databases** on **Kubernetes** clusters.\n"
+                "- **Integration**:\n"
+                "  - Uses **Docker** to build images and **Kubernetes** to orchestrate them in **AWS** and **GCP**.\n"
+                "  - Integrates with **Jenkins** and **GitHub Actions** for **CI/CD** automation.\n"
+                "- **Monitoring**:\n"
+                "  - Implements **Prometheus** and **Grafana** for **real-time monitoring** of **Kubernetes** clusters.\n\n"
+                "His **Udemy certification** in **MLOps** enhances his expertise in **Docker** and **Kubernetes**."
+            )
+        },
+        {
+            "content": "What are Siddharamayya’s contributions to web development?",
+            "response": (
+                "**Siddharamayya Mathapati** has made significant contributions to **web development** (95% proficiency), building responsive, user-friendly applications.\n\n"
+                "- **Projects**:\n"
+                "  - **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)):\n"
+                "    - A **web application** with **React** and **Flask** for **medical image analysis** and **chat-based** diagnostics.\n"
+                "  - **Student Study Assistant** ([GitHub](https://github.com/mtptisid/student-study-assistant)):\n"
+                "    - A **chatbot interface** using **Streamlit** for student queries from **PDF documents**.\n"
+                "- **Technologies**:\n"
+                "  - **Frontend**: **React**, **Bootstrap**, **HTML**, **CSS** for responsive UIs.\n"
+                "  - **Backend**: **Flask**, **Django**, **FastAPI** for robust APIs.\n"
+                "  - **Deployment**: Uses **Docker** and **Kubernetes** for scalable web apps.\n"
+                "- **Capgemini Contributions**:\n"
+                "  - Developed **web-based dashboards** for **ML model** monitoring using **Streamlit**.\n"
+                "  - Automated **web automation scripts** with **Selenium** for testing and data extraction.\n"
+                "- **X-Cencia Internship**:\n"
+                "  - Built **web interfaces** for **IoT systems**, integrating **real-time data** from **Raspberry Pi**.\n\n"
+                "His work combines **UX design**, **backend development**, and **DevOps** for seamless web solutions."
+            )
+        },
+        {
+            "content": "Visit Sid's portfolio",
+            "response": (
+                "To explore **Siddharamayya Mathapati**’s professional work and projects, visit his **portfolio**:\n\n"
+                "- **[Portfolio](https://mtptisid.github.io)**:\n"
+                "  - Showcases projects like **Stock Price Prediction**, **Medical Assistant AI**, and **Smart School Bus Tracking**.\n"
+                "  - Highlights **AI/ML**, **web development**, **DevOps**, and **IoT** expertise.\n"
+                "  - Includes details on **Udemy certifications** and **4+ years** of experience.\n"
+                "- **Additional Links**:\n"
+                "  - **[GitHub](https://github.com/mtptisid)**: View project repositories.\n"
+                "  - **[LinkedIn](https://linkedin.com/in/siddharamayya)**: Connect for professional updates.\n\n"
+                "His **portfolio** is a comprehensive resource for his **innovative** contributions."
+            )
+        },
+        {
+            "content": "Download Resume",
+            "response": (
+                "**Siddharamayya Mathapati**’s resume details his **4+ years** of experience in **AI/ML**, **MLOps**, **DevOps**, and **web development**. For a downloadable version, contact him directly:\n\n"
+                "- **[Email](mailto:msidrm455@gmail.com)**:\n"
+                "  - Request a PDF copy of his resume, tailored to **AI/ML**, **MLOps**, or **DevOps** roles.\n"
+                "- **Phone**: +91 97406 71620\n"
+                "  - Discuss resume details or specific role requirements.\n"
+                "- **[LinkedIn](https://linkedin.com/in/siddharamayya)**:\n"
+                "  - View his professional summary and endorsements.\n\n"
+                "Alternatively, explore his **[Portfolio](https://mtptisid.github.io)** or **[GitHub](https://github.com/mtptisid)** for project details and skills."
             )
         },
         {
             "content": "What certifications does Siddharamayya have?",
             "response": (
-                "**Siddharamayya Mathapati** has earned several **Udemy certifications**, reflecting his commitment to continuous learning and staying updated with industry trends in **AI/ML** and **MLOps**.\n\n"
+                "**Siddharamayya Mathapati** has earned **Udemy certifications** that validate his expertise in **AI/ML**, **MLOps**, and **data science**.\n\n"
                 "- **LLM Engineering: Master AI, Large Language Models & Agents**:\n"
-                "  - Covers **LLM fine-tuning**, **prompt engineering**, and **agent-based AI systems**.\n"
-                "  - Applied in projects like **Stock Price Prediction** and **Medical Assistant AI**.\n"
+                "  - Covers **LLM fine-tuning**, **prompt engineering**, and **AI agents**.\n"
+                "  - Applied in **Stock Price Prediction** and **Medical Assistant AI**.\n"
                 "- **MLOps Bootcamp: Mastering AI Operations for Success**:\n"
                 "  - Focuses on **CI/CD pipelines**, **model monitoring**, and **cloud deployments**.\n"
-                "  - Used at **Capgemini** to automate **MLOps workflows** with **Kubernetes** and **AWS SageMaker**.\n"
+                "  - Used at **Capgemini** for **MLOps** automation.\n"
                 "- **Python for Data Analysis & Visualization**:\n"
-                "  - Covers **Pandas**, **NumPy**, and **Matplotlib** for data processing and visualization.\n"
-                "  - Applied in **Credit Risk Analysis** for data preprocessing and model evaluation.\n"
+                "  - Covers **Pandas**, **NumPy**, and **Matplotlib** for data processing.\n"
+                "  - Applied in **Credit Risk Analysis**.\n"
                 "- **Deep Learning Masterclass with TensorFlow 2**:\n"
-                "  - Explores **neural network design** and **computer vision** applications.\n"
+                "  - Explores **neural network design** and **computer vision**.\n"
                 "  - Used in **Medical Assistant AI** for **image analysis**.\n\n"
-                "These certifications enhance his ability to deliver cutting-edge solutions in **AI**, **data science**, and **DevOps**."
+                "These certifications complement his **4+ years** of experience and project portfolio."
             )
         },
         {
-            "content": "What is Siddharamayya's educational background?",
+            "content": "What is Siddharamayya’s experience with IoT?",
             "response": (
-                "**Siddharamayya Mathapati** has a strong academic foundation in **computer applications**, equipping him with the skills to excel in **AI/ML**, **software development**, and **DevOps**.\n\n"
-                "- **MCA - Master of Computer Applications**:\n"
-                "  - **Institution**: Acharya Institute of Technology, Bangalore\n"
-                "  - **Duration**: July 2018 - September 2020\n"
-                "  - **Score**: CGPA 7.2/10\n"
-                "  - Focused on **advanced programming**, **database systems**, and **software engineering**, laying the groundwork for his **AI/ML** expertise.\n"
-                "- **BCA - Bachelor of Computer Applications**:\n"
-                "  - **Institution**: B K College, Chikodi\n"
-                "  - **Duration**: July 2015 - June 2018\n"
-                "  - **Score**: CGPA 6.8/10\n"
-                "  - Covered **programming fundamentals**, **web development**, and **database management**, fostering his passion for technology.\n\n"
-                "His education, combined with **Udemy certifications**, supports his ability to tackle complex technical challenges."
+                "**Siddharamayya Mathapati** has significant experience in **IoT** (80% proficiency), developing real-time systems for **smart applications**.\n\n"
+                "- **X-Cencia Internship** (February 2020 - April 2021):\n"
+                "  - Developed a **Smart School Bus Tracking System** using **RFID**, **GPS**, and **Raspberry Pi** for real-time student monitoring.\n"
+                "  - Built a **Car Security System** with **IoT**, **facial recognition**, and **RFID** for vehicle authentication.\n"
+                "  - Designed **automated data pipelines** for **sensor data** processing from **ESP32** devices.\n"
+                "- **Projects**:\n"
+                "  - **Smart School Bus Tracking** ([GitHub](https://github.com/mtptisid/smart-bus-tracking)):\n"
+                "    - Ensures **real-time location tracking** with a **web interface** for parents and schools.\n"
+                "  - **Car Security System** ([GitHub](https://github.com/mtptisid/car-security-system)):\n"
+                "    - Integrates **AI-based facial recognition** with **IoT** for enhanced security.\n"
+                "- **Technologies**:\n"
+                "  - Proficient in **Raspberry Pi**, **ESP32**, **RFID**, **GPS**, and **MQTT** for **IoT** communication.\n"
+                "  - Uses **Python** and **Flask** for **IoT** web interfaces.\n"
+                "- **Capgemini Contributions**:\n"
+                "  - Integrated **IoT data** with **ML models** for real-time analytics in **smart systems**.\n\n"
+                "His **IoT** expertise enhances his **AI/ML** and **web development** capabilities."
+            )
+        },
+        {
+            "content": "What is Siddharamayya’s experience with MLOps?",
+            "response": (
+                "**Siddharamayya Mathapati** has extensive **MLOps** experience, automating **machine learning** workflows for scalability and efficiency.\n\n"
+                "- **Capgemini** (May 2021 - April 2025):\n"
+                "  - Automated **MLOps pipelines** with **Kubernetes**, **Docker**, and **AWS SageMaker**, reducing deployment time by **50%**.\n"
+                "  - Built **model retraining pipelines** with **drift detection**, cutting prediction errors by **30%**.\n"
+                "  - Developed **real-time monitoring** systems with **Prometheus** and **Grafana** for **model performance**.\n"
+                "  - Migrated legacy ML workloads to **Spark** and **Kubernetes**, improving scalability by **40%**.\n"
+                "- **Tools**:\n"
+                "  - **MLflow**: Tracks **ML experiments** and manages model lifecycles.\n"
+                "  - **Airflow**: Schedules **data pipelines** for **ML workflows**.\n"
+                "  - **Jenkins** & **GitHub Actions**: Automates **CI/CD** for **ML deployments**.\n"
+                "- **Projects**:\n"
+                "  - **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "    - Deployed **LLM-based models** with **MLOps** automation.\n"
+                "  - **Credit Risk Analysis** ([GitHub](https://github.com/mtptisid/credit-risk-analysis)):\n"
+                "    - Managed model lifecycle with **MLflow**.\n"
+                "- **Certification**:\n"
+                "  - **MLOps Bootcamp** (Udemy) validates his expertise in **MLOps** workflows.\n\n"
+                "His **MLOps** skills ensure robust, scalable **ML** deployments."
             )
         }
     ]
 
-    # Prepare system prompt with detailed Markdown formatting
     system_prompt = (
         "You are an AI assistant with comprehensive knowledge about **Siddharamayya Mathapati**, a highly skilled **AI/ML Engineer** and **Senior Software Engineer**. "
         "Your responses must be in **Markdown format**, using **bold** for emphasis, **code blocks** for snippets, **bulleted lists** for clarity, and **[name](link)** for URLs. "
@@ -518,12 +828,10 @@ async def send_message(request: Request, message: MessageCreate):
         message.content
     )
 
-    # Prepare chat history for AI
     chat_history = [
         {"role": "system", "content": system_prompt}
     ]
 
-    # Handle tool usage
     response_content = ""
     tool_used = None
 
@@ -539,7 +847,6 @@ async def send_message(request: Request, message: MessageCreate):
             {"role": "system", "content": augmented_prompt}
         ]
 
-    # Get AI response
     try:
         response_content = await ai_manager.get_response(message.model, chat_history)
     except HTTPException as e:
@@ -547,10 +854,8 @@ async def send_message(request: Request, message: MessageCreate):
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {str(e)}")
 
-    # Clean up response
     response_content = clean_text(response_content)
 
-    # Store bot response
     bot_message = SessionMessage(
         content=response_content,
         is_bot=True,
@@ -559,7 +864,6 @@ async def send_message(request: Request, message: MessageCreate):
     )
     SESSIONS[session_id]["messages"].append(bot_message)
 
-    # Prepare response
     return MessageResponse(
         content=response_content,
         is_bot=True,
