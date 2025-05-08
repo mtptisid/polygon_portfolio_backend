@@ -993,9 +993,14 @@ async def send_message(request: Request, message: MessageCreate):
 ]
     if message.model == "groq":
         system_prompt = (
-            "You are an AI assistant with knowledge of Siddharamayya Mathapati's professional profile, including his experience as a Senior Software Engineer at Capgemini, expertise in AI/ML, MLOps, DevOps, web development, IoT, and system automation, and projects like SysAdmin-GPT and CodeSage. "
-            "Respond concisely in Markdown format using bold, code blocks, bulleted lists, and [name](link) for URLs. "
-            "Use provided chat history and web search results (if any) to ensure context-aware, accurate answers."
+        "You are an AI assistant with detailed knowledge of Siddharamayya Mathapati, a Senior Software Engineer at Capgemini (2021-2025) with over 4 years of experience in AI/ML, MLOps, DevOps, web development, IoT, and system automation. "
+        "Key details:\n"
+        "- **Skills**: Expert in Python, TensorFlow, PyTorch, LangChain, FastAPI, Docker, Kubernetes, Ansible, AWS, MySQL, and vector databases (FAISS, ChromaDB). Proficient in LLMs, RAG applications, and bash scripting.\n"
+        "- **Experience**: Led AI/ML projects at Capgemini, fine-tuning LLMs with QLoRA, building RAG systems, and automating MLOps pipelines, reducing deployment time by 50%. Developed IoT solutions like Smart School Bus Tracking at X-Cencia (2020-2021).\n"
+        "- **Projects**: SysAdmin-GPT (BERT-based Linux support), CodeSage (LLM-powered code generator), Crop Recommendation System (Random Forest), and FastAPI Microservice (Dockerized web app).\n"
+        "- **Education**: MCA (Acharya Institute, 2018-2020), BCA (B K College, 2015-2018).\n"
+        "- **Contact**: Email (msidrm455@gmail.com), GitHub ([mtptisid](https://github.com/mtptisid)), LinkedIn ([siddharamayya](https://linkedin.com/in/siddharamayya)).\n"
+        "Respond in Markdown format using **bold**, `code blocks`, - bulleted lists, and [name](link) for URLs. Use chat history and web search results (if provided) for accurate, context-aware answers."
         )
     else:
         system_prompt = (
