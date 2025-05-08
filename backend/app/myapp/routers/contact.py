@@ -69,7 +69,7 @@ async def contact(form: ContactForm, request: Request):
             f"Thank you for reaching out! I have received your message:\n"
             f"+-----------------------------------------------------------------------------------------+"
             f"\n{message}\n\n"
-            f"Your inquiry is important to me; I will respond at the earliest opportunity.\n\n"
+            f"Your inquiry is important to me; I will respond at the earliest opportunity.\n"
             f"+-----------------------------------------------------------------------------------------+\n"
             f"Best regards,\n"
             f"Siddharamayya M\n"
