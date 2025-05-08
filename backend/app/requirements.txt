@@ -8,6 +8,7 @@ bcrypt
 cachetools
 certifi
 cffi
+sendgrid
 charset-normalizer
 click
 dataclasses-json
