@@ -186,7 +186,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "Integrated with a **chatbot interface** for automated IT support, achieving high accuracy in query resolution. "
                     "Deployable as a **Linux system management tool** for real-time assistance."
                 ),
-                "link": "[SysAdmin-GPT](https://github.com/mtptisid/sysadmin-gpt)"
+                "link": "[SysAdmin-GPT](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Workout & Fitness Tracker ML Model",
@@ -194,7 +194,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **machine learning model** analyzing **10,000+ workout records** to predict workout efficiency based on health metrics. "
                     "Deployed with a **Streamlit UI** for interactive, real-time fitness insights, helping users optimize routines."
                 ),
-                "link": "[Workout Tracker](https://github.com/mtptisid/workout-fitness-tracker)"
+                "link": "[Workout Tracker](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Crop Recommendation System",
@@ -202,7 +202,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Random Forest Classifier** recommending crops based on soil characteristics and environmental factors. "
                     "Features a **Streamlit UI** for farmers to input data, promoting **sustainable farming** and **yield optimization**."
                 ),
-                "link": "[Crop Recommendation](https://github.com/mtptisid/crop-recommendation)"
+                "link": "[Crop Recommendation](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Blood Donation Prediction",
@@ -210,7 +210,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Random Forest Classifier** predicting blood donation likelihood using **Taiwan blood transfusion data**. "
                     "Deployed with a **Streamlit app** for user-friendly interaction, analyzing features like recency and frequency."
                 ),
-                "link": "[Blood Donation Prediction](https://github.com/mtptisid/blood-donation-prediction)"
+                "link": "[Blood Donation Prediction]https://siddharamayya.in/projects)"
             },
             {
                 "category": "Credit Default Prediction",
@@ -218,7 +218,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **machine learning model** predicting credit card defaults using simulated financial data. "
                     "Handles **imbalanced datasets** with techniques like SMOTE, achieving robust **creditworthiness assessments**."
                 ),
-                "link": "[Credit Default Prediction](https://github.com/mtptisid/credit-default-prediction)"
+                "link": "[Credit Default Prediction](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Heart Disease Prediction",
@@ -226,7 +226,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **web-based application** predicting **10-year heart disease risk** using a **machine learning model**. "
                     "Built with **Flask**, **Bootstrap**, and **scikit-learn**, featuring a responsive UI with gradient aesthetics."
                 ),
-                "link": "[Heart Disease Prediction](https://github.com/mtptisid/heart-disease-prediction)"
+                "link": "[Heart Disease Prediction](https://siddharamayya.in/projects)"
             },
             {
                 "category": "CodeSage: AI-Powered Documentation Suite",
@@ -234,7 +234,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "An **LLM-powered assistant** using **RAG** to answer questions from custom **PDFs/docs** and generate context-aware code in **Python**, **JavaScript**, and more. "
                     "Ideal for developers needing **documentation-driven development**."
                 ),
-                "link": "[CodeSage](https://github.com/mtptisid/codesage-ai)"
+                "link": "[CodeSage](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Containerized AI-Powered Automation Lab",
@@ -242,7 +242,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **containerized platform** integrating **CodeServer**, **GitLab**, **AWX**, and **Linux hosts** with an **AI assistant** for **Ansible playbook** generation. "
                     "Features **LDAP/AD authentication**, **SSH key automation**, and **Docker/OpenShift** deployment on **GCP**."
                 ),
-                "link": "[Automation Lab](https://github.com/mtptisid/ansible-automation-lab)"
+                "link": "[Automation Lab](https://siddharamayya.in/projects)"
             },
             {
                 "category": "NMON Analyser for Linux",
@@ -250,7 +250,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Python tool** automating **NMON file** collection and analysis from remote **Linux servers** via **SSH**. "
                     "Generates **performance reports** in **.docx** and sends **email notifications** with insights and plots."
                 ),
-                "link": "[NMON Analyser](https://github.com/mtptisid/nmon-analyser)"
+                "link": "[NMON Analyser](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Ansible Automation Platform API",
@@ -258,7 +258,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Python script** for **Red Hat Ansible Automation Platform (AAP)** to launch **job templates** and extract **notifications**. "
                     "Supports **CI/CD pipeline** integration for **DevOps** automation."
                 ),
-                "link": "[Ansible AAP API](https://github.com/mtptisid/ansible-aap-api)"
+                "link": "[Ansible AAP API](https://siddharamayya.in/projects)"
             },
             {
                 "category": "VMware Automation for vSphere",
@@ -266,7 +266,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Python script** using **pyVmomi** to fetch **VM details** (CPU, memory, OS) from **vCenter servers** and create **VMs** with predefined specs. "
                     "Simplifies **VM management** for **DevOps** teams."
                 ),
-                "link": "[VMware Automation](https://github.com/mtptisid/vmware-automation)"
+                "link": "[VMware Automation](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Ansible Role: AWS VM Creation",
@@ -274,7 +274,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "An **Ansible script** creating **VMs** in **AWS EC2** and hosting jobs on **AWX**. "
                     "Automates **cloud infrastructure** provisioning for scalable deployments."
                 ),
-                "link": "[AWS VM Creation](https://github.com/mtptisid/ansible-aws-vm)"
+                "link": "[AWS VM Creation](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Ansible Role: Systemd Service",
@@ -282,21 +282,21 @@ async def send_message(request: Request, message: MessageCreate):
                     "An **Ansible role** to create and manage **systemd services** on **Linux** systems. "
                     "Ensures reliable service deployment and configuration."
                 ),
-                "link": "[Systemd Service Role](https://github.com/mtptisid/ansible-systemd-service)"
+                "link": "[Systemd Service Role](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Ansible Role: Swap Management",
                 "description": (
                     "An **Ansible role** to manage **swap space** on **Linux** machines, automating creation and extension of swap files."
                 ),
-                "link": "[Swap Management Role](https://github.com/mtptisid/ansible-swap-management)"
+                "link": "[Swap Management Role](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Ansible Role: Kernel Parameter Management",
                 "description": (
                     "An **Ansible role** to configure **kernel parameters** in **sysctl** and **GRUB** for **Linux** systems, optimizing performance."
                 ),
-                "link": "[Kernel Parameter Role](https://github.com/mtptisid/ansible-kernel-params)"
+                "link": "[Kernel Parameter Role](https://siddharamayya.in/projects)"
             },
             {
                 "category": "System Resource Usage Monitoring",
@@ -304,7 +304,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **bash script** monitoring **CPU**, **memory**, and **swap usage** on **Linux** systems. "
                     "Outputs data in **CSV** for analysis, featuring user-friendly table formatting."
                 ),
-                "link": "[Resource Monitoring](https://github.com/mtptisid/system-resource-monitoring)"
+                "link": "[Resource Monitoring](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Remote Swap Management",
@@ -312,42 +312,42 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **bash script** for managing **swap space** on remote **Linux servers** via **SSH**. "
                     "Automates swap file creation and reports usage in **CSV**."
                 ),
-                "link": "[Remote Swap Management](https://github.com/mtptisid/remote-swap-management)"
+                "link": "[Remote Swap Management](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Systemd Service Deployment",
                 "description": (
                     "A **bash script** deploying **systemd services** across remote **Linux servers**, configuring **SELinux** and enabling services."
                 ),
-                "link": "[Systemd Deployment](https://github.com/mtptisid/systemd-deployment)"
+                "link": "[Systemd Deployment](https://siddharamayya.in/projects)"
             },
             {
                 "category": "User Disabling Script",
                 "description": (
                     "A **bash script** disabling user accounts on remote **Linux servers**, backing up system files, and sending **HTML/CSV reports** via **email**."
                 ),
-                "link": "[User Disabling](https://github.com/mtptisid/user-disabling)"
+                "link": "[User Disabling](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Check Last Patch",
                 "description": (
                     "A **bash script** collecting **system update** information (uptime, Red Hat version, kernel) from remote **Linux servers** via **SSH**, saving to **log files**."
                 ),
-                "link": "[Check Last Patch](https://github.com/mtptisid/check-last-patch)"
+                "link": "[Check Last Patch](https://siddharamayya.in/projects)"
             },
             {
                 "category": "NFS/CIFS Share Monitoring",
                 "description": (
                     "A **bash script** checking **NFS/CIFS share** mount status on **Linux servers** via **SSH**, verifying access and generating **CSV/HTML reports**."
                 ),
-                "link": "[Share Monitoring](https://github.com/mtptisid/nfs-cifs-monitoring)"
+                "link": "[Share Monitoring](https://siddharamayya.in/projects)"
             },
             {
                 "category": "CIFS fstab Updater",
                 "description": (
                     "A **bash script** updating **CIFS entries** in **/etc/fstab** on remote **Linux servers**, replacing usernames with **UIDs/GIDs** for proper mounts."
                 ),
-                "link": "[CIFS fstab Updater](https://github.com/mtptisid/cifs-fstab-updater)"
+                "link": "[CIFS fstab Updater](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Django Tutor Application",
@@ -355,7 +355,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Django-based web application** for expert talks, guiding beginners to create and host apps on **AWS EC2**. "
                     "Features user-friendly tutorials and deployment scripts."
                 ),
-                "link": "[Django Tutor](https://github.com/mtptisid/My-Django-Web-Applications)"
+                "link": "[Django Tutor](https://siddharamayya.in/projects)"
             },
             {
                 "category": "FastAPI Microservice Application",
@@ -363,7 +363,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **FastAPI** and **MySQL** application deployed as a **Docker microservice** with a **React frontend**. "
                     "Demonstrates scalable **web development** and **containerization**."
                 ),
-                "link": "[FastAPI Microservice](https://github.com/mtptisid/Python-Web-Application-with-Micro-service)"
+                "link": "[FastAPI Microservice](https://siddharamayya.in/projects)"
             },
             {
                 "category": "LinkedIn Activity Scraper",
@@ -371,63 +371,63 @@ async def send_message(request: Request, message: MessageCreate):
                     "A **Python-based tool** using **Selenium** and **BeautifulSoup** to extract **LinkedIn** activity data (posts, likes, shares, comments). "
                     "Features **dynamic content handling** and **ethical scraping**."
                 ),
-                "link": "[LinkedIn Comment Poster](https://github.com/mtptisid/linkedin-comment-poster)"
+                "link": "[LinkedIn Comment Poster](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Recruitment Automation",
                 "description": (
                     "An **AI-driven solution** extracting job data from career pages and generating personalized **cold emails** using **NLP** and **web scraping**, reducing effort by **80%**."
                 ),
-                "link": "[Recruitment Solution](https://github.com/mtptisid/recruitment-solution)"
+                "link": "[Recruitment Solution](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Stock Price Prediction",
                 "description": (
                     "An **AI-powered finance agent** using **LLMs** to predict stock prices, integrating **Yahoo Finance** and **NewsAPI** for **25%** improved accuracy."
                 ),
-                "link": "[Stock Price Prediction](https://github.com/mtptisid/stock-price-prediction)"
+                "link": "[Stock Price Prediction](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Credit Risk Analysis",
                 "description": (
                     "A **machine learning model** using **CatBoostClassifier** to predict credit card defaults, achieving **90% accuracy**."
                 ),
-                "link": "[Credit Risk Analysis](https://github.com/mtptisid/credit-risk-analysis)"
+                "link": "[Credit Risk Analysis](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Medical Assistant AI",
                 "description": (
                     "A **web application** using **Google Generative AI** for **medical image analysis** with a **chat interface** for diagnostic insights."
                 ),
-                "link": "[Medical Assistant AI](https://github.com/mtptisid/medical-assistant-ai)"
+                "link": "[Medical Assistant AI](https://siddharamayya.in/projects)"
             },
             {
                 "category": "SQL Query Generator",
                 "description": (
                     "A **Jupyter Notebook-based tool** integrating **Google Gemini LLM** with **MySQL** using **LangChain** for natural language **SQL query** generation."
                 ),
-                "link": "[Simple SQL with Gemini](https://github.com/mtptisid/simple-sql-gemini)"
+                "link": "[Simple SQL with Gemini](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Student Study Assistant",
                 "description": (
                     "A **chatbot** using **LangChain**, **Gemini LLM**, and **PDF processing** to answer student queries from uploaded documents."
                 ),
-                "link": "[Student Study Assistant](https://github.com/mtptisid/student-study-assistant)"
+                "link": "[Student Study Assistant](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Smart School Bus Tracking",
                 "description": (
                     "An **IoT-based system** using **RFID**, **GPS**, and **Raspberry Pi** for real-time student location monitoring."
                 ),
-                "link": "[Smart Bus Tracking](https://github.com/mtptisid/smart-bus-tracking)"
+                "link": "[Smart Bus Tracking](https://siddharamayya.in/projects)"
             },
             {
                 "category": "Car Security System",
                 "description": (
                     "A **real-time AI-based system** using **IoT**, **facial recognition**, and **RFID** for vehicle security."
                 ),
-                "link": "[Car Security System](https://github.com/mtptisid/car-security-system)"
+                "link": "[Car Security System](https://siddharamayya.in/projects)"
             }
         ],
         "contact": {
@@ -573,79 +573,79 @@ async def send_message(request: Request, message: MessageCreate):
             "content": "What are Siddharamayya's projects?",
             "response": (
                 "**Siddharamayya Mathapati** has an extensive portfolio showcasing expertise in **AI/ML**, **web development**, **DevOps**, **IoT**, **Ansible automation**, **bash scripting**, and **system administration**. Below is a comprehensive overview:\n\n"
-                "- **SysAdmin-GPT: AI-Powered Linux System Management** ([GitHub](https://github.com/mtptisid/sysadmin-gpt)):\n"
+                "- **SysAdmin-GPT: AI-Powered Linux System Management** ([SysAdmin-GPT: AI-Powered Linux System Managemen](https://siddharamayya.in/projects)):\n"
                 "  - A **BERT-based classification model** fine-tuned on **Red Hat Enterprise Linux (RHEL)** documentation to classify queries (e.g., Security, Networking, Storage).\n"
                 "  - Integrated with a **chatbot interface** for automated **IT support**, enhancing query resolution efficiency.\n"
-                "- **Workout & Fitness Tracker ML Model** ([GitHub](https://github.com/mtptisid/workout-fitness-tracker)):\n"
+                "- **Workout & Fitness Tracker ML Model** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **machine learning model** analyzing **10,000+ workout records** to predict workout efficiency.\n"
                 "  - Deployed with a **Streamlit UI** for real-time fitness insights.\n"
-                "- **Crop Recommendation System** ([GitHub](https://github.com/mtptisid/crop-recommendation)):\n"
+                "- **Crop Recommendation System** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Random Forest Classifier** recommending crops based on soil and environmental data.\n"
                 "  - Features a **Streamlit UI** for farmers, promoting **sustainable farming**.\n"
-                "- **Blood Donation Prediction** ([GitHub](https://github.com/mtptisid/blood-donation-prediction)):\n"
+                "- **Blood Donation Prediction** ([Blood Donation Prediction](https://siddharamayya.in/projects)):\n"
                 "  - A **Random Forest Classifier** predicting blood donation likelihood using **Taiwan transfusion data**.\n"
                 "  - Deployed with a **Streamlit app** for user interaction.\n"
-                "- **Credit Default Prediction** ([GitHub](https://github.com/mtptisid/credit-default-prediction)):\n"
+                "- **Credit Default Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **machine learning model** predicting credit card defaults, handling **imbalanced datasets** with SMOTE.\n"
                 "  - Supports **financial risk management**.\n"
-                "- **Heart Disease Prediction** ([GitHub](https://github.com/mtptisid/heart-disease-prediction)):\n"
+                "- **Heart Disease Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **web-based app** predicting **10-year heart disease risk** using **scikit-learn**.\n"
                 "  - Built with **Flask** and **Bootstrap** for a responsive UI.\n"
-                "- **CodeSage: AI-Powered Documentation Suite** ([GitHub](https://github.com/mtptisid/codesage-ai)):\n"
+                "- **CodeSage: AI-Powered Documentation Suite** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **LLM-powered assistant** using **RAG** to generate context-aware code from **PDFs/docs** in **Python**, **JavaScript**, etc.\n"
                 "  - Ideal for **documentation-driven development**.\n"
-                "- **Containerized AI-Powered Automation Lab** ([GitHub](https://github.com/mtptisid/ansible-automation-lab)):\n"
+                "- **Containerized AI-Powered Automation Lab** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Docker/OpenShift** platform with **CodeServer**, **GitLab**, **AWX**, and an **AI assistant** for **Ansible playbook** generation.\n"
                 "  - Features **LDAP/AD authentication** and **SSH key automation**.\n"
-                "- **NMON Analyser for Linux** ([GitHub](https://github.com/mtptisid/nmon-analyser)):\n"
+                "- **NMON Analyser for Linux** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Python tool** automating **NMON file** analysis from remote **Linux servers** via **SSH**, generating **.docx reports** and **email notifications**.\n"
-                "- **Ansible Automation Platform API** ([GitHub](https://github.com/mtptisid/ansible-aap-api)):\n"
+                "- **Ansible Automation Platform API** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Python script** for **Red Hat Ansible Automation Platform** to launch **job templates** and extract **notifications** for **CI/CD** integration.\n"
-                "- **VMware Automation for vSphere** ([GitHub](https://github.com/mtptisid/vmware-automation)):\n"
+                "- **VMware Automation for vSphere** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Python script** using **pyVmomi** to fetch **VM details** and create **VMs** on **vCenter servers**.\n"
-                "- **Ansible Role: AWS VM Creation** ([GitHub](https://github.com/mtptisid/ansible-aws-vm)):\n"
+                "- **Ansible Role: AWS VM Creation** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **Ansible script** creating **AWS EC2 VMs** and hosting jobs on **AWX**.\n"
-                "- **Ansible Role: Systemd Service** ([GitHub](https://github.com/mtptisid/ansible-systemd-service)):\n"
+                "- **Ansible Role: Systemd Service** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **Ansible role** managing **systemd services** on **Linux** systems.\n"
-                "- **Ansible Role: Swap Management** ([GitHub](https://github.com/mtptisid/ansible-swap-management)):\n"
+                "- **Ansible Role: Swap Management** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **Ansible role** automating **swap space** creation and extension.\n"
-                "- **Ansible Role: Kernel Parameter Management** ([GitHub](https://github.com/mtptisid/ansible-kernel-params)):\n"
+                "- **Ansible Role: Kernel Parameter Management** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **Ansible role** configuring **kernel parameters** in **sysctl** and **GRUB**.\n"
-                "- **System Resource Usage Monitoring** ([GitHub](https://github.com/mtptisid/system-resource-monitoring)):\n"
+                "- **System Resource Usage Monitoring** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** monitoring **CPU**, **memory**, and **swap usage**, outputting to **CSV**.\n"
-                "- **Remote Swap Management** ([GitHub](https://github.com/mtptisid/remote-swap-management)):\n"
+                "- **Remote Swap Management** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** managing **swap space** on remote **Linux servers** via **SSH**, reporting in **CSV**.\n"
-                "- **Systemd Service Deployment** ([GitHub](https://github.com/mtptisid/systemd-deployment)):\n"
+                "- **Systemd Service Deployment** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** deploying **systemd services** with **SELinux** configuration.\n"
-                "- **User Disabling Script** ([GitHub](https://github.com/mtptisid/user-disabling)):\n"
+                "- **User Disabling Script** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** disabling user accounts, backing up files, and sending **HTML/CSV reports** via **email**.\n"
-                "- **Check Last Patch** ([GitHub](https://github.com/mtptisid/check-last-patch)):\n"
+                "- **Check Last Patch** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** collecting **system update** info (uptime, kernel) from remote **Linux servers**.\n"
-                "- **NFS/CIFS Share Monitoring** ([GitHub](https://github.com/mtptisid/nfs-cifs-monitoring)):\n"
+                "- **NFS/CIFS Share Monitoring** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **bash script** checking **NFS/CIFS share** mount status, generating **CSV/HTML reports**.\n"
-                "- **CIFS fstab Updater** ([GitHub](https://github.com/mtptisid/cifs-fstab-updater)):\n"
+                "- **CIFS fstab Updater** ([GitHub](https://siddharamayya.in/projectsr)):\n"
                 "  - A **bash script** updating **CIFS entries** in **/etc/fstab** with **UIDs/GIDs**.\n"
-                "- **Django Tutor Application** ([GitHub](https://github.com/mtptisid/My-Django-Web-Applications)):\n"
+                "- **Django Tutor Application** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Django app** guiding beginners to create and host apps on **AWS EC2**.\n"
-                "- **FastAPI Microservice Application** ([GitHub](https://github.com/mtptisid/Python-Web-Application-with-Micro-service)):\n"
+                "- **FastAPI Microservice Application** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **FastAPI** and **MySQL** app with a **React frontend**, deployed as a **Docker microservice**.\n"
-                "- **LinkedIn Activity Scraper** ([GitHub](https://github.com/mtptisid/linkedin-comment-poster)):\n"
+                "- **LinkedIn Activity Scraper** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Python tool** using **Selenium** and **BeautifulSoup** for **LinkedIn** data extraction.\n"
-                "- **Recruitment Automation** ([GitHub](https://github.com/mtptisid/recruitment-solution)):\n"
+                "- **Recruitment Automation** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **AI-driven tool** generating **cold emails** using **NLP** and **web scraping**, reducing effort by **80%**.\n"
-                "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "- **Stock Price Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **LLM-based finance agent** integrating **Yahoo Finance** and **NewsAPI** for **25%** improved accuracy.\n"
-                "- **Credit Risk Analysis** ([GitHub](https://github.com/mtptisid/credit-risk-analysis)):\n"
+                "- **Credit Risk Analysis** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **CatBoostClassifier** model predicting credit defaults with **90% accuracy**.\n"
-                "- **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)):\n"
+                "- **Medical Assistant AI** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **web app** using **Google Generative AI** for **medical image analysis**.\n"
-                "- **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)):\n"
+                "- **SQL Query Generator** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Jupyter tool** using **Google Gemini LLM** for **SQL query** generation.\n"
-                "- **Student Study Assistant** ([GitHub](https://github.com/mtptisid/student-study-assistant)):\n"
+                "- **Student Study Assistant** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **chatbot** using **LangChain** and **Gemini LLM** for student queries.\n"
-                "- **Smart School Bus Tracking** ([GitHub](https://github.com/mtptisid/smart-bus-tracking)):\n"
+                "- **Smart School Bus Tracking** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **IoT system** using **RFID**, **GPS**, and **Raspberry Pi** for student tracking.\n"
-                "- **Car Security System** ([GitHub](https://github.com/mtptisid/car-security-system)):\n"
+                "- **Car Security System** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **AI-based IoT system** with **facial recognition** and **RFID** for vehicle security.\n\n"
                 "Explore more on his **[GitHub](https://github.com/mtptisid)** and **[Portfolio](https://mtptisid.github.io)**."
             )
@@ -772,18 +772,18 @@ async def send_message(request: Request, message: MessageCreate):
             "content": "What generative AI projects has Siddharamayya worked on?",
             "response": (
                 "**Siddharamayya Mathapati** has developed several **generative AI** projects leveraging **LLMs** and **deep learning**.\n\n"
-                "- **CodeSage: AI-Powered Documentation Suite** ([GitHub](https://github.com/mtptisid/codesage-ai)):\n"
+                "- **CodeSage: AI-Powered Documentation Suite** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **LLM-powered assistant** using **RAG** to generate **Python**, **JavaScript**, and other code from **PDFs/docs**.\n"
                 "  - Enhances **documentation-driven development** for developers.\n"
-                "- **Medical Assistant AI** ([GitHub](https://github.com/mtptisid/medical-assistant-ai)):\n"
+                "- **Medical Assistant AI** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **web app** using **Google Generative AI** for **medical image analysis** and diagnostic insights via a **chat interface**.\n"
-                "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "- **Stock Price Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **AI-powered finance agent** using **LLMs** for stock price predictions, improving accuracy by **25%**.\n"
-                "- **Student Study Assistant** ([GitHub](https://github.com/mtptisid/student-study-assistant)):\n"
+                "- **Student Study Assistant** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **chatbot** with **LangChain** and **Gemini LLM** generating responses from **PDF documents**.\n"
-                "- **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)):\n"
+                "- **SQL Query Generator** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **Jupyter tool** using **Google Gemini LLM** for natural language **SQL query** generation.\n"
-                "- **Containerized AI-Powered Automation Lab** ([GitHub](https://github.com/mtptisid/ansible-automation-lab)):\n"
+                "- **Containerized AI-Powered Automation Lab** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **AI assistant** generating **Ansible playbooks** in a **Docker/OpenShift** environment.\n\n"
                 "These projects highlight his expertise in **generative AI**, supported by his **LLM Engineering** certification."
             )
@@ -815,11 +815,11 @@ async def send_message(request: Request, message: MessageCreate):
                 "  - Designed **Retrieval-Augmented Generation** systems with **FAISS** and **ChromaDB**, enhancing accuracy by **25%**.\n"
                 "  - Example: **CodeSage** for code generation from **PDFs**.\n"
                 "- **Project Highlights**:\n"
-                "  - **SysAdmin-GPT** ([GitHub](https://github.com/mtptisid/sysadmin-gpt)): Fine-tuned **BERT** for **RHEL** query classification.\n"
-                "  - **CodeSage** ([GitHub](https://github.com/mtptisid/codesage-ai)): Uses **RAG** for **code generation**.\n"
-                "  - **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)): **LLM-based** market analysis.\n"
-                "  - **SQL Query Generator** ([GitHub](https://github.com/mtptisid/simple-sql-gemini)): **Gemini LLM** for **SQL queries**.\n"
-                "  - **Containerized Automation Lab** ([GitHub](https://github.com/mtptisid/ansible-automation-lab)): **LLM** for **Ansible playbooks**.\n"
+                "  - **SysAdmin-GPT** ([GitHub](https://siddharamayya.in/projects)): Fine-tuned **BERT** for **RHEL** query classification.\n"
+                "  - **CodeSage** ([GitHub](https://siddharamayya.in/projects)): Uses **RAG** for **code generation**.\n"
+                "  - **Stock Price Prediction** ([GitHub]https://siddharamayya.in/projects)): **LLM-based** market analysis.\n"
+                "  - **SQL Query Generator** ([GitHub](https://siddharamayya.in/projects)): **Gemini LLM** for **SQL queries**.\n"
+                "  - **Containerized Automation Lab** ([GitHub](https://siddharamayya.in/projects)): **LLM** for **Ansible playbooks**.\n"
                 "- **Tools & Frameworks**:\n"
                 "  - Proficient in **LangChain**, **Hugging Face**, **PyTorch**, and **AWS SageMaker**.\n"
                 "- **Certifications**:\n"
@@ -831,11 +831,11 @@ async def send_message(request: Request, message: MessageCreate):
             "content": "What AI-powered finance projects has Siddharamayya built?",
             "response": (
                 "**Siddharamayya Mathapati** has developed impactful **AI-powered finance projects** using **LLMs** and **machine learning**.\n\n"
-                "- **Stock Price Prediction** ([GitHub](https://github.com/mtptisid/stock-price-prediction)):\n"
+                "- **Stock Price Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - An **AI-powered finance agent** using **LLMs** to predict stock prices, integrating **Yahoo Finance** and **NewsAPI** for **25%** improved accuracy.\n"
-                "- **Credit Default Prediction** ([GitHub](https://github.com/mtptisid/credit-default-prediction)):\n"
+                "- **Credit Default Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **machine learning model** handling **imbalanced datasets** to predict credit card defaults, supporting **risk management**.\n"
-                "- **Credit Risk Analysis** ([GitHub](https://github.com/mtptisid/credit-risk-analysis)):\n"
+                "- **Credit Risk Analysis** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "  - A **CatBoostClassifier** model predicting credit defaults with **90% accuracy**.\n"
                 "- **Capgemini Finance Projects**:\n"
                 "  - Fine-tuned **LLMs** for **financial analytics**, optimizing **contextual accuracy** in budgeting and forecasting.\n"
@@ -882,11 +882,11 @@ async def send_message(request: Request, message: MessageCreate):
             "response": (
                 "**Siddharamayya Mathapati** has significant contributions to **web development** (95% proficiency), building responsive applications.\n\n"
                 "- **Projects**:\n"
-                "  - **FastAPI Microservice Application** ([GitHub](https://github.com/mtptisid/Python-Web-Application-with-Micro-service)):\n"
+                "  - **FastAPI Microservice Application** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "    - A **FastAPI** app with a **React frontend**, deployed as a **Docker microservice**.\n"
-                "  - **Django Tutor Application** ([GitHub](https://github.com/mtptisid/My-Django-Web-Applications)):\n"
+                "  - **Django Tutor Application** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "    - A **Django app** guiding beginners to host apps on **AWS EC2**.\n"
-                "  - **Heart Disease Prediction** ([GitHub](https://github.com/mtptisid/heart-disease-prediction)):\n"
+                "  - **Heart Disease Prediction** ([GitHub](https://siddharamayya.in/projects)):\n"
                 "    - A **Flask** app with **Bootstrap** for **heart disease risk** prediction.\n"
                 "- **Technologies**:\n"
                 "  - **Frontend**: **React**, **Bootstrap**, **HTML**, **CSS**.\n"
@@ -941,8 +941,8 @@ async def send_message(request: Request, message: MessageCreate):
                 "  - Built **Car Security System** with **IoT**, **facial recognition**, and **RFID**.\n"
                 "  - Designed **data pipelines** for **sensor data** from **ESP32**.\n"
                 "- **Projects**:\n"
-                "  - **Smart School Bus Tracking** ([GitHub](https://github.com/mtptisid/smart-bus-tracking)): Real-time student tracking with a **web interface**.\n"
-                "  - **Car Security System** ([GitHub](https://github.com/mtptisid/car-security-system)): **AI-based** security with **IoT**.\n"
+                "  - **Smart School Bus Tracking** ([GitHub](https://siddharamayya.in/projects)): Real-time student tracking with a **web interface**.\n"
+                "  - **Car Security System** ([GitHub](https://siddharamayya.in/projects)): **AI-based** security with **IoT**.\n"
                 "- **Technologies**:\n"
                 "  - **Raspberry Pi**, **ESP32**, **RFID**, **GPS**, **MQTT**.\n"
                 "  - **Python** and **Flask** for **IoT** interfaces.\n"
@@ -964,8 +964,8 @@ async def send_message(request: Request, message: MessageCreate):
                 "  - **Airflow**: Schedules **data pipelines**.\n"
                 "  - **Jenkins** & **GitHub Actions**: Automates **CI/CD**.\n"
                 "- **Projects**:\n"
-                "  - **Workout & Fitness Tracker** ([GitHub](https://github.com/mtptisid/workout-fitness-tracker)): Deployed with **MLOps** automation.\n"
-                "  - **Crop Recommendation System** ([GitHub](https://github.com/mtptisid/crop-recommendation)): Managed with **MLflow**.\n"
+                "  - **Workout & Fitness Tracker** ([GitHub](https://siddharamayya.in/projects)): Deployed with **MLOps** automation.\n"
+                "  - **Crop Recommendation System** ([GitHub](https://siddharamayya.in/projects)): Managed with **MLflow**.\n"
                 "- **Certification**:\n"
                 "  - **MLOps Bootcamp** (Udemy) validates his expertise.\n\n"
                 "His **MLOps** skills ensure robust **ML** deployments."
@@ -975,17 +975,17 @@ async def send_message(request: Request, message: MessageCreate):
         "content": "What are Siddharamayya’s Ansible-based projects?",
         "response": (
             "**Siddharamayya Mathapati** has developed several **Ansible-based projects** for automating **infrastructure** and **system administration** tasks.\n\n"
-            "- **Containerized AI-Powered Automation Lab** ([GitHub](https://github.com/mtptisid/automation-lab)):\n"
+            "- **Containerized AI-Powered Automation Lab** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - A **Docker-based lab** integrating **AWX**, **CodeServer**, and **GitLab** with an **AI assistant** generating **Ansible** playbooks.\n"
-            "- **Ansible Automation Platform API** ([GitHub](https://github.com/mtptisid/ansible-aap-api)):\n"
+            "- **Ansible Automation Platform API** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - A **Python script** launching **Ansible Automation Platform** jobs and extracting notifications for **CI/CD** integration.\n"
-            "- **Ansible Role: AWS VM Creation** ([GitHub](https://github.com/mtptisid/ansible-aws-vm)):\n"
+            "- **Ansible Role: AWS VM Creation** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - An **Ansible script** creating **VMs** in **AWS** and hosting jobs on **AWX**.\n"
-            "- **Ansible Role: Systemd Service** ([GitHub](https://github.com/mtptisid/ansible-systemd-service)):\n"
+            "- **Ansible Role: Systemd Service** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - An **Ansible role** automating **systemd service** creation on **Linux**.\n"
-            "- **Ansible Role: Swap Management** ([GitHub](https://github.com/mtptisid/ansible-swap-management)):\n"
+            "- **Ansible Role: Swap Management** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - An **Ansible role** managing **swap space** for performance optimization.\n"
-            "- **Ansible Role: Kernel Parameter Management** ([GitHub](https://github.com/mtptisid/ansible-kernel-params)):\n"
+            "- **Ansible Role: Kernel Parameter Management** ([GitHub](https://siddharamayya.in/projects)):\n"
             "  - An **Ansible role** modifying **sysctl** and **GRUB** parameters.\n\n"
             "These projects highlight his **Ansible** expertise for **cloud** and **Linux** automation."
         )
@@ -1035,7 +1035,7 @@ async def send_message(request: Request, message: MessageCreate):
         "- Use **bold** for key terms (e.g., names, roles, technologies).\n"
         "- Wrap code snippets in triple backticks (e.g., ```python ... ```).\n"
         "- Use `-` for bulleted lists, with one item per line and blank lines before/after.\n"
-        "- Format URLs as **[name](link)** (e.g., **[GitHub](https://github.com/mtptisid)**).\n"
+        "- Format URLs as **[name](link)** (e.g., **[project name](https://siddharamayya.in/projects)**).\n"
         "- Ensure readability with clear section breaks (e.g., `---` for separators).\n"
         "- Provide detailed, context-aware responses, leveraging **profile data** and **chat history**.\n"
         "- For unrelated questions, use **web search results** or **general knowledge**, maintaining the same formatting.\n\n"
