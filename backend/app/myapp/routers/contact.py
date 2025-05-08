@@ -51,7 +51,7 @@ async def contact(form: ContactForm, request: Request):
 
         # Email to you
         mail_to_you = Mail(
-            from_email=Email("msidrm455@siddharamayya.in", "Siddharamayya Portfolio"),
+            from_email=Email("msidrm455@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To("msidrm455@gmail.com"),
             subject=f"New Contact Form Submission: {subject}",
             plain_text_content=(
@@ -67,11 +67,13 @@ async def contact(form: ContactForm, request: Request):
         ack_message = (
             f"Dear {name},\n\n"
             f"Thank you for reaching out! I have received your message:\n\n"
-            f"Subject: {subject}\n"
-            f"Message:\n{message}\n\n"
-            f"I will get back to you soon.\n\n"
+            f"-----------------------------------------------------------"
+            f"\n{message}\n\n"
+            f"Your inquiry is important to me; I will respond at the earliest opportunity.n\n"
             f"Best regards,\n"
-            f"Siddharamayya M"
+            f"Siddharamayya M\n"
+            f"+91 9740671620\n"
+            f"https://siddharamayya.in"
         ) if subject != "Contact Form Submission" else (
             f"Dear {name},\n\n"
             f"Thank you for contacting me through my portfolio. I appreciate your interest and will respond to your inquiry soon.\n\n"
