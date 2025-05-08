@@ -12,6 +12,7 @@ origins = [
       # For local development (uncommented and included)
     #"https://improved-spork-pjwxw7vj9545f6p4p-3000.app.github.dev/", 
     "https://siddharamayya.in", 
+    "https://mtptisid.github.io",
 ]
 
 # Add CORS middleware with specific origins
