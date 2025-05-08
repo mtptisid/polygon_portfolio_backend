@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
 from myapp import models
 from myapp.database import engine
-from myapp.routers import user, authentication, ai_chat
+from myapp.routers import user, authentication, ai_chat, contact
 
 app = FastAPI()
 
@@ -31,4 +31,5 @@ models.Base.metadata.create_all(engine)
 # Include routers
 #app.include_router(authentication.router)
 app.include_router(ai_chat.router)
+app.include_router(contact.router)
 #app.include_router(user.router)
