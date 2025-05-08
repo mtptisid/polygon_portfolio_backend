@@ -1,15 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
-import smtplib
-from email.mime.text import MIMEText
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Content
 import os
 
-router = APIRouter(
-    prefix="/api/email",
-    tags=['Contact']
-)
-
+router = APIRouter()
 
 # Pydantic model for form data validation
 class ContactForm(BaseModel):
@@ -17,39 +13,46 @@ class ContactForm(BaseModel):
     email: EmailStr
     subject: str = "Contact Form Submission"
     message: str
+    honeypot: str | None = None  # Optional honeypot field for spam prevention
 
 @router.post("/contact")
-async def contact(form: ContactForm):
+async def contact(form: ContactForm, request: Request):
     try:
-        # Extract form data
-        name = form.name
+        # Check honeypot field for spam
+        if form.honeypot:
+            raise HTTPException(status_code=400, detail="Spam detected")
+
+        # Extract and sanitize form data
+        name = form.name.strip()
         email = form.email
-        subject = form.subject
-        message = form.message
+        subject = form.subject.strip()
+        message = form.message.strip()
 
         # Validate required fields
         if not email or not message:
+            
             raise HTTPException(status_code=400, detail="Email and message are required")
 
-        # Set up SMTP
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = "msidrm455@gmail.com"
-        password = os.environ.get("GMAIL_APP_PASSWORD")
+        # Initialize SendGrid client
+        api_key = os.environ.get("SENDGRID_API_KEY")
+        if not api_key:
+            
+            raise HTTPException(status_code=500, detail="Server configuration error: SENDGRID_API_KEY missing")
 
-        if not password:
-            raise HTTPException(status_code=500, detail="GMAIL_APP_PASSWORD not configured")
+        sg = sendgrid.SendGridAPIClient(api_key=api_key)
 
         # Email to you
-        msg_to_you = MIMEText(
-            f"Name: {name}\n"
-            f"Email: {email}\n"
-            f"Subject: {subject}\n"
-            f"Message:\n{message}"
+        mail_to_you = Mail(
+            from_email=Email("msidrm455@gmail.com", "Siddharamayya Portfolio"),
+            to_emails=To("msidrm455@gmail.com"),
+            subject=f"New Contact Form Submission: {subject}",
+            plain_text_content=(
+                f"Name: {name}\n"
+                f"Email: {email}\n"
+                f"Subject: {subject}\n"
+                f"Message:\n{message}"
+            )
         )
-        msg_to_you["Subject"] = f"New Contact Form Submission: {subject}"
-        msg_to_you["From"] = sender_email
-        msg_to_you["To"] = sender_email
 
         # Acknowledgment email to user
         ack_subject = subject if subject != "Contact Form Submission" else "Thank You for Contacting Me"
@@ -67,21 +70,27 @@ async def contact(form: ContactForm):
             f"Best regards,\n"
             f"Siddharamayya M"
         )
-        msg_to_user = MIMEText(ack_message)
-        msg_to_user["Subject"] = ack_subject
-        msg_to_user["From"] = sender_email
-        msg_to_user["To"] = email
+        mail_to_user = Mail(
+            from_email=Email("msidrm455@gmail.com", "Siddharamayya Portfolio"),
+            to_emails=To(email),
+            subject=ack_subject,
+            plain_text_content=ack_message
+        )
 
         # Send emails
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(sender_email, password)
-            server.sendmail(sender_email, [sender_email], msg_to_you.as_string())
-            server.sendmail(sender_email, [email], msg_to_user.as_string())
+        response_to_you = sg.send(mail_to_you)
+        response_to_user = sg.send(mail_to_user)
 
+        if response_to_you.status_code != 202 or response_to_user.status_code != 202:
+            
+            raise HTTPException(status_code=500, detail="Failed to send one or more emails")
+
+        
         return JSONResponse(content={"message": "Emails sent successfully"}, status_code=200)
 
-    except smtplib.SMTPAuthenticationError:
-        raise HTTPException(status_code=500, detail="Failed to authenticate with Gmail SMTP")
+    except sendgrid.SendGridException as sg_error:
+        #logger.error(f"SendGrid error: {str(sg_error)}")
+        raise HTTPException(status_code=500, detail=f"SendGrid error: {str(sg_error)}")
     except Exception as e:
+        #logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending emails: {str(e)}")
