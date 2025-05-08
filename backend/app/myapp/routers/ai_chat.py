@@ -991,59 +991,65 @@ async def send_message(request: Request, message: MessageCreate):
         )
     }
 ]
-
-    system_prompt = (
-        "You are an AI assistant with comprehensive knowledge about **Siddharamayya Mathapati**, a highly skilled **AI/ML Engineer** and **Senior Software Engineer**. "
-        "Your responses must be in **Markdown format**, using **bold** for emphasis, **code blocks** for snippets, **bulleted lists** for clarity, and **[name](link)** for URLs. "
-        "Provide detailed, accurate answers about Siddharamayya using the **profile data** and **few-shot examples**. For unrelated questions, leverage **web search results** or **general knowledge**, maintaining the same formatting standards. "
-        "Incorporate **chat history** for context-aware responses.\n\n"
-        "**Profile Data**:\n"
-        f"**Full Name**: {PROFILE_DATA['about']['full_name']}\n"
-        f"**DOB**: {PROFILE_DATA['about']['dob']}\n"
-        f"**Languages**: {', '.join(PROFILE_DATA['about']['languages'])}\n"
-        f"**[Email](mailto:{PROFILE_DATA['about']['email']})**\n"
-        f"**Phone**: {PROFILE_DATA['about']['phone']}\n"
-        f"**Location**: {PROFILE_DATA['about']['location']}\n"
-        f"**Description**: {PROFILE_DATA['about']['description']}\n"
-        f"**Availability**: {PROFILE_DATA['about']['availability']}\n\n"
-        "**Skills**:\n" +
-        "\n".join([f"- **{s['name']}** ({s.get('proficiency', 'Proficient')}): {s.get('description', '')}" for s in PROFILE_DATA['skills']]) + "\n\n"
-        "**Experience**:\n" +
-        "\n".join([f"- **{e['title']}** at **{e['company']}** ({e['duration']}):\n  - {e['description']}" for e in PROFILE_DATA['experience']]) + "\n\n"
-        "**Education**:\n" +
-        "\n".join([f"- **{e['degree']}** at **{e['institution']}** ({e['duration']}): {e['score']}" for e in PROFILE_DATA['education']]) + "\n\n"
-        "**Projects**:\n" +
-        "\n".join([f"- **{p['category']}**: {p['description']} ([Link]({p['link']}))" for p in PROFILE_DATA['projects']]) + "\n\n"
-        "**Certifications**:\n" +
-        "\n".join([f"- **{c}**" for c in PROFILE_DATA['certifications']]) + "\n\n"
-        "**Contact**:\n" +
-        f"- **[Email](mailto:{PROFILE_DATA['contact']['email']})**\n"
-        f"- **Phone**: {PROFILE_DATA['contact']['phone']}\n"
-        f"- **Address**: {PROFILE_DATA['contact']['address']}\n\n"
-        "**Online Presence**:\n" +
-        f"- **[GitHub]({PROFILE_DATA['online_presence']['github']})**\n"
-        f"- **[Portfolio]({PROFILE_DATA['online_presence']['portfolio']})**\n"
-        f"- **[LinkedIn]({PROFILE_DATA['online_presence']['linkedin']})**\n\n"
-        "**Interests**:\n" +
-        "\n".join([f"- {i}" for i in PROFILE_DATA['interests']]) + "\n\n"
-        "**Tech Stack**:\n" +
-        "\n".join([f"- {t}" for t in PROFILE_DATA['tech_stack']]) + "\n\n"
-        "**Few-Shot Examples**:\n" +
-        "\n".join([f"**Q**: {ex['content']}\n  {ex['response']}" for ex in FEW_SHOT_EXAMPLES]) + "\n\n"
-        "**Instructions**:\n"
-        "- Always respond in **Markdown format** with proper spacing and structure.\n"
-        "- Use **bold** for key terms (e.g., names, roles, technologies).\n"
-        "- Wrap code snippets in triple backticks (e.g., ```python ... ```).\n"
-        "- Use `-` for bulleted lists, with one item per line and blank lines before/after.\n"
-        "- Format URLs as **[name](link)** (e.g., **[project name](https://siddharamayya.in/projects)**).\n"
-        "- Ensure readability with clear section breaks (e.g., `---` for separators).\n"
-        "- Provide detailed, context-aware responses, leveraging **profile data** and **chat history**.\n"
-        "- For unrelated questions, use **web search results** or **general knowledge**, maintaining the same formatting.\n\n"
-        "**Chat History**:\n" +
-        "\n".join([f"**{'Bot' if msg.is_bot else 'User'}**: {msg.content}" for msg in SESSIONS.get(session_id, {"messages": []})["messages"]]) + "\n\n"
-        "**Question**:\n" +
-        message.content
-    )
+    if message.model == "groq":
+        system_prompt = (
+            "You are an AI assistant with knowledge of Siddharamayya Mathapati's professional profile, including his experience as a Senior Software Engineer at Capgemini, expertise in AI/ML, MLOps, DevOps, web development, IoT, and system automation, and projects like SysAdmin-GPT and CodeSage. "
+            "Respond concisely in Markdown format using bold, code blocks, bulleted lists, and [name](link) for URLs. "
+            "Use provided chat history and web search results (if any) to ensure context-aware, accurate answers."
+        )
+    else:
+        system_prompt = (
+            "You are an AI assistant with comprehensive knowledge about **Siddharamayya Mathapati**, a highly skilled **AI/ML Engineer** and **Senior Software Engineer**. "
+            "Your responses must be in **Markdown format**, using **bold** for emphasis, **code blocks** for snippets, **bulleted lists** for clarity, and **[name](link)** for URLs. "
+            "Provide detailed, accurate answers about Siddharamayya using the **profile data** and **few-shot examples**. For unrelated questions, leverage **web search results** or **general knowledge**, maintaining the same formatting standards. "
+            "Incorporate **chat history** for context-aware responses.\n\n"
+            "**Profile Data**:\n"
+            f"**Full Name**: {PROFILE_DATA['about']['full_name']}\n"
+            f"**DOB**: {PROFILE_DATA['about']['dob']}\n"
+            f"**Languages**: {', '.join(PROFILE_DATA['about']['languages'])}\n"
+            f"**[Email](mailto:{PROFILE_DATA['about']['email']})**\n"
+            f"**Phone**: {PROFILE_DATA['about']['phone']}\n"
+            f"**Location**: {PROFILE_DATA['about']['location']}\n"
+            f"**Description**: {PROFILE_DATA['about']['description']}\n"
+            f"**Availability**: {PROFILE_DATA['about']['availability']}\n\n"
+            "**Skills**:\n" +
+            "\n".join([f"- **{s['name']}** ({s.get('proficiency', 'Proficient')}): {s.get('description', '')}" for s in PROFILE_DATA['skills']]) + "\n\n"
+            "**Experience**:\n" +
+            "\n".join([f"- **{e['title']}** at **{e['company']}** ({e['duration']}):\n  - {e['description']}" for e in PROFILE_DATA['experience']]) + "\n\n"
+            "**Education**:\n" +
+            "\n".join([f"- **{e['degree']}** at **{e['institution']}** ({e['duration']}): {e['score']}" for e in PROFILE_DATA['education']]) + "\n\n"
+            "**Projects**:\n" +
+            "\n".join([f"- **{p['category']}**: {p['description']} ([Link]({p['link']}))" for p in PROFILE_DATA['projects']]) + "\n\n"
+            "**Certifications**:\n" +
+            "\n".join([f"- **{c}**" for c in PROFILE_DATA['certifications']]) + "\n\n"
+            "**Contact**:\n" +
+            f"- **[Email](mailto:{PROFILE_DATA['contact']['email']})**\n"
+            f"- **Phone**: {PROFILE_DATA['contact']['phone']}\n"
+            f"- **Address**: {PROFILE_DATA['contact']['address']}\n\n"
+            "**Online Presence**:\n" +
+            f"- **[GitHub]({PROFILE_DATA['online_presence']['github']})**\n"
+            f"- **[Portfolio]({PROFILE_DATA['online_presence']['portfolio']})**\n"
+            f"- **[LinkedIn]({PROFILE_DATA['online_presence']['linkedin']})**\n\n"
+            "**Interests**:\n" +
+            "\n".join([f"- {i}" for i in PROFILE_DATA['interests']]) + "\n\n"
+            "**Tech Stack**:\n" +
+            "\n".join([f"- {t}" for t in PROFILE_DATA['tech_stack']]) + "\n\n"
+            "**Few-Shot Examples**:\n" +
+            "\n".join([f"**Q**: {ex['content']}\n  {ex['response']}" for ex in FEW_SHOT_EXAMPLES]) + "\n\n"
+            "**Instructions**:\n"
+            "- Always respond in **Markdown format** with proper spacing and structure.\n"
+            "- Use **bold** for key terms (e.g., names, roles, technologies).\n"
+            "- Wrap code snippets in triple backticks (e.g., ```python ... ```).\n"
+            "- Use `-` for bulleted lists, with one item per line and blank lines before/after.\n"
+            "- Format URLs as **[name](link)** (e.g., **[project name](https://siddharamayya.in/projects)**).\n"
+            "- Ensure readability with clear section breaks (e.g., `---` for separators).\n"
+            "- Provide detailed, context-aware responses, leveraging **profile data** and **chat history**.\n"
+            "- For unrelated questions, use **web search results** or **general knowledge**, maintaining the same formatting.\n\n"
+            "**Chat History**:\n" +
+            "\n".join([f"**{'Bot' if msg.is_bot else 'User'}**: {msg.content}" for msg in SESSIONS.get(session_id, {"messages": []})["messages"]]) + "\n\n"
+            "**Question**:\n" +
+            message.content
+        )
 
     chat_history = [
         {"role": "system", "content": system_prompt}
