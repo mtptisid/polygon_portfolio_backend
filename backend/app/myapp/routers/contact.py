@@ -5,7 +5,7 @@ import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import os
 import logging
-from fastapi.middleware.cors import CORS
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Enable CORS for GitHub Pages
-CORS(router, allow_origins=["https://mtptisid.github.io"], allow_methods=["POST"], allow_headers=["*"])
 
 # Pydantic model for form data validation
 class ContactForm(BaseModel):
