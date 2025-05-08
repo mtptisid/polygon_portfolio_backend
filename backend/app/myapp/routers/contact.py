@@ -6,10 +6,13 @@ from email.mime.text import MIMEText
 import os
 from fastapi.middleware.cors import CORS
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/email",
+    tags=['Contact']
+)
 
 # Enable CORS for GitHub Pages
-CORS(router, allow_origins=["https://yourusername.github.io"], allow_methods=["POST"], allow_headers=["*"])
+CORS(router, allow_origins=["https://mtptisid.github.io"], allow_methods=["POST"], allow_headers=["*"])
 
 # Pydantic model for form data validation
 class ContactForm(BaseModel):
