@@ -67,14 +67,14 @@ async def contact(form: ContactForm, request: Request):
         ack_message = (
             f"Dear {name},\n\n"
             f"Thank you for reaching out! I have received your message:\n"
-            f"+----------------------------------------------------------------------------+"
+            f"+-----------------------------------------------------------------------------------------+"
             f"\n{message}\n\n"
             f"Your inquiry is important to me; I will respond at the earliest opportunity.\n\n"
-            f"+----------------------------------------------------------------------------+"
+            f"+-----------------------------------------------------------------------------------------+\n"
             f"Best regards,\n"
             f"Siddharamayya M\n"
             f"+91 9740671620\n"
-            f"Portfolio: https://siddharamayya.in ."
+            f"https://siddharamayya.in"
         ) if subject != "Contact Form Submission" else (
             f"Dear {name},\n\n"
             f"Thank you for contacting me through my portfolio. I appreciate your interest and will respond to your inquiry soon.\n\n"
