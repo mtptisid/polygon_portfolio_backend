@@ -13,7 +13,7 @@ origins = [
     #"https://improved-spork-pjwxw7vj9545f6p4p-3000.app.github.dev/", 
     "https://siddharamayya.in", 
     "https://mtptisid.github.io",
-    "https://portfolio.siddharamayya.in/"
+    "https://portfolio.siddharamayya.in"
 ]
 
 # Add CORS middleware with specific origins
