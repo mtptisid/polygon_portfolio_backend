@@ -161,10 +161,10 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
                 </div>
             </div>
             <div class="footer">
-                <p>Siddharamayya M</p>
+                <p>Siddharamayya Mathapati</p>
+                <p>Portfolio: siddharamayya.in</p>
                 <p>Email: msidrm455@gmail.com</p>
                 <p>Phone: +91 97406 71620</p>
-                <p>Instagram: its_5iD</p>
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
                         <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn">
@@ -200,7 +200,7 @@ def get_email_to_you_plain(name: str, email: str, subject: str, message: str) ->
     Siddharamayya M
     Email: msidrm455@gmail.com
     Phone: +91 97406 71620
-    Instagram: its_5iD
+    Portfolio: siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
@@ -331,10 +331,10 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
                 {ack_content}
             </div>
             <div class="footer">
-                <p>Siddharamayya M</p>
+                <p>Siddharamayya Mathapati</p>
+                <p>Portfolio: siddharamayya.in</p>
                 <p>Email: msidrm455@gmail.com</p>
                 <p>Phone: +91 97406 71620</p>
-                <p>Instagram: its_5iD</p>
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
                         <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn">
@@ -373,7 +373,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
         Siddharamayya M
         Email: msidrm455@gmail.com
         Phone: +91 97406 71620
-        Instagram: its_5iD
+        Portfolio: siddharamayya.in
         LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
         Medium: https://medium.com/@msidrm455
         GitHub: https://github.com/mtptisid
@@ -388,7 +388,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
     Siddharamayya M
     Email: msidrm455@gmail.com
     Phone: +91 97406 71620
-    Instagram: its_5iD
+    Portfolio: siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
@@ -442,7 +442,7 @@ async def contact(form: ContactForm, request: Request):
         )
 
         # Send emails
-        logger.info(f"Sending emails to {email} and msidrm455@gmail.com")
+        #logger.info(f"Sending emails to {email} and msidrm455@gmail.com")
         response_to_you = sg.send(mail_to_you)
         response_to_user = sg.send(mail_to_user)
 
@@ -450,7 +450,7 @@ async def contact(form: ContactForm, request: Request):
             logger.error(f"SendGrid failed: to_you={response_to_you.status_code}, to_user={response_to_user.status_code}")
             raise HTTPException(status_code=500, detail="Failed to send one or more emails")
 
-        logger.info("Emails sent successfully")
+        #logger.info("Emails sent successfully")
         return JSONResponse(content={"message": "Emails sent successfully"}, status_code=200)
 
     except sendgrid.SendGridException as sg_error:
