@@ -1,4 +1,3 @@
-```python
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
@@ -369,4 +368,3 @@ async def contact(form: ContactForm, request: Request):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending emails: {str(e)}")
-```
