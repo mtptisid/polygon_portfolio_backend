@@ -335,7 +335,7 @@ async def contact(form: ContactForm, request: Request):
 
         # Email to you
         mail_to_you = Mail(
-            from_email=Email("msidrm455@siddharamayya.in", "Siddharamayya Mathapati"),
+            from_email=Email("siddharamayya@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To("msidrm455@gmail.com"),
             subject=f"New Contact Form Submission: {subject}",
             html_content=get_email_to_you_html(name, email, subject, message)
@@ -344,7 +344,7 @@ async def contact(form: ContactForm, request: Request):
         # Acknowledgment email to user
         ack_subject = subject if subject != "Contact Form Submission" else "Thank You for Contacting Me"
         mail_to_user = Mail(
-            from_email=Email("msidrm455@siddharamayya.in", "Siddharamayya Mathapati"),
+            from_email=Email("siddharamayya@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To(email),
             subject=ack_subject,
             html_content=get_ack_email_html(name, ack_subject, message)
