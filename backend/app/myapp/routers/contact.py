@@ -162,7 +162,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
             </div>
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
-                <p>Portfolio: siddharamayya.in</p>
+                <p>Portfolio: https://siddharamayya.in</p>
                 <p>Email: msidrm455@gmail.com</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
@@ -200,7 +200,7 @@ def get_email_to_you_plain(name: str, email: str, subject: str, message: str) ->
     Siddharamayya M
     Email: msidrm455@gmail.com
     Phone: +91 97406 71620
-    Portfolio: siddharamayya.in
+    Portfolio: https://siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
@@ -332,7 +332,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
             </div>
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
-                <p>Portfolio: siddharamayya.in</p>
+                <p>Portfolio: https://siddharamayya.in</p>
                 <p>Email: msidrm455@gmail.com</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
@@ -373,7 +373,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
         Siddharamayya M
         Email: msidrm455@gmail.com
         Phone: +91 97406 71620
-        Portfolio: siddharamayya.in
+        Portfolio: https://siddharamayya.in
         LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
         Medium: https://medium.com/@msidrm455
         GitHub: https://github.com/mtptisid
@@ -388,7 +388,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
     Siddharamayya M
     Email: msidrm455@gmail.com
     Phone: +91 97406 71620
-    Portfolio: siddharamayya.in
+    Portfolio: https://siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
