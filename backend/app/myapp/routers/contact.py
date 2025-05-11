@@ -1,3 +1,4 @@
+```python
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
@@ -22,7 +23,7 @@ class ContactForm(BaseModel):
 
 # HTML email template for the email sent to you
 def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> str:
-    return fmeals = """
+    return """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -138,19 +139,19 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
             <div class="content">
                 <div class="field">
                     <div class="field-label">Name</div>
-                    <div class="field-value">{{ name }}</div>
+                    <div class="field-value">{name}</div>
                 </div>
                 <div class="field">
                     <div class="field-label">Email</div>
-                    <div class="field-value">{{ email }}</div>
+                    <div class="field-value">{email}</div>
                 </div>
                 <div class="field">
                     <div class="field-label">Subject</div>
-                    <div class="field-value">{{ subject }}</div>
+                    <div class="field-value">{subject}</div>
                 </div>
                 <div class="field">
                     <div class="field-label">Message</div>
-                    <div class="field-value">{{ message }}</div>
+                    <div class="field-value">{message}</div>
                 </div>
             </div>
             <div class="footer">
@@ -168,7 +169,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
         </div>
     </body>
     </html>
-    """.replace("{{ name }}", name).replace("{{ email }}", email).replace("{{ subject }}", subject).replace("{{ message }}", message)
+    """.format(name=name, email=email, subject=subject, message=message)
 
 # HTML email template for the acknowledgment email to the user
 def get_ack_email_html(name: str, subject: str, message: str) -> str:
@@ -191,7 +192,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ subject }}</title>
+        <title>{subject}</title>
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
@@ -284,10 +285,10 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
                 <a href="https://siddharamayya.in">Siddharamayya</a>
             </div>
             <div class="header">
-                {{ subject }}
+                {subject}
             </div>
             <div class="content">
-                {{ content }}
+                {ack_content}
             </div>
             <div class="footer">
                 <p>Siddharamayya M</p>
@@ -304,7 +305,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         </div>
     </body>
     </html>
-    """.replace("{{ subject }}", subject).replace("{{ content }}", ack_content)
+    """.format(subject=subject, ack_content=ack_content)
 
 @router.post("/contact")
 async def contact(form: ContactForm, request: Request):
@@ -368,3 +369,4 @@ async def contact(form: ContactForm, request: Request):
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending emails: {str(e)}")
+```
