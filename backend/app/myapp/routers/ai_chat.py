@@ -1104,3 +1104,7 @@ async def send_message(request: Request, message: MessageCreate):
 async def get_session_history():
     """Retrieve all session histories."""
     return [Session(**session) for session in SESSIONS.values()]
+
+@router.get("/")
+def homestart():
+    return Response(status_code=204)
