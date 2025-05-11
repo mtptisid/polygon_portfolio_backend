@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
 import sendgrid
-from sendgrid.helpers.mail import Mail, Email, To
+from sendgrid.helpers.mail import Mail, Email, To, Content
 import os
 import logging
 from html import escape
@@ -29,7 +29,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
     subject = escape(subject)
     message = escape(message).replace('\n', '<br>')
     
-    return """
+    return f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -37,101 +37,101 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>New Contact Form Submission</title>
         <style>
-            body {
+            body {{
                 font-family: 'Poppins', Arial, sans-serif;
                 line-height: 1.6;
                 color: #333333;
                 background-color: #f7fafc;
                 margin: 0;
                 padding: 0;
-            }
-            .container {
+            }}
+            .container {{
                 max-width: 600px;
                 margin: 20px auto;
                 background: #ffffff;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
-            }
-            .navbar {
+            }}
+            .navbar {{
                 background-color: #404347;
                 padding: 15px 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }
-            .navbar a {
+            }}
+            .navbar a {{
                 color: #edf2f7;
                 text-decoration: none;
                 font-size: 18px;
                 font-weight: 600;
-            }
-            .navbar a:hover {
+            }}
+            .navbar a:hover {{
                 color: #63b3ed;
-            }
-            .content {
+            }}
+            .content {{
                 padding: 20px;
-            }
-            .header {
+            }}
+            .header {{
                 background-color: #07b1d0;
                 color: #ffffff;
                 padding: 15px 20px;
                 font-size: 20px;
                 font-weight: 600;
                 text-align: center;
-            }
-            .field {
+            }}
+            .field {{
                 margin-bottom: 15px;
-            }
-            .field-label {
+            }}
+            .field-label {{
                 font-weight: 600;
                 color: #1a202c;
                 margin-bottom: 5px;
-            }
-            .field-value {
+            }}
+            .field-value {{
                 color: #4a5568;
-                word-wrap: break-word;
-            }
-            .footer {
+                overflow-wrap: break-word;
+            }}
+            .footer {{
                 background-color: #daebdd;
                 padding: 20px;
                 text-align: center;
                 border-top: 1px solid #e2e8f0;
-            }
-            .footer p {
+            }}
+            .footer p {{
                 margin: 5px 0;
                 color: #000000;
                 font-size: 14px;
-            }
-            .social-links {
+            }}
+            .social-links {{
                 margin-top: 10px;
-            }
-            .social-links a {
+            }}
+            .social-links a {{
                 margin: 0 10px;
                 text-decoration: none;
-            }
-            .social-links img {
+            }}
+            .social-links img {{
                 width: 24px;
                 height: 24px;
                 vertical-align: middle;
-            }
-            @media screen and (max-width: 600px) {
-                .container {
+            }}
+            @media screen and (max-width: 600px) {{
+                .container {{
                     margin: 10px;
-                }
-                .navbar a {
+                }}
+                .navbar a {{
                     font-size: 16px;
-                }
-                .header {
+                }}
+                .header {{
                     font-size: 18px;
-                }
-                .content {
+                }}
+                .content {{
                     padding: 15px;
-                }
-                .footer {
+                }}
+                .footer {{
                     padding: 15px;
-                }
-            }
+                }}
+            }}
         </style>
     </head>
     <body>
@@ -183,7 +183,29 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
         </div>
     </body>
     </html>
-    """.format(name=name, email=email, subject=subject, message=message)
+    """
+
+# Plain-text fallback for the email sent to you
+def get_email_to_you_plain(name: str, email: str, subject: str, message: str) -> str:
+    return f"""
+    New Contact Form Submission
+
+    Name: {name}
+    Email: {email}
+    Subject: {subject}
+    Message:
+    {message}
+
+    ---
+    Siddharamayya M
+    Email: msidrm455@gmail.com
+    Phone: +91 97406 71620
+    Instagram: its_5iD
+    LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
+    Medium: https://medium.com/@msidrm455
+    GitHub: https://github.com/mtptisid
+    Instagram: https://www.instagram.com/its_5iD
+    """
 
 # HTML email template for the acknowledgment email to the user
 def get_ack_email_html(name: str, subject: str, message: str) -> str:
@@ -204,7 +226,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         f"<p>Best regards,<br>Siddharamayya M</p>"
     )
     
-    return """
+    return f"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -212,89 +234,89 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{subject}</title>
         <style>
-            body {
+            body {{
                 font-family: 'Poppins', Arial, sans-serif;
                 line-height: 1.6;
                 color: #333333;
                 background-color: #f7fafc;
                 margin: 0;
                 padding: 0;
-            }
-            .container {
+            }}
+            .container {{
                 max-width: 600px;
                 margin: 20px auto;
                 background: #ffffff;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
-            }
-            .navbar {
+            }}
+            .navbar {{
                 background-color: #404347;
                 padding: 15px 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }
-            .navbar a {
+            }}
+            .navbar a {{
                 color: #edf2f7;
                 text-decoration: none;
                 font-size: 18px;
                 font-weight: 600;
-            }
-            .navbar a:hover {
+            }}
+            .navbar a:hover {{
                 color: #63b3ed;
-            }
-            .content {
+            }}
+            .content {{
                 padding: 20px;
-            }
-            .header {
+            }}
+            .header {{
                 background-color: #07b1d0;
                 color: #ffffff;
                 padding: 15px 20px;
                 font-size: 20px;
                 font-weight: 600;
                 text-align: center;
-            }
-            .footer {
+            }}
+            .footer {{
                 background-color: #daebdd;
                 padding: 20px;
                 text-align: center;
                 border-top: 1px solid #e2e8f0;
-            }
-            .footer p {
+            }}
+            .footer p {{
                 margin: 5px 0;
                 color: #000000;
                 font-size: 14px;
-            }
-            .social-links {
+            }}
+            .social-links {{
                 margin-top: 10px;
-            }
-            .social-links a {
+            }}
+            .social-links a {{
                 margin: 0 10px;
                 text-decoration: none;
-            }
-            .social-links img {
+            }}
+            .social-links img {{
                 width: 24px;
                 height: 24px;
                 vertical-align: middle;
-            }
-            @media screen and (max-width: 600px) {
-                .container {
+            }}
+            @media screen and (max-width: 600px) {{
+                .container {{
                     margin: 10px;
-                }
-                .navbar a {
+                }}
+                .navbar a {{
                     font-size: 16px;
-                }
-                .header {
+                }}
+                .header {{
                     font-size: 18px;
-                }
-                .content {
+                }}
+                .content {{
                     padding: 15px;
-                }
-                .footer {
+                }}
+                .footer {{
                     padding: 15px;
-                }
-            }
+                }}
+            }}
         </style>
     </head>
     <body>
@@ -331,7 +353,47 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         </div>
     </body>
     </html>
-    """.format(subject=subject, ack_content=ack_content)
+    """
+
+# Plain-text fallback for the acknowledgment email to the user
+def get_ack_email_plain(name: str, subject: str, message: str) -> str:
+    if subject != "Contact Form Submission":
+        return f"""
+        Dear {name},
+
+        Thank you for reaching out! I have received your message:
+
+        ---
+        {message}
+        ---
+
+        Your inquiry is important to me; I will respond at the earliest opportunity.
+
+        Best regards,
+        Siddharamayya M
+        Email: msidrm455@gmail.com
+        Phone: +91 97406 71620
+        Instagram: its_5iD
+        LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
+        Medium: https://medium.com/@msidrm455
+        GitHub: https://github.com/mtptisid
+        Instagram: https://www.instagram.com/its_5iD
+        """
+    return f"""
+    Dear {name},
+
+    Thank you for contacting me through my portfolio. I appreciate your interest and will respond to your inquiry soon.
+
+    Best regards,
+    Siddharamayya M
+    Email: msidrm455@gmail.com
+    Phone: +91 97406 71620
+    Instagram: its_5iD
+    LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
+    Medium: https://medium.com/@msidrm455
+    GitHub: https://github.com/mtptisid
+    Instagram: https://www.instagram.com/its_5iD
+    """
 
 @router.post("/contact")
 async def contact(form: ContactForm, request: Request):
@@ -365,7 +427,8 @@ async def contact(form: ContactForm, request: Request):
             from_email=Email("siddharamayya@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To("msidrm455@gmail.com"),
             subject=f"New Contact Form Submission: {subject}",
-            html_content=get_email_to_you_html(name, email, subject, message)
+            html_content=Content("text/html", get_email_to_you_html(name, email, subject, message)),
+            plain_text_content=Content("text/plain", get_email_to_you_plain(name, email, subject, message))
         )
 
         # Acknowledgment email to user
@@ -374,7 +437,8 @@ async def contact(form: ContactForm, request: Request):
             from_email=Email("siddharamayya@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To(email),
             subject=ack_subject,
-            html_content=get_ack_email_html(name, ack_subject, message)
+            html_content=Content("text/html", get_ack_email_html(name, ack_subject, message)),
+            plain_text_content=Content("text/plain", get_ack_email_plain(name, ack_subject, message))
         )
 
         # Send emails
