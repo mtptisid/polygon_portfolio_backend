@@ -5,6 +5,7 @@ import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To
 import os
 import logging
+from html import escape
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,12 @@ class ContactForm(BaseModel):
 
 # HTML email template for the email sent to you
 def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> str:
+    # Escape user input to prevent HTML/CSS injection
+    name = escape(name)
+    email = escape(email)
+    subject = escape(subject)
+    message = escape(message).replace('\n', '<br>')
+    
     return """
     <!DOCTYPE html>
     <html lang="en">
@@ -31,9 +38,9 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
         <title>New Contact Form Submission</title>
         <style>
             body {
-                font-family: 'Poppins', sans-serif;
+                font-family: 'Poppins', Arial, sans-serif;
                 line-height: 1.6;
-                color: #333;
+                color: #333333;
                 background-color: #f7fafc;
                 margin: 0;
                 padding: 0;
@@ -43,7 +50,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
                 margin: 20px auto;
                 background: #ffffff;
                 border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
             }
             .navbar {
@@ -101,14 +108,14 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
             }
             .social-links a {
                 margin: 0 10px;
-                color: #07b1d0;
                 text-decoration: none;
-                font-size: 24px;
             }
-            .social-links a:hover {
-                color: #0cd2e8;
+            .social-links img {
+                width: 24px;
+                height: 24px;
+                vertical-align: middle;
             }
-            @media (max-width: 600px) {
+            @media screen and (max-width: 600px) {
                 .container {
                     margin: 10px;
                 }
@@ -159,10 +166,18 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
                 <p>Phone: +91 97406 71620</p>
                 <p>Instagram: its_5iD</p>
                 <div class="social-links">
-                    <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://medium.com/@msidrm455" title="Medium"><i class="fab fa-medium"></i></a>
-                    <a href="https://github.com/mtptisid" title="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://www.instagram.com/its_5iD" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
+                        <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn">
+                    </a>
+                    <a href="https://medium.com/@msidrm455" title="Medium">
+                        <img src="https://img.icons8.com/color/24/medium-monogram.png" alt="Medium">
+                    </a>
+                    <a href="https://github.com/mtptisid" title="GitHub">
+                        <img src="https://img.icons8.com/color/24/github.png" alt="GitHub">
+                    </a>
+                    <a href="https://www.instagram.com/its_5iD" title="Instagram">
+                        <img src="https://img.icons8.com/color/24/instagram-new.png" alt="Instagram">
+                    </a>
                 </div>
             </div>
         </div>
@@ -172,12 +187,15 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
 
 # HTML email template for the acknowledgment email to the user
 def get_ack_email_html(name: str, subject: str, message: str) -> str:
+    # Escape user input to prevent HTML/CSS injection
+    name = escape(name)
+    subject = escape(subject)
+    message = escape(message).replace('\n', '<br>')
+    
     ack_content = (
         f"<p>Dear {name},</p>"
         f"<p>Thank you for reaching out! I have received your message:</p>"
-        f"<blockquote style='border-left: 4px solid #07b1d0; padding-left: 15px; margin: 15px 0; color: #4a5568;'>"
-        f"{message}"
-        f"</blockquote>"
+        f"<blockquote style='border-left: 4px solid #07b1d0; padding-left: 15px; margin: 15px 0; color: #4a5568;'>{message}</blockquote>"
         f"<p>Your inquiry is important to me; I will respond at the earliest opportunity.</p>"
         f"<p>Best regards,<br>Siddharamayya M</p>"
     ) if subject != "Contact Form Submission" else (
@@ -185,6 +203,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         f"<p>Thank you for contacting me through my portfolio. I appreciate your interest and will respond to your inquiry soon.</p>"
         f"<p>Best regards,<br>Siddharamayya M</p>"
     )
+    
     return """
     <!DOCTYPE html>
     <html lang="en">
@@ -194,9 +213,9 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
         <title>{subject}</title>
         <style>
             body {
-                font-family: 'Poppins', sans-serif;
+                font-family: 'Poppins', Arial, sans-serif;
                 line-height: 1.6;
-                color: #333;
+                color: #333333;
                 background-color: #f7fafc;
                 margin: 0;
                 padding: 0;
@@ -206,7 +225,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
                 margin: 20px auto;
                 background: #ffffff;
                 border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
             }
             .navbar {
@@ -252,14 +271,14 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
             }
             .social-links a {
                 margin: 0 10px;
-                color: #07b1d0;
                 text-decoration: none;
-                font-size: 24px;
             }
-            .social-links a:hover {
-                color: #0cd2e8;
+            .social-links img {
+                width: 24px;
+                height: 24px;
+                vertical-align: middle;
             }
-            @media (max-width: 600px) {
+            @media screen and (max-width: 600px) {
                 .container {
                     margin: 10px;
                 }
@@ -295,10 +314,18 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
                 <p>Phone: +91 97406 71620</p>
                 <p>Instagram: its_5iD</p>
                 <div class="social-links">
-                    <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://medium.com/@msidrm455" title="Medium"><i class="fab fa-medium"></i></a>
-                    <a href="https://github.com/mtptisid" title="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://www.instagram.com/its_5iD" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
+                        <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn">
+                    </a>
+                    <a href="https://medium.com/@msidrm455" title="Medium">
+                        <img src="https://img.icons8.com/color/24/medium-monogram.png" alt="Medium">
+                    </a>
+                    <a href="https://github.com/mtptisid" title="GitHub">
+                        <img src="https://img.icons8.com/color/24/github.png" alt="GitHub">
+                    </a>
+                    <a href="https://www.instagram.com/its_5iD" title="Instagram">
+                        <img src="https://img.icons8.com/color/24/instagram-new.png" alt="Instagram">
+                    </a>
                 </div>
             </div>
         </div>
@@ -316,7 +343,7 @@ async def contact(form: ContactForm, request: Request):
 
         # Extract and sanitize form data
         name = form.name.strip()
-        email = form.email
+        email = form.email.strip()
         subject = form.subject.strip()
         message = form.message.strip()
 
