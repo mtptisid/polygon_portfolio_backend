@@ -1106,5 +1106,5 @@ async def get_session_history():
     return [Session(**session) for session in SESSIONS.values()]
 
 @router.get("/")
-def homestart():
+async def homestart():
     return Response(status_code=204)
