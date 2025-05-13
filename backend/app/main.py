@@ -32,6 +32,7 @@ models.Base.metadata.create_all(engine)
 
 # Include routers
 #app.include_router(authentication.router)
+app.include_router(sendmail.router)
 app.include_router(ai_chat.router)
 app.include_router(contact.router)
 #app.include_router(user.router)
