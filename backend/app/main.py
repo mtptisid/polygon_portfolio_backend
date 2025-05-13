@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
 from myapp import models
 from myapp.database import engine
-from myapp.routers import user, authentication, ai_chat, contact
+from myapp.routers import user, authentication, ai_chat, contact, sendmail
 
 app = FastAPI()
 
