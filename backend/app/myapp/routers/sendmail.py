@@ -9,23 +9,19 @@ import os
 import logging
 from html import escape
 import random
-from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 
-# Set up logging
+# Set up logging (commented out for production)
 #logging.basicConfig(level=logging.INFO)
 #logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 # JWT configuration
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "302dc08633d5abeff51ac92c2fbcf5a6ea5a5286f82aa9c121da081a56c24706")  # Set in env for production
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "302dc08633d5abeff51ac92c2fbcf5a6ea5a5286f82aa9c121da081a56c24706")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Pydantic model for form data validation
 class EmailForm(BaseModel):
@@ -266,8 +262,8 @@ async def login(form: LoginForm):
         #logger.error("ADMIN_PASSWORD not configured")
         raise HTTPException(status_code=500, detail="Server configuration error: ADMIN_PASSWORD missing")
 
-    # Verify password
-    if not pwd_context.verify(form.password, pwd_context.hash(admin_password)):
+    # Verify password (direct comparison for simplicity)
+    if form.password != admin_password:
         #logger.warning("Invalid admin password")
         raise HTTPException(status_code=401, detail="Invalid password")
 
