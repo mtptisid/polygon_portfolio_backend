@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc, Bcc
 import os
 import logging
 from html import escape
@@ -23,6 +23,8 @@ class EmailForm(BaseModel):
     subject: str = "Message from Siddharamayya"
     message: str
     honeypot: str | None = None  # Optional honeypot field for spam prevention
+    cc: str | None = None  # Optional CC field
+    bcc: str | None = None  # Optional BCC field
 
 # HTTP Basic Authentication
 security = HTTPBasic()
@@ -66,22 +68,23 @@ def get_email_html(name: str, subject: str, message: str, sender_email: str) -> 
                 padding: 0;
                 min-height: 100vh;
                 display: flex;
-                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }}
             .container {{
                 width: 100%;
-                max-width: 1200px; /* Fallback for very large screens */
-                margin: 0 auto;
+                max-width: 800px;
+                margin: 20px auto;
                 background: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
                 overflow: hidden;
-                flex: 1;
+                flex: 0 1 auto;
                 box-sizing: border-box;
             }}
             .navbar {{
                 background-color: #404347;
-                padding: 15px 20px;
+                padding: 20px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -89,66 +92,90 @@ def get_email_html(name: str, subject: str, message: str, sender_email: str) -> 
             .navbar a {{
                 color: #edf2f7;
                 text-decoration: none;
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: 600;
+                transition: color 0.3s ease;
             }}
             .navbar a:hover {{
                 color: #63b3ed;
             }}
-            .content {{
-                padding: 20px;
-            }}
             .header {{
                 background-color: #07b1d0;
                 color: #ffffff;
-                padding: 15px 20px;
-                font-size: 20px;
-                font-weight: 600;
+                padding: 20px;
+                font-size: 24px;
+                font-weight: 700;
                 text-align: center;
+                border-bottom: 2px solid #06a2c0;
+            }}
+            .content {{
+                padding: 30px;
+                font-size: 16px;
             }}
             .message-body {{
                 color: #4a5568;
                 overflow-wrap: break-word;
-                margin: 15px 0;
+                margin: 20px 0;
+                font-size: 16px;
+                line-height: 1.8;
             }}
             .footer {{
                 background-color: #daebdd;
-                padding: 20px;
+                padding: 25px;
                 text-align: center;
                 border-top: 1px solid #e2e8f0;
             }}
             .footer p {{
-                margin: 5px 0;
+                margin: 8px 0;
                 color: #000000;
                 font-size: 14px;
+                font-weight: 500;
             }}
             .social-links {{
-                margin-top: 10px;
+                margin-top: 15px;
+                display: flex;
+                justify-content: center;
+                gap: 15px;
             }}
             .social-links a {{
-                margin: 0 10px;
                 text-decoration: none;
             }}
             .social-links img {{
-                width: 24px;
-                height: 24px;
-                vertical-align: middle;
+                width: 28px;
+                height: 28px;
+                transition: transform 0.3s ease;
+            }}
+            .social-links img:hover {{
+                transform: scale(1.1);
             }}
             @media screen and (max-width: 600px) {{
                 .container {{
-                    border-radius: 0;
+                    margin: 10px;
+                    border-radius: 8px;
+                }}
+                .navbar {{
+                    padding: 15px;
                 }}
                 .navbar a {{
                     font-size: 16px;
                 }}
                 .header {{
-                    font-size: 18px;
+                    font-size: 20px;
+                    padding: 15px;
                 }}
                 .content {{
-                    padding: 15px;
+                    padding: 20px;
+                    font-size: 14px;
+                }}
+                .message-body {{
+                    font-size: 14px;
                 }}
                 .footer {{
-                    padding: 15px;
+                    padding: 20px;
+                }}
+                .social-links img {{
+                    width: 24px;
+                    height: 24px;
                 }}
             }}
         </style>
@@ -168,21 +195,21 @@ def get_email_html(name: str, subject: str, message: str, sender_email: str) -> 
             </div>
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
-                <p>Portfolio: https://siddharamayya.in</p>
+                <p>Portfolio: <a href="https://siddharamayya.in">https://siddharamayya.in</a></p>
                 <p>Email: {sender_email}</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
-                        <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn">
+                        <img src="https://img.icons8.com/color/28/linkedin.png" alt="LinkedIn">
                     </a>
                     <a href="https://medium.com/@msidrm455" title="Medium">
-                        <img src="https://img.icons8.com/color/24/medium-monogram.png" alt="Medium">
+                        <img src="https://img.icons8.com/color/28/medium-monogram.png" alt="Medium">
                     </a>
                     <a href="https://github.com/mtptisid" title="GitHub">
-                        <img src="https://img.icons8.com/color/24/github.png" alt="GitHub">
+                        <img src="https://img.icons8.com/color/28/github.png" alt="GitHub">
                     </a>
                     <a href="https://www.instagram.com/its_5iD" title="Instagram">
-                        <img src="https://img.icons8.com/color/24/instagram-new.png" alt="Instagram">
+                        <img src="https://img.icons8.com/color/28/instagram-new.png" alt="Instagram">
                     </a>
                 </div>
             </div>
@@ -222,6 +249,8 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
         email = form.email.strip()
         subject = form.subject.strip()
         message = form.message.strip()
+        cc = form.cc.strip() if form.cc else None
+        bcc = form.bcc.strip() if form.bcc else None
 
         # Validate required fields
         if not email or not message:
@@ -249,6 +278,12 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
             plain_text_content=Content("text/plain", get_email_plain(name, subject, message, sender))
         )
 
+        # Add CC and BCC if provided
+        if cc:
+            mail_to_user.add_cc(Cc(cc))
+        if bcc:
+            mail_to_user.add_bcc(Bcc(bcc))
+
         # Send email
         logger.info(f"Sending email to {email} from {sender}")
         response_to_user = sg.send(mail_to_user)
@@ -260,9 +295,6 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
         logger.info("Email sent successfully")
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
 
-    except SendGridException as sg_error:
-        logger.error(f"SendGrid error: {str(sg_error)}")
-        raise HTTPException(status_code=500, detail=f"SendGrid error: {str(sg_error)}")
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")
