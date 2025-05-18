@@ -1,20 +1,31 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel, EmailStr, ValidationError
 from fastapi.responses import JSONResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content, Cc, Bcc
+from jose import JWTError, jwt
 import os
 import logging
 from html import escape
-import hashlib
 import random
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from typing import Optional
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO)
+#logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# JWT configuration
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "your-secret-key")  # Set in env for production
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Pydantic model for form data validation
 class EmailForm(BaseModel):
@@ -26,24 +37,38 @@ class EmailForm(BaseModel):
     cc: str | None = None
     bcc: str | None = None
 
-# HTTP Basic Authentication
-security = HTTPBasic()
+# Pydantic model for login
+class LoginForm(BaseModel):
+    password: str
 
-def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
-    admin_password = os.environ.get("EMAIL_ADMIN_PASSWORD")
-    if not admin_password:
-        logger.error("ADMIN_PASSWORD not configured")
-        raise HTTPException(status_code=500, detail="Server configuration error: ADMIN_PASSWORD missing")
+# JWT token dependency
+security = HTTPBearer()
 
-    provided_password_hash = hashlib.sha256(credentials.password.encode()).hexdigest()
-    stored_password_hash = hashlib.sha256(admin_password.encode()).hexdigest()
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username != "admin":
+            #logger.warning("Invalid JWT: Incorrect username")
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return True
+    except JWTError as e:
+        #logger.error(f"JWT error: {str(e)}")
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-    if credentials.username != "admin" or provided_password_hash != stored_password_hash:
-        logger.warning("Authentication failed for admin access")
-        raise HTTPException(status_code=401, detail="Invalid admin credentials")
-    return True
+# Create JWT token
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
-# HTML email template (unchanged for brevity)
+# HTML email template (unchanged)
 def get_email_html(name: str, subject: str, message: str, sender_email: str) -> str:
     name = escape(name)
     subject = escape(subject)
@@ -233,15 +258,32 @@ GitHub: https://github.com/mtptisid
 Instagram: https://www.instagram.com/its_5iD
 """
 
-@router.post("/sendmail")
-async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Depends(verify_admin)):
-    try:
-        # Log the incoming request body for debugging
-        logger.info(f"Received request body: {form.dict()}")
+# Login endpoint
+@router.post("/sendmail/login")
+async def login(form: LoginForm):
+    admin_password = os.environ.get("EMAIL_ADMIN_PASSWORD")
+    if not admin_password:
+        #logger.error("ADMIN_PASSWORD not configured")
+        raise HTTPException(status_code=500, detail="Server configuration error: ADMIN_PASSWORD missing")
 
+    # Verify password
+    if not pwd_context.verify(form.password, pwd_context.hash(admin_password)):
+        #logger.warning("Invalid admin password")
+        raise HTTPException(status_code=401, detail="Invalid password")
+
+    # Create JWT
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": "admin"}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/sendmail")
+async def sendmail(form: EmailForm, request: Request, token_verified: bool = Depends(verify_token)):
+    try:
         # Check honeypot field for spam
         if form.honeypot:
-            logger.warning("Spam detected: Honeypot field filled")
+            #logger.warning("Spam detected: Honeypot field filled")
             raise HTTPException(status_code=400, detail="Spam detected")
 
         # Extract and sanitize form data
@@ -254,7 +296,7 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
 
         # Validate required fields
         if not email or not message:
-            logger.warning("Validation failed: Email or message missing")
+            #logger.warning("Validation failed: Email or message missing")
             raise HTTPException(status_code=400, detail="Email and message are required")
 
         # Validate cc and bcc email formats if provided
@@ -263,19 +305,19 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
             try:
                 validate_email(cc, check_deliverability=False)
             except EmailNotValidError as e:
-                logger.warning(f"Invalid CC email: {cc}")
+                #logger.warning(f"Invalid CC email: {cc}")
                 raise HTTPException(status_code=400, detail=f"Invalid CC email: {str(e)}")
         if bcc:
             try:
                 validate_email(bcc, check_deliverability=False)
             except EmailNotValidError as e:
-                logger.warning(f"Invalid BCC email: {bcc}")
+                #logger.warning(f"Invalid BCC email: {bcc}")
                 raise HTTPException(status_code=400, detail=f"Invalid BCC email: {str(e)}")
 
         # Initialize SendGrid client
         api_key = os.environ.get("SENDGRID_API_KEY")
         if not api_key:
-            logger.error("SENDGRID_API_KEY not configured")
+            #logger.error("SENDGRID_API_KEY not configured")
             raise HTTPException(status_code=500, detail="Server configuration error: SENDGRID_API_KEY missing")
 
         sg = SendGridAPIClient(api_key=api_key)
@@ -300,19 +342,19 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
             mail_to_user.add_bcc(Bcc(bcc))
 
         # Send email
-        logger.info(f"Sending email to {email} from {sender}")
+        #logger.info(f"Sending email to {email} from {sender}")
         response_to_user = sg.send(mail_to_user)
 
         if response_to_user.status_code != 202:
-            logger.error(f"SendGrid failed: to_user={response_to_user.status_code}")
+            #logger.error(f"SendGrid failed: to_user={response_to_user.status_code}")
             raise HTTPException(status_code=500, detail="Failed to send email")
 
-        logger.info("Email sent successfully")
+        #logger.info("Email sent successfully")
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
 
     except ValidationError as ve:
-        logger.error(f"Validation error: {str(ve)}")
+        #logger.error(f"Validation error: {str(ve)}")
         raise HTTPException(status_code=422, detail=f"Invalid input: {str(ve)}")
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        #logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")
