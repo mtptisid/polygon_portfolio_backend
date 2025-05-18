@@ -20,7 +20,7 @@ from typing import Optional
 router = APIRouter()
 
 # JWT configuration
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "your-secret-key")  # Set in env for production
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "302dc08633d5abeff51ac92c2fbcf5a6ea5a5286f82aa9c121da081a56c24706")  # Set in env for production
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
