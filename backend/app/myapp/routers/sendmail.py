@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sendgrid import SendGridAPIClient
@@ -22,9 +22,9 @@ class EmailForm(BaseModel):
     email: EmailStr
     subject: str = "Message from Siddharamayya"
     message: str
-    honeypot: str | None = None  # Optional honeypot field for spam prevention
-    cc: str | None = None  # Optional CC field
-    bcc: str | None = None  # Optional BCC field
+    honeypot: str | None = None
+    cc: str | None = None
+    bcc: str | None = None
 
 # HTTP Basic Authentication
 security = HTTPBasic()
@@ -35,7 +35,6 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
         logger.error("ADMIN_PASSWORD not configured")
         raise HTTPException(status_code=500, detail="Server configuration error: ADMIN_PASSWORD missing")
 
-    # Hash the provided password and compare with hashed admin password
     provided_password_hash = hashlib.sha256(credentials.password.encode()).hexdigest()
     stored_password_hash = hashlib.sha256(admin_password.encode()).hexdigest()
 
@@ -44,13 +43,11 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
         raise HTTPException(status_code=401, detail="Invalid admin credentials")
     return True
 
-# HTML email template for the email sent to the user
+# HTML email template (unchanged for brevity)
 def get_email_html(name: str, subject: str, message: str, sender_email: str) -> str:
-    # Escape user input to prevent HTML/CSS injection
     name = escape(name)
     subject = escape(subject)
     message = escape(message).replace('\n', '<br>')
-    
     return f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -218,7 +215,7 @@ def get_email_html(name: str, subject: str, message: str, sender_email: str) -> 
     </html>
     """
 
-# Plain-text fallback for the email sent to the user
+# Plain-text fallback (unchanged)
 def get_email_plain(name: str, subject: str, message: str, sender_email: str) -> str:
     return f"""
 Dear {name},
@@ -239,15 +236,18 @@ Instagram: https://www.instagram.com/its_5iD
 @router.post("/sendmail")
 async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Depends(verify_admin)):
     try:
+        # Log the incoming request body for debugging
+        logger.info(f"Received request body: {form.dict()}")
+
         # Check honeypot field for spam
         if form.honeypot:
             logger.warning("Spam detected: Honeypot field filled")
             raise HTTPException(status_code=400, detail="Spam detected")
 
         # Extract and sanitize form data
-        name = form.name.strip()
+        name = form.name.strip() if form.name else "Unknown"
         email = form.email.strip()
-        subject = form.subject.strip()
+        subject = form.subject.strip() if form.subject else "Message from Siddharamayya"
         message = form.message.strip()
         cc = form.cc.strip() if form.cc else None
         bcc = form.bcc.strip() if form.bcc else None
@@ -256,6 +256,21 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
         if not email or not message:
             logger.warning("Validation failed: Email or message missing")
             raise HTTPException(status_code=400, detail="Email and message are required")
+
+        # Validate cc and bcc email formats if provided
+        from email_validator import validate_email, EmailNotValidError
+        if cc:
+            try:
+                validate_email(cc, check_deliverability=False)
+            except EmailNotValidError as e:
+                logger.warning(f"Invalid CC email: {cc}")
+                raise HTTPException(status_code=400, detail=f"Invalid CC email: {str(e)}")
+        if bcc:
+            try:
+                validate_email(bcc, check_deliverability=False)
+            except EmailNotValidError as e:
+                logger.warning(f"Invalid BCC email: {bcc}")
+                raise HTTPException(status_code=400, detail=f"Invalid BCC email: {str(e)}")
 
         # Initialize SendGrid client
         api_key = os.environ.get("SENDGRID_API_KEY")
@@ -295,6 +310,9 @@ async def sendmail(form: EmailForm, request: Request, admin_verified: bool = Dep
         logger.info("Email sent successfully")
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
 
+    except ValidationError as ve:
+        logger.error(f"Validation error: {str(ve)}")
+        raise HTTPException(status_code=422, detail=f"Invalid input: {str(ve)}")
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")
