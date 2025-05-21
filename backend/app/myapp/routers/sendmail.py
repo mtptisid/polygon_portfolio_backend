@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File, Form
 from pydantic import BaseModel, EmailStr, ValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -277,14 +277,14 @@ async def login(form: LoginForm):
 
 @router.post("/sendmail")
 async def sendmail(
-    name: str = Form("Unknown"),
+    name: str = Form(default="Unknown"),
     email: EmailStr = Form(...),
-    subject: str = Form("Message from Siddharamayya"),
+    subject: str = Form(default="Message from Siddharamayya"),
     message: str = Form(...),
-    honeypot: Optional[str] = Form(None),
-    cc: Optional[str] = Form(None),
-    bcc: Optional[str] = Form(None),
-    files: List[UploadFile] = File([]),
+    honeypot: Optional[str] = Form(default=None),
+    cc: Optional[str] = Form(default=None),
+    bcc: Optional[str] = Form(default=None),
+    files: List[UploadFile] = File(default=[]),
     token_verified: bool = Depends(verify_token)
 ):
     try:
