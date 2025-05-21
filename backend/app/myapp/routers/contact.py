@@ -436,11 +436,11 @@ async def contact(form: ContactForm, request: Request):
         mail_to_user = Mail(
             from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To(email),
-            cc_emails=Cc("me@siddharamayya.in"),
             subject=ack_subject,
             html_content=Content("text/html", get_ack_email_html(name, ack_subject, message)),
             plain_text_content=Content("text/plain", get_ack_email_plain(name, ack_subject, message))
         )
+        mail_to_user.add_cc(Cc("me@siddharamayya.in"))
 
         # Send emails
         response_to_you = sg.send(mail_to_you)
