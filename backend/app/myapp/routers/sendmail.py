@@ -1,16 +1,17 @@
-from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File
 from pydantic import BaseModel, EmailStr, ValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content, Cc, Bcc
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc, Bcc, Attachment
 from jose import JWTError, jwt
 import os
 import logging
 from html import escape
 import random
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List
+import base64
 
 # Set up logging (commented out for production)
 #logging.basicConfig(level=logging.INFO)
@@ -275,20 +276,30 @@ async def login(form: LoginForm):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/sendmail")
-async def sendmail(form: EmailForm, request: Request, token_verified: bool = Depends(verify_token)):
+async def sendmail(
+    name: str = Form("Unknown"),
+    email: EmailStr = Form(...),
+    subject: str = Form("Message from Siddharamayya"),
+    message: str = Form(...),
+    honeypot: Optional[str] = Form(None),
+    cc: Optional[str] = Form(None),
+    bcc: Optional[str] = Form(None),
+    files: List[UploadFile] = File([]),
+    token_verified: bool = Depends(verify_token)
+):
     try:
         # Check honeypot field for spam
-        if form.honeypot:
+        if honeypot:
             #logger.warning("Spam detected: Honeypot field filled")
             raise HTTPException(status_code=400, detail="Spam detected")
 
         # Extract and sanitize form data
-        name = form.name.strip() if form.name else "Unknown"
-        email = form.email.strip()
-        subject = form.subject.strip() if form.subject else "Message from Siddharamayya"
-        message = form.message.strip()
-        cc = form.cc.strip() if form.cc else None
-        bcc = form.bcc.strip() if form.bcc else None
+        name = name.strip() if name else "Unknown"
+        email = email.strip()
+        subject = subject.strip() if subject else "Message from Siddharamayya"
+        message = message.strip()
+        cc = cc.strip() if cc else None
+        bcc = bcc.strip() if bcc else None
 
         # Validate required fields
         if not email or not message:
@@ -309,6 +320,27 @@ async def sendmail(form: EmailForm, request: Request, token_verified: bool = Dep
             except EmailNotValidError as e:
                 #logger.warning(f"Invalid BCC email: {bcc}")
                 raise HTTPException(status_code=400, detail=f"Invalid BCC email: {str(e)}")
+
+        # Validate files
+        MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+        MAX_FILES = 5
+        ALLOWED_MIME_TYPES = [
+            "application/pdf",
+            "image/jpeg",
+            "image/png",
+            "text/plain",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ]
+
+        if len(files) > MAX_FILES:
+            raise HTTPException(status_code=400, detail=f"Maximum {MAX_FILES} files allowed")
+        
+        for file in files:
+            if file.size > MAX_FILE_SIZE:
+                raise HTTPException(status_code=400, detail=f"File {file.filename} exceeds 5MB limit")
+            if file.content_type not in ALLOWED_MIME_TYPES:
+                raise HTTPException(status_code=400, detail=f"File {file.filename} has unsupported type: {file.content_type}")
 
         # Initialize SendGrid client
         api_key = os.environ.get("SENDGRID_API_KEY")
@@ -337,8 +369,19 @@ async def sendmail(form: EmailForm, request: Request, token_verified: bool = Dep
         if bcc:
             mail_to_user.add_bcc(Bcc(bcc))
 
+        # Add attachments
+        for file in files:
+            content = await file.read()
+            encoded_file = base64.b64encode(content).decode()
+            attachment = Attachment()
+            attachment.file_content = encoded_file
+            attachment.file_name = file.filename
+            attachment.file_type = file.content_type
+            attachment.disposition = 'attachment'
+            mail_to_user.add_attachment(attachment)
+
         # Send email
-        #logger.info(f"Sending email to {email} from {sender}")
+        #logger.info(f"Sending email to {email} from {sender} with {len(files)} attachments")
         response_to_user = sg.send(mail_to_user)
 
         if response_to_user.status_code != 202:
