@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
 import sendgrid
-from sendgrid.helpers.mail import Mail, Email, To, Content
+from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
 import os
 import logging
 from html import escape
@@ -431,18 +431,18 @@ async def contact(form: ContactForm, request: Request):
             plain_text_content=Content("text/plain", get_email_to_you_plain(name, email, subject, message))
         )
 
-        # Acknowledgment email to user
+        # Acknowledgment email to user with CC to me@siddharamayya.in
         ack_subject = subject if subject != "Contact Form Submission" else "Thank You for Contacting Me"
         mail_to_user = Mail(
             from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To(email),
+            cc_emails=Cc("me@siddharamayya.in"),
             subject=ack_subject,
             html_content=Content("text/html", get_ack_email_html(name, ack_subject, message)),
             plain_text_content=Content("text/plain", get_ack_email_plain(name, ack_subject, message))
         )
 
         # Send emails
-        #logger.info(f"Sending emails to {email} and msidrm455@gmail.com")
         response_to_you = sg.send(mail_to_you)
         response_to_user = sg.send(mail_to_user)
 
@@ -450,7 +450,6 @@ async def contact(form: ContactForm, request: Request):
             logger.error(f"SendGrid failed: to_you={response_to_you.status_code}, to_user={response_to_user.status_code}")
             raise HTTPException(status_code=500, detail="Failed to send one or more emails")
 
-        #logger.info("Emails sent successfully")
         return JSONResponse(content={"message": "Emails sent successfully"}, status_code=200)
 
     except sendgrid.SendGridException as sg_error:
