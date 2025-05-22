@@ -163,7 +163,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
                 <p>Portfolio: https://siddharamayya.in</p>
-                <p>Email: msidrm455@gmail.com</p>
+                <p>Email: me@siddharamayya.in</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
@@ -198,7 +198,7 @@ def get_email_to_you_plain(name: str, email: str, subject: str, message: str) ->
 
     ---
     Siddharamayya M
-    Email: msidrm455@gmail.com
+    Email: me@siddharamayya.in
     Phone: +91 97406 71620
     Portfolio: https://siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
@@ -333,7 +333,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
                 <p>Portfolio: https://siddharamayya.in</p>
-                <p>Email: msidrm455@gmail.com</p>
+                <p>Email: me@siddharamayya.in</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/siddharamayya-mathapati" title="LinkedIn">
@@ -371,7 +371,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
 
         Best regards,
         Siddharamayya M
-        Email: msidrm455@gmail.com
+        Email: me@siddharamayya.in
         Phone: +91 97406 71620
         Portfolio: https://siddharamayya.in
         LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
@@ -386,7 +386,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
 
     Best regards,
     Siddharamayya M
-    Email: msidrm455@gmail.com
+    Email: me@siddharamayya.in
     Phone: +91 97406 71620
     Portfolio: https://siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
@@ -425,7 +425,7 @@ async def contact(form: ContactForm, request: Request):
         # Email to you
         mail_to_you = Mail(
             from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
-            to_emails=To("msidrm455@gmail.com"),
+            to_emails=To("me@siddharamayya.in"),
             subject=f"New Contact Form Submission: {subject}",
             html_content=Content("text/html", get_email_to_you_html(name, email, subject, message)),
             plain_text_content=Content("text/plain", get_email_to_you_plain(name, email, subject, message))
