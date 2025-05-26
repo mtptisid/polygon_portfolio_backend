@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
 import sendgrid
-from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
+from sendgrid.helpers.mail import Mail, Email, To, Content, Bcc
 import os
 import logging
 from html import escape
@@ -431,7 +431,7 @@ async def contact(form: ContactForm, request: Request):
             plain_text_content=Content("text/plain", get_email_to_you_plain(name, email, subject, message))
         )
 
-        # Acknowledgment email to user with CC to me@siddharamayya.in
+        # Acknowledgment email to user with BCC to msidrm455@gmail.com
         ack_subject = subject if subject != "Contact Form Submission" else "Thank You for Contacting Me"
         mail_to_user = Mail(
             from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
@@ -440,7 +440,7 @@ async def contact(form: ContactForm, request: Request):
             html_content=Content("text/html", get_ack_email_html(name, ack_subject, message)),
             plain_text_content=Content("text/plain", get_ack_email_plain(name, ack_subject, message))
         )
-        mail_to_user.add_cc(Cc("msidrm455@gmail.com"))
+        mail_to_user.add_bcc(Bcc("msidrm455@gmail.com"))
 
         # Send emails
         response_to_you = sg.send(mail_to_you)
