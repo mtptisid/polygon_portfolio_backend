@@ -3,7 +3,6 @@ from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content, Cc
-from email_validator import validate_email, EmailNotValidError
 import os
 import logging
 from html import escape
@@ -415,15 +414,6 @@ async def contact(form: ContactForm, request: Request):
             logger.warning("Validation failed: Email or message missing")
             raise HTTPException(status_code=400, detail="Email and message are required")
 
-        # Validate email addresses
-        sender_email = "me@siddharamayya.in"
-        try:
-            validate_email(email, check_deliverability=False)
-            validate_email(sender_email, check_deliverability=False)
-        except EmailNotValidError as e:
-            logger.warning(f"Invalid email: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Invalid email: {str(e)}")
-
         # Initialize SendGrid client
         api_key = os.environ.get("SENDGRID_API_KEY")
         if not api_key:
@@ -434,8 +424,8 @@ async def contact(form: ContactForm, request: Request):
 
         # Email to you
         mail_to_you = Mail(
-            from_email=Email(sender_email, "Siddharamayya Mathapati"),
-            to_emails=To(sender_email),
+            from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
+            to_emails=To("msidrm455@gmail.com"),
             subject=f"New Contact Form Submission: {subject}",
             html_content=Content("text/html", get_email_to_you_html(name, email, subject, message)),
             plain_text_content=Content("text/plain", get_email_to_you_plain(name, email, subject, message))
@@ -444,36 +434,27 @@ async def contact(form: ContactForm, request: Request):
         # Acknowledgment email to user with CC to me@siddharamayya.in
         ack_subject = subject if subject != "Contact Form Submission" else "Thank You for Contacting Me"
         mail_to_user = Mail(
-            from_email=Email(sender_email, "Siddharamayya Mathapati"),
+            from_email=Email("me@siddharamayya.in", "Siddharamayya Mathapati"),
             to_emails=To(email),
             subject=ack_subject,
             html_content=Content("text/html", get_ack_email_html(name, ack_subject, message)),
             plain_text_content=Content("text/plain", get_ack_email_plain(name, ack_subject, message))
         )
-        try:
-            validate_email(sender_email, check_deliverability=False)
-            mail_to_user.add_cc(Cc(sender_email))
-        except EmailNotValidError as e:
-            logger.warning(f"Invalid CC email: {sender_email}")
-            raise HTTPException(status_code=400, detail=f"Invalid CC email: {str(e)}")
+        mail_to_user.add_cc(Cc("msidrm455@gmail.com"))
 
         # Send emails
-        try:
-            response_to_you = sg.send(mail_to_you)
-            if response_to_you.status_code != 202:
-                logger.error(f"SendGrid failed for mail_to_you: {response_to_you.status_code}, {response_to_you.body}")
-                raise HTTPException(status_code=500, detail=f"Failed to send email to owner: {response_to_you.body}")
+        response_to_you = sg.send(mail_to_you)
+        response_to_user = sg.send(mail_to_user)
 
-            response_to_user = sg.send(mail_to_user)
-            if response_to_user.status_code != 202:
-                logger.error(f"SendGrid failed for mail_to_user: {response_to_user.status_code}, {response_to_user.body}")
-                raise HTTPException(status_code=500, detail=f"Failed to send email to user: {response_to_user.body}")
+        if response_to_you.status_code != 202 or response_to_user.status_code != 202:
+            logger.error(f"SendGrid failed: to_you={response_to_you.status_code}, to_user={response_to_user.status_code}")
+            raise HTTPException(status_code=500, detail="Failed to send one or more emails")
 
-            return JSONResponse(content={"message": "Emails sent successfully"}, status_code=200)
+        return JSONResponse(content={"message": "Emails sent successfully"}, status_code=200)
 
-        except sendgrid.SendGridException as sg_error:
-            logger.error(f"SendGrid error: {str(sg_error)}, Body: {sg_error.body if hasattr(sg_error, 'body') else 'No body'}")
-            raise HTTPException(status_code=500, detail=f"SendGrid error: {str(sg_error)}")
+    except sendgrid.SendGridException as sg_error:
+        logger.error(f"SendGrid error: {str(sg_error)}")
+        raise HTTPException(status_code=500, detail=f"SendGrid error: {str(sg_error)}")
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending emails: {str(e)}")
