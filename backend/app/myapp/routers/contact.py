@@ -137,7 +137,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
     <body>
         <div class="container">
             <div class="navbar">
-                <a href="https://siddharamayya.in">Siddharamayya</a>
+                <a href="siddharamayya.in">Siddharamayya</a>
             </div>
             <div class="header">
                 New Contact Form Submission
@@ -162,7 +162,7 @@ def get_email_to_you_html(name: str, email: str, subject: str, message: str) -> 
             </div>
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
-                <p>Portfolio: https://siddharamayya.in</p>
+                <p>Portfolio: siddharamayya.in</p>
                 <p>Email: me@siddharamayya.in</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
@@ -200,7 +200,7 @@ def get_email_to_you_plain(name: str, email: str, subject: str, message: str) ->
     Siddharamayya M
     Email: me@siddharamayya.in
     Phone: +91 97406 71620
-    Portfolio: https://siddharamayya.in
+    Portfolio: siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
@@ -322,7 +322,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
     <body>
         <div class="container">
             <div class="navbar">
-                <a href="https://siddharamayya.in">Siddharamayya</a>
+                <a href="siddharamayya.in">Siddharamayya</a>
             </div>
             <div class="header">
                 {subject}
@@ -332,7 +332,7 @@ def get_ack_email_html(name: str, subject: str, message: str) -> str:
             </div>
             <div class="footer">
                 <p>Siddharamayya Mathapati</p>
-                <p>Portfolio: https://siddharamayya.in</p>
+                <p>Portfolio: siddharamayya.in</p>
                 <p>Email: me@siddharamayya.in</p>
                 <p>Phone: +91 97406 71620</p>
                 <div class="social-links">
@@ -373,7 +373,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
         Siddharamayya M
         Email: me@siddharamayya.in
         Phone: +91 97406 71620
-        Portfolio: https://siddharamayya.in
+        Portfolio: siddharamayya.in
         LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
         Medium: https://medium.com/@msidrm455
         GitHub: https://github.com/mtptisid
@@ -388,7 +388,7 @@ def get_ack_email_plain(name: str, subject: str, message: str) -> str:
     Siddharamayya M
     Email: me@siddharamayya.in
     Phone: +91 97406 71620
-    Portfolio: https://siddharamayya.in
+    Portfolio: siddharamayya.in
     LinkedIn: https://www.linkedin.com/in/siddharamayya-mathapati
     Medium: https://medium.com/@msidrm455
     GitHub: https://github.com/mtptisid
