@@ -68,7 +68,7 @@ class GroqService:
         self.api_key = os.getenv("GROQ_API_KEY")
         if not self.api_key:
             raise HTTPException(status_code=500, detail="GROQ_API_KEY not set in environment variables")
-        self.model = "llama3-70b-8192"
+        self.model = "llama-3.3-70b-versatile" #llama3-70b-8192 and llama3-8b-8192 will be deprecated from GroqCloud™.
         self.client = Groq(api_key=self.api_key)
 
     async def get_response(self, messages: List[Dict[str, str]]) -> str:
