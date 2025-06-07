@@ -189,6 +189,35 @@ async def send_message(request: Request, message: MessageCreate):
                 "link": "[SysAdmin-GPT](https://siddharamayya.in/projects)"
             },
             {
+               "category": "ML Hands-On: Practical Machine Learning Exploration",
+               "description": (
+                    "A comprehensive hands-on repository that demonstrates key machine learning concepts using real-world datasets. "
+                    "Includes end-to-end projects covering data cleaning, visualization, feature engineering, model training, and evaluation. "
+                    "Designed as a learning resource for beginners and intermediates to grasp ML fundamentals in practice, using popular Python libraries such as Scikit-learn and Pandas. "
+                    "Projects are built using Jupyter notebooks for interactivity and clarity."
+              ),
+              "link": "[ML Hands-On](https://github.com/mtptisid/ml-hands-on)"
+            },
+            {
+              "category": "RAG Hands-On: Building Retrieval-Augmented Generation Pipelines",
+              "description": (
+                "An applied project demonstrating how to build Retrieval-Augmented Generation (RAG) systems using large language models and vector databases. "
+                "The repository integrates LangChain and FAISS to enable document-aware question answering using custom embeddings. "
+                "This project serves as a practical introduction to RAG for developers and researchers interested in enhancing LLM capabilities with external knowledge sources."
+              ),
+              "link": "[RAG Hands-On](https://github.com/mtptisid/RAG-hands-on)"
+            },
+            {
+              "category": "IPL Score Prediction: Cricket Analytics with ML",
+              "description": (
+                "A machine learning project designed to predict the final score of an IPL (Indian Premier League) innings based on real match data. "
+                "Utilizes regression algorithms and feature engineering techniques to forecast outcomes using current match states like overs, runs, and wickets. "
+                "Includes detailed exploratory data analysis (EDA), visualization, model training, and evaluation. "
+                "Ideal for sports analytics enthusiasts and aspiring data scientists."
+              ),
+              "link": "[IPL Score Prediction](https://github.com/mtptisid/IPL_score_prediction)"
+            },
+            {
                 "category": "Workout & Fitness Tracker ML Model",
                 "description": (
                     "A **machine learning model** analyzing **10,000+ workout records** to predict workout efficiency based on health metrics. "
