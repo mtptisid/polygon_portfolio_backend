@@ -242,6 +242,16 @@ async def send_message(request: Request, message: MessageCreate):
                 "link": "[Blood Donation Prediction]https://siddharamayya.in/projects)"
             },
             {
+               "category": "FLAN-T5-Small Fine-Tuning with LoRA",
+               "description": (
+               "A practical guide and implementation for fine-tuning the **FLAN-T5-Small** language model using **Low-Rank Adaptation (LoRA)**. "
+               "This repository walks through setting up parameter-efficient fine-tuning (PEFT) for downstream NLP tasks with Hugging Face Transformers. "
+               "LoRA significantly reduces the computational requirements and memory footprint, making fine-tuning accessible even on modest hardware setups. "
+               "Ideal for NLP researchers, developers, and enthusiasts working with resource-constrained environments."
+             ),
+              "link": "[FLAN-T5 Small Fine-Tuning (LoRA)](https://github.com/mtptisid/FLAN-T5-Small_finetuning_LoRA)"
+            },
+            {
                 "category": "Credit Default Prediction",
                 "description": (
                     "A **machine learning model** predicting credit card defaults using simulated financial data. "
