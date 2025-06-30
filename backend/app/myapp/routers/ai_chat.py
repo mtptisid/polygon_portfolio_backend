@@ -189,6 +189,25 @@ async def send_message(request: Request, message: MessageCreate):
                 "link": "[SysAdmin-GPT](https://siddharamayya.in/projects)"
             },
             {
+               "category": "YOLOv5 Object Detection Practice",
+               "description": (
+                   "A practical repository demonstrating the use of **YOLOv5** for real-time object detection tasks. "
+                   "Includes custom dataset preparation, annotation using Roboflow, model training, evaluation, and inference. "
+                   "Covers the complete object detection workflow from data pipeline to deployment-ready predictions. "
+                   "Ideal for learners and developers working with computer vision and real-time image recognition systems."
+                ),
+               "link": "[YOLOv5 Practice](https://github.com/mtptisid/YOLOV5_Practice)"
+            },
+            {
+               "category": "Custom CNN Model with PyTorch",
+               "description": (
+                    "An educational deep learning project building a **Convolutional Neural Network (CNN)** from scratch using **PyTorch**. "
+                    "Demonstrates architecture design, training loops, and evaluation on image datasets. "
+                    "Ideal for those learning about CNNs, PyTorch fundamentals, and custom model creation for image classification tasks."
+              ),
+              "link": "[PyTorch CNN Model](https://github.com/mtptisid/PyTorch-CNN-model)"
+            },
+            {
                "category": "ML Hands-On: Practical Machine Learning Exploration",
                "description": (
                     "A comprehensive hands-on repository that demonstrates key machine learning concepts using real-world datasets. "
