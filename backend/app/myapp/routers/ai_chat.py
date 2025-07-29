@@ -135,6 +135,22 @@ async def send_message(request: Request, message: MessageCreate):
         ],
         "experience": [
             {
+                "title": "Senior Artificial Intelligence Engineer",
+                "company": "Maveric Systems Limited",
+                "location": "Bangalore, India",
+                "duration": "June 2025 - Present",
+                "description": (
+                    "Architecting advanced **AI-driven systems** and **LLM-integrated applications** for enterprise-grade automation and insights. "
+                    "Built and deployed a scalable **MCP (Model Context Protocol) server** enabling modular tool and resource integration for LLM agents. "
+                    "Engineered **Agentic AI frameworks** using **AutoGen**, **CrewAI**, and **Agno**, enabling context-aware multi-agent collaboration. "
+                    "Developed reusable **tool wrappers**, **resource templates**, and customized **LLM memory modules** for task-specific agents. "
+                    "Implemented **agent orchestration**, secure **tool calling**, and **resource-bound execution** for fine-grained agent behavior. "
+                    "Pioneered **prompt engineering** strategies including **instructional design**, **role prompting**, and **dynamic input injection** to optimize LLM output. "
+                    "Integrated **LangChain**, **Ollama**, and **local vector databases** (FAISS, ChromaDB) for robust, offline-compatible RAG systems. "
+                    "Collaborated with cross-functional teams to deliver **AI-powered automation**, boosting operational efficiency by **40%**."
+                )
+            },
+            {
                 "title": "Senior Software Engineer",
                 "company": "Capgemini Technology Service Limited India",
                 "location": "Navi Mumbai, India",
@@ -163,7 +179,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "Created **bash scripts** for system monitoring and resource management."
                 )
             }
-        ],
+        ]
         "education": [
             {
                 "degree": "MCA - Master of Computer Applications",
