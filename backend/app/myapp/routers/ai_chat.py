@@ -141,13 +141,15 @@ async def send_message(request: Request, message: MessageCreate):
                 "duration": "June 2025 - Present",
                 "description": (
                     "Architecting advanced **AI-driven systems** and **LLM-integrated applications** for enterprise-grade automation and insights. "
-                    "Built and deployed a scalable **MCP (Model Context Protocol) server** enabling modular tool and resource integration for LLM agents. "
-                    "Engineered **Agentic AI frameworks** using **AutoGen**, **CrewAI**, and **Agno**, enabling context-aware multi-agent collaboration. "
-                    "Developed reusable **tool wrappers**, **resource templates**, and customized **LLM memory modules** for task-specific agents. "
-                    "Implemented **agent orchestration**, secure **tool calling**, and **resource-bound execution** for fine-grained agent behavior. "
-                    "Pioneered **prompt engineering** strategies including **instructional design**, **role prompting**, and **dynamic input injection** to optimize LLM output. "
-                    "Integrated **LangChain**, **Ollama**, and **local vector databases** (FAISS, ChromaDB) for robust, offline-compatible RAG systems. "
-                    "Collaborated with cross-functional teams to deliver **AI-powered automation**, boosting operational efficiency by **40%**."
+                    "Built and deployed a scalable **MCP (Model Context Protocol) server** with modular tool/resource orchestration and secure multi-client support. "
+                    "Developed **MCP clients** capable of selectively accessing tools and resources, enabling role-based permissions for agents. "
+                    "Engineered **Agentic AI frameworks** using **AutoGen**, **CrewAI**, and **Agno**, facilitating intelligent multi-agent collaboration across domains. "
+                    "Designed reusable **tool wrappers**, **resource templates**, and **prompt adapters** to abstract system functionality for agents. "
+                    "Performed rigorous **prompt evaluation** using automated benchmarks and manual feedback loops to optimize agent reliability. "
+                    "Led efforts on **static code analysis** and **security hardening** for LLM-based applications, ensuring compliance with **OWASP** and **LLM-specific threat models**. "
+                    "Implemented **role prompting**, **context chaining**, and **memory injection** strategies for high-fidelity LLM interaction. "
+                    "Integrated **LangChain**, **Ollama**, and **FAISS/ChromaDB** to enable scalable RAG pipelines with offline compatibility. "
+                    "Worked cross-functionally to deliver **AI-first automation**, improving decision velocity and reducing operational costs by **40%**."
                 )
             },
             {
