@@ -179,7 +179,7 @@ async def send_message(request: Request, message: MessageCreate):
                     "Created **bash scripts** for system monitoring and resource management."
                 )
             }
-        ]
+        ],
         "education": [
             {
                 "degree": "MCA - Master of Computer Applications",
