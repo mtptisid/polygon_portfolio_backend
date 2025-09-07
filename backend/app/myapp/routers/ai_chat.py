@@ -52,7 +52,7 @@ SESSIONS = {}
 
 async def search_web(query: str, model: str = "groq") -> str:
     """Perform a web search using DuckDuckGo via LangChain with fixed site-specific query."""
-    sites = ["github.com", "linkedin.com"]
+    sites = ["google.com", "wikipedia.org"]
     site_queries = [f"site:{site}" for site in sites]
     full_query = f"{query} {' OR '.join(site_queries)}"
     logger.info(f"Performing search with query: {full_query}")
