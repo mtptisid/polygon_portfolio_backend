@@ -4,7 +4,7 @@ from typing import List, Optional
 from datetime import datetime
 from uuid import uuid4
 from ..services.ai import ai_manager
-from langchain.tools import DuckDuckGoSearchRun
+#from langchain.tools import DuckDuckGoSearchRun
 import asyncio
 import logging
 import re
@@ -44,8 +44,10 @@ class Session(BaseModel):
     messages: List[SessionMessage]
     created_at: datetime
 
-# Initialize DuckDuckGo search tool
-search = DuckDuckGoSearchRun()
+from langchain.tools.duckduckgo_search import DuckDuckGoSearchTool
+
+# Initialize the DuckDuckGo Search Tool
+search = DuckDuckGoSearchTool()
 
 # In-memory session store (replace with database for production)
 SESSIONS = {}
