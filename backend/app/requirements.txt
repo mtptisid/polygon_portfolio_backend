@@ -88,3 +88,4 @@ uvicorn
 yarl
 zstandard
 ddgs
+duckduckgo-search
