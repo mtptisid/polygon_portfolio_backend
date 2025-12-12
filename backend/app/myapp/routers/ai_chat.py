@@ -46,7 +46,7 @@ class Session(BaseModel):
 
 from langchain.tools.duckduckgo_search import DuckDuckGoSearchTool
 
-# Initialize the DuckDuckGo Search Tool
+# Initialize DuckDuckGo Search Tool
 search = DuckDuckGoSearchTool()
 
 # In-memory session store (replace with database for production)
