@@ -44,10 +44,10 @@ class Session(BaseModel):
     messages: List[SessionMessage]
     created_at: datetime
 
-from langchain.tools.duckduckgo_search import DuckDuckGoSearchTool
+from langchain_community.tools import DuckDuckGoSearchRun
 
-# Initialize DuckDuckGo Search Tool
-search = DuckDuckGoSearchTool()
+# Initialize DuckDuckGo Search Run tool
+search = DuckDuckGoSearchRun()
 
 # In-memory session store (replace with database for production)
 SESSIONS = {}
