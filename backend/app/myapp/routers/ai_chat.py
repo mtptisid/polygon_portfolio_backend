@@ -1,51 +1,62 @@
 from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
 from datetime import datetime
 from uuid import uuid4
-from ..services.ai import ai_manager
 import asyncio
 import logging
 import re
 from fastapi.responses import JSONResponse
+from langchain_community.tools import DuckDuckGoSearchRun
+import os
+import google.genai as genai
+from google.genai.types import Content, Part, Tool, FunctionDeclaration
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 router = APIRouter(
     prefix="/api/ai_chat",
     tags=["Chat"]
 )
+
 # Define Pydantic models
 class MessageCreate(BaseModel):
     content: str
     model: str
-    session_id: Optional[str] = None  # Changed to str for consistency
+    session_id: Optional[Union[str, int]] = None  # Allow str or int
     tool: Optional[str] = None
+
 class MessageResponse(BaseModel):
     content: str
     is_bot: bool
-    session_id: str  # Changed to str
+    session_id: str
     timestamp: datetime
     tool_used: Optional[str] = None
+
 class SessionMessage(BaseModel):
     content: str
     is_bot: bool
     timestamp: datetime
     tool_used: Optional[str] = None
+
 class Session(BaseModel):
-    session_id: str  # Changed to str
+    session_id: str
     messages: List[SessionMessage]
     created_at: datetime
-from langchain_community.tools import DuckDuckGoSearchRun
+
 # Initialize DuckDuckGo Search Run tool
 search = DuckDuckGoSearchRun()
+
 # In-memory session store (replace with database for production)
 SESSIONS = {}
+
 async def search_web(query: str, model: str = "groq") -> str:
     """Perform a web search using DuckDuckGo via LangChain without site restrictions for broader results."""
     full_query = query
     logger.info(f"Performing search with query: {full_query}")
-   
+  
     try:
         search_results = await asyncio.to_thread(search.run, full_query)
         if not search_results or "No good" in search_results:
@@ -61,6 +72,7 @@ async def search_web(query: str, model: str = "groq") -> str:
     except Exception as e:
         logger.error(f"Search failed: {str(e)}")
         return f"Web Search Results: Search failed: {str(e)}. Proceed with general knowledge."
+
 def clean_text(text: str) -> str:
     """Clean text by removing excessive newlines and unwanted characters."""
     if not text:
@@ -69,15 +81,64 @@ def clean_text(text: str) -> str:
     text = re.sub(r'[\r\t]', '', text)
     text = text.strip()
     return text
+
+async def get_gemini_response(messages: list):
+    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+
+    model_name = "gemini-1.5-flash"  # Valid model
+
+    # Map messages to contents
+    contents = []
+    for msg in messages:
+        role = "user" if msg["role"] == "system" else msg["role"]
+        contents.append(Content(role=role, parts=[Part(text=msg["content"])]))
+
+    # Define DuckDuckGo search tool
+    search_tool = Tool(
+        function_declarations=[
+            FunctionDeclaration(
+                name="search_web",
+                description="Perform a web search using DuckDuckGo.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The search query."}
+                    },
+                    "required": ["query"]
+                }
+            )
+        ]
+    )
+
+    model = genai.GenerativeModel(model_name, tools=[search_tool])
+
+    full_response = ""
+    response = model.generate_content(contents, stream=True)
+
+    for chunk in response:
+        if hasattr(chunk, 'function_call') and chunk.function_call:
+            fc = chunk.function_call
+            if fc.name == "search_web":
+                params = dict(fc.args)
+                tool_result = await search_web(params['query'])
+                contents.append(Content(parts=[Part(function_response={"name": "search_web", "response": tool_result})]))
+                response = model.generate_content(contents)
+                full_response += response.text
+                break
+        else:
+            full_response += chunk.text
+
+    return full_response
+
 @router.post("/request", response_model=MessageResponse)
 async def send_message(request: Request, message: MessageCreate):
     """Send a message to the selected AI model, optionally using tools."""
     raw_body = await request.body()
     logger.info(f"Raw request payload: {raw_body.decode('utf-8')}")
-   
+  
     if not message.content.strip():
         raise HTTPException(status_code=400, detail="Message content cannot be empty")
-    session_id = message.session_id or str(uuid4())
+    session_id = str(message.session_id or uuid4())  # Cast to str
     if session_id not in SESSIONS:
         SESSIONS[session_id] = {
             "session_id": session_id,
@@ -408,7 +469,7 @@ async def send_message(request: Request, message: MessageCreate):
                 "description": (
                     "A **bash script** updating **CIFS entries** in **/etc/fstab** on remote **Linux servers**, replacing usernames with **UIDs/GIDs** for proper mounts."
                 ),
-                "link": "https://siddharamayya.in/projects"  # Fixed typo from /projectsr
+                "link": "https://siddharamayya.in/projects" # Fixed typo from /projectsr
             },
             {
                 "category": "Django Tutor Application",
@@ -708,8 +769,8 @@ async def send_message(request: Request, message: MessageCreate):
         }
         # You can add more sarcastic examples here if needed, e.g.,
         # {
-        #     "content": "What's Siddharamayya's favorite color?",
-        #     "response": "Blue, like the screen you'll get if you keep asking personal stuff! 😜"
+        # "content": "What's Siddharamayya's favorite color?",
+        # "response": "Blue, like the screen you'll get if you keep asking personal stuff! 😜"
         # }
     ]
     if message.model == "groq":
@@ -775,7 +836,10 @@ async def send_message(request: Request, message: MessageCreate):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            response_content = await ai_manager.get_response(message.model, chat_history)
+            if message.model == "gemini":
+                response_content = await get_gemini_response(chat_history)
+            else:
+                response_content = await ai_manager.get_response(message.model, chat_history)  # Assume ai_manager has groq
             break
         except HTTPException as e:
             if e.status_code == 503 and attempt < max_retries - 1:
@@ -795,7 +859,7 @@ async def send_message(request: Request, message: MessageCreate):
         tool_used=tool_used
     )
     SESSIONS[session_id]["messages"].append(bot_message)
-    logger.info(f"Generated response: {response_content[:200]}...")  # Log snippet to debug
+    logger.info(f"Generated response: {response_content[:200]}...") # Log snippet to debug
     return MessageResponse(
         content=response_content,
         is_bot=True,
