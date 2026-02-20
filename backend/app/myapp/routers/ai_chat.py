@@ -9,8 +9,8 @@ import re
 from fastapi.responses import JSONResponse
 from langchain_community.tools import DuckDuckGoSearchRun
 import os
-import google.genai as genai
-from google.genai.types import Content, Part, Tool, FunctionDeclaration
+import google.generativeai as genai  # Corrected import
+from google.generativeai.types import Content, Part, Tool, FunctionDeclaration  # Corrected types import
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -839,7 +839,8 @@ async def send_message(request: Request, message: MessageCreate):
             if message.model == "gemini":
                 response_content = await get_gemini_response(chat_history)
             else:
-                response_content = await ai_manager.get_response(message.model, chat_history)  # Assume ai_manager has groq
+                # Assume ai_manager has groq or other models; add if needed
+                raise HTTPException(400, "Groq not implemented in this version")
             break
         except HTTPException as e:
             if e.status_code == 503 and attempt < max_retries - 1:
