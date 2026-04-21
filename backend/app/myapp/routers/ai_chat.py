@@ -74,9 +74,15 @@ async def search_web(query: str, model: str = "groq") -> str:
         logger.error(f"Search failed: {str(e)}")
         return f"Web Search Results: Search failed: {str(e)}. Proceed with general knowledge."
 
-def clean_text(text: str) -> str:
+def clean_text(text) -> str:
     """Clean text by removing excessive newlines and unwanted characters."""
-    if not text:
+    # Handle list responses (e.g. gemini-2.5-flash thinking blocks)
+    if isinstance(text, list):
+        text = "".join(
+            part if isinstance(part, str) else part.get("text", "") if isinstance(part, dict) else str(part)
+            for part in text
+        )
+    if not text or not isinstance(text, str):
         return "No response generated. Please try rephrasing your query."
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[\r\t]', '', text)
