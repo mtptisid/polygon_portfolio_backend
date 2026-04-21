@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 import openai
 import aiohttp
-import anyio
 from groq import Groq
-import google.generativeai as genai
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from typing import List, Dict
 import os
 from dotenv import load_dotenv
@@ -39,21 +39,27 @@ class OpenAIService:
 # --------------------------
 # Gemini Service
 # --------------------------
+_ROLE_MAP = {
+    "system": SystemMessage,
+    "user": HumanMessage,
+    "assistant": AIMessage,
+}
+
 class GeminiService:
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY")
-        if not self.api_key:
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
             raise HTTPException(status_code=500, detail="GEMINI_API_KEY not set in environment variables")
-        genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel("gemini-2.0-flash")
+        self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
 
     async def get_response(self, messages: List[Dict[str, str]]) -> str:
+        lc_messages = [
+            _ROLE_MAP.get(msg["role"], HumanMessage)(content=msg["content"])
+            for msg in messages
+        ]
         try:
-            parts = [msg["content"] for msg in messages]
-            response = await anyio.to_thread.run_sync(
-                lambda: self.model.generate_content(parts)
-            )
-            return response.text
+            response = await self.llm.ainvoke(lc_messages)
+            return response.content
         except Exception as e:
             raise HTTPException(
                 status_code=503,

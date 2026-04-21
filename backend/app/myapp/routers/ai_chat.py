@@ -9,8 +9,8 @@ import re
 from fastapi.responses import JSONResponse
 from langchain_community.tools import DuckDuckGoSearchRun
 import os
-import google.generativeai as genai  # Corrected import
-from google.generativeai.types import Content, Part, Tool, FunctionDeclaration  # Corrected types import
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -82,53 +82,32 @@ def clean_text(text: str) -> str:
     text = text.strip()
     return text
 
-async def get_gemini_response(messages: list):
-    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+_ROLE_MAP = {
+    "system": SystemMessage,
+    "user": HumanMessage,
+    "assistant": AIMessage,
+}
 
-    model_name = "gemini-1.5-flash"  # Valid model
 
-    # Map messages to contents
-    contents = []
-    for msg in messages:
-        role = "user" if msg["role"] == "system" else msg["role"]
-        contents.append(Content(role=role, parts=[Part(text=msg["content"])]))
+async def get_gemini_response(messages: list) -> str:
+    lc_messages = [
+        _ROLE_MAP.get(m["role"], HumanMessage)(content=m["content"])
+        for m in messages
+    ]
 
-    # Define DuckDuckGo search tool
-    search_tool = Tool(
-        function_declarations=[
-            FunctionDeclaration(
-                name="search_web",
-                description="Perform a web search using DuckDuckGo.",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "The search query."}
-                    },
-                    "required": ["query"]
-                }
-            )
-        ]
-    )
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    llm_with_tools = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=gemini_api_key).bind_tools([search])
+    response = await llm_with_tools.ainvoke(lc_messages)
 
-    model = genai.GenerativeModel(model_name, tools=[search_tool])
+    if response.tool_calls:
+        for tool_call in response.tool_calls:
+            query = tool_call["args"]["query"]
+            result = await asyncio.to_thread(search.run, query)
+            lc_messages.append(AIMessage(content="", tool_calls=[tool_call]))
+            lc_messages.append(ToolMessage(content=result, tool_call_id=tool_call["id"]))
+        response = await llm_with_tools.ainvoke(lc_messages)
 
-    full_response = ""
-    response = model.generate_content(contents, stream=True)
-
-    for chunk in response:
-        if hasattr(chunk, 'function_call') and chunk.function_call:
-            fc = chunk.function_call
-            if fc.name == "search_web":
-                params = dict(fc.args)
-                tool_result = await search_web(params['query'])
-                contents.append(Content(parts=[Part(function_response={"name": "search_web", "response": tool_result})]))
-                response = model.generate_content(contents)
-                full_response += response.text
-                break
-        else:
-            full_response += chunk.text
-
-    return full_response
+    return response.content
 
 @router.post("/request", response_model=MessageResponse)
 async def send_message(request: Request, message: MessageCreate):
@@ -818,7 +797,8 @@ async def send_message(request: Request, message: MessageCreate):
             message.content
         )
     chat_history = [
-        {"role": "system", "content": system_prompt}
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": message.content},
     ]
     response_content = ""
     tool_used = None
@@ -831,7 +811,8 @@ async def send_message(request: Request, message: MessageCreate):
             "Provide a detailed response in **Markdown**, using **[name](link)** for all URLs in the search results or elsewhere. Even if search results are limited, explain using general knowledge and relate to Siddharamayya's expertise if relevant (e.g., his MCP server project)."
         )
         chat_history = [
-            {"role": "system", "content": augmented_prompt}
+            {"role": "system", "content": augmented_prompt},
+            {"role": "user", "content": message.content},
         ]
     max_retries = 3
     for attempt in range(max_retries):
