@@ -149,9 +149,10 @@ async def send_message(request: Request, message: MessageCreate):
             "phone": "+91 97406 71620",
             "location": "Yadur, Chikodi, Belagavi, Karnataka, India",
             "description": (
-                "**Siddharamayya Mathapati** is a seasoned **AI/ML Engineer** and **Senior Software Engineer** with over **4 years** of experience in **AI**, **MLOps**, **DevOps**, **web development**, and **system automation**. "
-                "He specializes in **large language models (LLMs)**, **generative AI**, **RAG applications**, and **cloud-native solutions**, delivering scalable systems for **finance**, **healthcare**, **agriculture**, and **IT infrastructure**. "
-                "At **Capgemini**, he led **MLOps pipelines**, optimized **LLM fine-tuning**, and automated **infrastructure management**. His diverse portfolio includes **IoT**, **Ansible automation**, and **bash scripting**, complemented by **Udemy certifications**."
+                "**Siddharamayya Mathapati** is a seasoned **Senior AI Engineer** with over **4 years** of experience specializing in **production-grade multi-agent AI systems**, **LLM orchestration**, and **enterprise AI platforms** for **banking**, **fintech**, and **IT operations**. "
+                "Currently at **Maveric Systems**, he has mastered **LangChain**, **LangGraph**, **AutoGen**, and **MCP (Model Context Protocol)**, building real-time AML investigation platforms, regulatory compliance pipelines, and AI-powered code analysis systems. "
+                "He excels in **LLM observability** (LangSmith, OpenTelemetry), **cloud AI** (AWS Bedrock, GCP, Azure), **streaming architectures** (Kafka, SSE), and **vector databases** (MongoDB Atlas, FAISS, ChromaDB). "
+                "At **Capgemini** (2021–2025), he led **MLOps pipelines**, optimized **LLM fine-tuning** (QLoRA, LoRA), and automated **infrastructure management**. His diverse portfolio includes **IoT**, **Ansible automation**, **React 19 / TypeScript** frontends, and **bash scripting**, complemented by **Udemy certifications**."
             ),
             "availability": "Immediately available for new opportunities as of May 2025."
         },
@@ -159,11 +160,14 @@ async def send_message(request: Request, message: MessageCreate):
             {"name": "Python", "proficiency": "90%", "description": "Expert in **AI/ML**, **web development**, **automation**, and **system scripting** with **TensorFlow**, **PyTorch**, **LangChain**, **FastAPI**, and **Scrapy**."},
             {"name": "Deep Learning", "proficiency": "85%", "description": "Designs **neural networks** for **NLP**, **computer vision**, and **predictive modeling** using **TensorFlow** and **PyTorch**."},
             {"name": "Machine Learning/AI", "proficiency": "85%", "description": "Builds **LLMs**, **RAG applications**, and **predictive models** with **QLoRA**, **RLHF**, and **Random Forest**."},
+            {"name": "Agentic AI & LLM Frameworks", "proficiency": "90%", "description": "Builds production-grade multi-agent systems using **LangChain**, **LangGraph**, **AutoGen**, **CrewAI**, and **Agno**; implements agentic pipelines with tool-calling, memory, and multi-step reasoning."},
+            {"name": "MCP (Model Context Protocol)", "proficiency": "90%", "description": "Designs and deploys spec-compliant **MCP servers** exposing tools and resources over HTTP, WebSocket, and stdio; integrates with **AutoGen** and other agent frameworks for natural-language operations."},
+            {"name": "LLM Observability & Evaluation", "proficiency": "85%", "description": "Implements **LangSmith** tracing with `@traceable` decorators, A/B prompt testing, annotation queues, and **LangSmith Hub** for prompt versioning; uses **OpenTelemetry** for distributed LLM workflow observability."},
             {"name": "Data Science", "proficiency": "85%", "description": "Skilled in **data preprocessing**, **visualization**, and **analysis** with **Pandas**, **NumPy**, and **Matplotlib**."},
             {"name": "DevOps", "tools": ["Docker", "Kubernetes", "Ansible", "Jenkins", "GitHub Actions"], "description": "Automates **CI/CD pipelines**, **cloud infrastructure**, and **Ansible-based deployments**."},
-            {"name": "Web Development", "proficiency": "95%", "description": "Develops responsive applications with **React**, **Flask**, **Django**, **FastAPI**, and **Streamlit**."},
-            {"name": "DBMS & SQL", "proficiency": "80%", "description": "Manages **MySQL**, **PostgreSQL**, **MongoDB**, and **vector databases** (FAISS, ChromaDB)."},
-            {"name": "Cloud Engineering", "proficiency": "85%", "description": "Optimizes **AWS**, **GCP**, and **Azure** for cost and performance."},
+            {"name": "Web Development", "proficiency": "95%", "description": "Develops responsive applications with **React 19**, **TypeScript**, **Tailwind CSS**, **Flask**, **Django**, **FastAPI**, and **Streamlit**; builds real-time UIs with **Server-Sent Events** and **D3-Geo** visualisations."},
+            {"name": "DBMS & SQL", "proficiency": "80%", "description": "Manages **MySQL**, **PostgreSQL**, **MongoDB Atlas** (vector store), and **vector databases** (FAISS, ChromaDB)."},
+            {"name": "Cloud Engineering", "proficiency": "85%", "description": "Optimizes **AWS** (Bedrock, SageMaker), **GCP**, and **Azure** (DevOps) for cost and performance; integrates cloud-native AI services."},
             {"name": "IoT", "proficiency": "80%", "description": "Builds real-time systems with **Raspberry Pi**, **ESP32**, **RFID**, and **GPS**."},
             {"name": "System Administration", "proficiency": "85%", "description": "Automates **Linux** system management with **Ansible**, **bash**, and **systemd**."}
         ],
@@ -174,16 +178,16 @@ async def send_message(request: Request, message: MessageCreate):
                 "location": "Bangalore, India",
                 "duration": "June 2025 - Present",
                 "description": (
-                    "Architecting advanced **AI-driven systems** and **LLM-integrated applications** for enterprise-grade automation and insights. "
-                    "Built and deployed a scalable **MCP (Model Context Protocol) server** with modular tool/resource orchestration and secure multi-client support. "
-                    "Developed **MCP clients** capable of selectively accessing tools and resources, enabling role-based permissions for agents. "
-                    "Engineered **Agentic AI frameworks** using **AutoGen**, **CrewAI**, and **Agno**, facilitating intelligent multi-agent collaboration across domains. "
-                    "Designed reusable **tool wrappers**, **resource templates**, and **prompt adapters** to abstract system functionality for agents. "
-                    "Performed rigorous **prompt evaluation** using automated benchmarks and manual feedback loops to optimize agent reliability. "
-                    "Led efforts on **static code analysis** and **security hardening** for LLM-based applications, ensuring compliance with **OWASP** and **LLM-specific threat models**. "
-                    "Implemented **role prompting**, **context chaining**, and **memory injection** strategies for high-fidelity LLM interaction. "
-                    "Integrated **LangChain**, **Ollama**, and **FAISS/ChromaDB** to enable scalable RAG pipelines with offline compatibility. "
-                    "Worked cross-functionally to deliver **AI-first automation**, improving decision velocity and reducing operational costs by **40%**."
+                    "As a **Senior AI Engineer** at Maveric Systems, mastered and applied **LangChain**, **LangGraph**, and **multi-agent orchestration** at production scale across multiple enterprise AI initiatives in the **banking and financial services** domain. "
+                    "Built a production-grade **multi-agent AML investigation platform** using **LangGraph** (8-node sequential pipeline) and **AutoGen**, ingesting real-time **Kafka alert streams**, performing behavioural analysis across **7 risk dimensions**, and auto-generating **SAR reports** aligned with L1 AML investigation checklists. "
+                    "Integrated **AWS Bedrock** (Mistral + Titan Embeddings), **MongoDB Atlas vector store**, and **LangSmith** distributed tracing with **PII redaction**, per-agent latency instrumentation, and schema-validated JSON outputs to ensure full auditability of financial compliance decisions. "
+                    "Designed **PRISM**, an end-to-end AI pipeline converting regulatory PDFs into executable **DMN/DRL rules** deployed to **Apache KIE/Drools**; implemented a **7-stage async LLM workflow** using **Gemini 2.5 Flash** with **OpenTelemetry** observability and four-eyes governance (**90.6% complete**, 18 certified gates). "
+                    "Architected **CodeLens**, a microservices-based code analysis platform with **7 independent FastAPI agent services** (Ingestion, Parsing, Explainer, Quality, Dependency, Refactor, Coordinator) integrating **Azure DevOps**, **GitHub**, and **SQL Server** using **Tree-Sitter AST** parsing and **Ollama**-hosted LLMs. "
+                    "Built a spec-compliant **MCP (Model Context Protocol) server** exposing **10+ banking tools** and **11 fraud-data resources** over HTTP, WebSocket, and stdio; integrated with **AutoGen** multi-agent framework running **Qwen2.5/Gemma3** models via **Ollama** for natural-language banking operations. "
+                    "Developed a real-time **IT Operations Command Center** in **React 19 / TypeScript / Tailwind CSS** with **Server-Sent Events**, geo-hotspot world-map visualisations (**D3-Geo**), auto-healing panels, and noise-filtration views with sub-second update latency. "
+                    "Implemented an **LLM observability stack** using **LangSmith** with `@traceable` decorators, A/B prompt testing with statistical confidence tracking, annotation queues for human-feedback collection, and **LangSmith Hub** for prompt versioning and rollback. "
+                    "Scoped and designed an **AI-powered loan delinquency prediction system** featuring **0–999 risk scoring**, 3 contextual repayment strategy recommendations per customer, scenario taxonomy (Temporary Income Disruption vs. Chronic Financial Stress), and a multi-channel personalised communication framework targeting **NPA reduction**. "
+                    "**Key technologies mastered**: LangChain, LangGraph, AutoGen, CrewAI, MCP, AWS Bedrock, LangSmith, OpenTelemetry, Kafka, MongoDB Atlas, Apache Drools, Tree-Sitter, Ollama, Gemini 2.5 Flash, React 19, D3-Geo."
                 )
             },
             {
@@ -783,8 +787,8 @@ async def send_message(request: Request, message: MessageCreate):
             f"**Full Name**: {PROFILE_DATA['about']['full_name']}\n"
             f"**Description**: {PROFILE_DATA['about']['description']}\n"
             f"**Availability**: {PROFILE_DATA['about']['availability']}\n"
-            f"**Skills Summary**: Expert in AI/ML (LLMs, RAG), DevOps (Docker, Kubernetes, Ansible), Web Dev (FastAPI, React), Cloud (AWS, GCP), IoT, System Admin.\n"
-            f"**Experience Summary**: Senior AI Engineer at Maveric (2025-present), Senior Software at Capgemini (2021-2025), Intern at X-Cencia (2020-2021).\n"
+            f"**Skills Summary**: Expert in **Agentic AI** (LangChain, LangGraph, AutoGen, CrewAI, MCP), **AI/ML** (LLMs, RAG, fine-tuning), **LLM Observability** (LangSmith, OpenTelemetry), **DevOps** (Docker, Kubernetes, Ansible), **Web Dev** (FastAPI, React 19, TypeScript), **Cloud** (AWS Bedrock, GCP, Azure), **Streaming** (Kafka, SSE), **Vector DBs** (MongoDB Atlas, FAISS, ChromaDB), IoT, System Admin.\n"
+            f"**Experience Summary**: Senior AI Engineer at Maveric Systems (June 2025–present) — mastered LangChain, LangGraph, multi-agent systems (AutoGen, CrewAI), MCP servers, AWS Bedrock, LangSmith observability, and production AI for banking/fintech. Senior Software Engineer at Capgemini (2021–2025) — MLOps, LLM fine-tuning, RAG, cloud infrastructure. Intern at X-Cencia (2020–2021) — computer vision, IoT.\n"
             f"**Education**: MCA (7.2 CGPA), BCA (6.8 CGPA).\n"
             f"**Projects Summary**: Includes SysAdmin-GPT, YOLOv5 Practice, RAG Hands-On, IPL Score Prediction, CodeSage, Automation Lab, AICT – Maveric, MCP Framework, Codelens, Fraud Sight, and many Ansible/bash scripts. Links: GitHub repositories and https://siddharamayya.in/projects.\n"
             f"**Certifications**: LLM Engineering, MLOps Bootcamp, Python Data Analysis, Deep Learning (Udemy).\n"
