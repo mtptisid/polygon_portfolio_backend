@@ -11,6 +11,7 @@ from langchain_community.tools import DuckDuckGoSearchRun
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
+from myapp.services.ai import ai_manager
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -107,7 +108,9 @@ async def get_gemini_response(messages: list) -> str:
             lc_messages.append(ToolMessage(content=result, tool_call_id=tool_call["id"]))
         response = await llm_with_tools.ainvoke(lc_messages)
 
-    return response.content
+    return response.content if isinstance(response.content, str) else "".join(
+        part if isinstance(part, str) else part.get("text", "") for part in response.content
+    )
 
 @router.post("/request", response_model=MessageResponse)
 async def send_message(request: Request, message: MessageCreate):
@@ -820,8 +823,7 @@ async def send_message(request: Request, message: MessageCreate):
             if message.model == "gemini":
                 response_content = await get_gemini_response(chat_history)
             else:
-                # Assume ai_manager has groq or other models; add if needed
-                raise HTTPException(400, "Groq not implemented in this version")
+                response_content = await ai_manager.get_response(message.model, chat_history)
             break
         except HTTPException as e:
             if e.status_code == 503 and attempt < max_retries - 1:
