@@ -17,8 +17,8 @@ load_dotenv()
 class OpenAIService:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
-        if not self.api_key:
-            raise HTTPException(status_code=500, detail="OPENAI_API_KEY not set in environment variables")
+        if not self.api_key or self.api_key == "your_openai_api_key_here":
+            raise ValueError("OPENAI_API_KEY not set in environment variables")
         openai.api_key = self.api_key
         self.model = "gpt-3.5-turbo"
 
@@ -48,8 +48,8 @@ _ROLE_MAP = {
 class GeminiService:
     def __init__(self):
         api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
-            raise HTTPException(status_code=500, detail="GEMINI_API_KEY not set in environment variables")
+        if not api_key or api_key == "your_gemini_api_key_here":
+            raise ValueError("GEMINI_API_KEY not set in environment variables")
         self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
 
     async def get_response(self, messages: List[Dict[str, str]]) -> str:
@@ -72,8 +72,8 @@ class GeminiService:
 class GroqService:
     def __init__(self):
         self.api_key = os.getenv("GROQ_API_KEY")
-        if not self.api_key:
-            raise HTTPException(status_code=500, detail="GROQ_API_KEY not set in environment variables")
+        if not self.api_key or self.api_key == "your_groq_api_key_here":
+            raise ValueError("GROQ_API_KEY not set in environment variables")
         self.model = "llama-3.3-70b-versatile" #llama3-70b-8192 and llama3-8b-8192 will be deprecated from GroqCloud™.
         self.client = Groq(api_key=self.api_key)
 
@@ -96,8 +96,8 @@ class GroqService:
 class DeepseekService:
     def __init__(self):
         self.api_key = os.getenv("DEEPSEEK_API_KEY")
-        if not self.api_key:
-            raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not set in environment variables")
+        if not self.api_key or self.api_key == "your_deepseek_api_key_here":
+            raise ValueError("DEEPSEEK_API_KEY not set in environment variables")
         self.model = "deepseek-chat"
         self.base_url = "https://api.deepseek.com/v1/chat/completions"
 
@@ -133,16 +133,43 @@ class DeepseekService:
 # --------------------------
 class AIManager:
     def __init__(self):
-        self.services = {
-            "openai": OpenAIService(),
-            "gemini": GeminiService(),
-            "groq": GroqService(),
-            "deepseek": DeepseekService()
-        }
+        """Initialize AI services with error handling"""
+        self.services = {}
+        
+        # Try to initialize each service, skip if API key is missing
+        try:
+            self.services["openai"] = OpenAIService()
+        except Exception as e:
+            logger.warning(f"OpenAI service not available: {e}")
+        
+        try:
+            self.services["gemini"] = GeminiService()
+        except Exception as e:
+            logger.warning(f"Gemini service not available: {e}")
+        
+        try:
+            self.services["groq"] = GroqService()
+        except Exception as e:
+            logger.warning(f"Groq service not available: {e}")
+        
+        try:
+            self.services["deepseek"] = DeepseekService()
+        except Exception as e:
+            logger.warning(f"DeepSeek service not available: {e}")
+        
+        if not self.services:
+            logger.error("No AI services available! Please set API keys.")
 
     async def get_response(self, model: str, messages: List[Dict[str, str]]) -> str:
         if model not in self.services:
-            raise HTTPException(status_code=400, detail=f"Unsupported model: {model}")
+            # Try to find any available service
+            if self.services:
+                available = list(self.services.keys())[0]
+                logger.warning(f"Model {model} not available, using {available}")
+                model = available
+            else:
+                raise HTTPException(status_code=503, detail="No AI services available")
+        
         return await self.services[model].get_response(messages)
 
 # Export singleton
