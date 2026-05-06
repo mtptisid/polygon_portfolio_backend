@@ -2,14 +2,44 @@ import os
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
-from myapp.models import db_models
-from myapp.database import engine
-from myapp.routers import user, authentication, ai_chat, contact, sendmail, hr_assistant, admin
-from myapp.startup import startup_tasks
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging FIRST
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
+
+# Log startup
+logger.info("=" * 60)
+logger.info("Starting Portfolio Backend API")
+logger.info("=" * 60)
+
+# Import models and database with error handling
+try:
+    from myapp.models import db_models
+    from myapp.database import engine
+    logger.info("✓ Database models imported successfully")
+except Exception as e:
+    logger.error(f"✗ Failed to import database models: {e}")
+    db_models = None
+    engine = None
+
+# Import routers with error handling
+try:
+    from myapp.routers import user, authentication, ai_chat, contact, sendmail, hr_assistant, admin
+    logger.info("✓ Routers imported successfully")
+except Exception as e:
+    logger.error(f"✗ Failed to import routers: {e}", exc_info=True)
+    raise
+
+# Import startup tasks
+try:
+    from myapp.startup import startup_tasks
+    logger.info("✓ Startup tasks imported successfully")
+except Exception as e:
+    logger.error(f"✗ Failed to import startup tasks: {e}")
+    startup_tasks = None
 
 app = FastAPI(title="Portfolio Backend API", version="1.0.0")
 
@@ -18,19 +48,30 @@ app = FastAPI(title="Portfolio Backend API", version="1.0.0")
 async def on_startup():
     """Run startup tasks when the application starts."""
     try:
-        logger.info("Starting application...")
+        logger.info("Running startup tasks...")
         
         # Create database tables
-        logger.info("Creating database tables...")
-        db_models.Base.metadata.create_all(engine)
-        logger.info("Database tables created successfully")
+        if db_models and engine:
+            try:
+                logger.info("Creating database tables...")
+                db_models.Base.metadata.create_all(engine)
+                logger.info("✓ Database tables created successfully")
+            except Exception as e:
+                logger.error(f"✗ Database table creation failed: {e}")
         
         # Run startup tasks (RAG ingestion, etc.)
-        await startup_tasks()
+        if startup_tasks:
+            try:
+                await startup_tasks()
+                logger.info("✓ Startup tasks completed")
+            except Exception as e:
+                logger.error(f"✗ Startup tasks failed: {e}")
         
-        logger.info("Application startup completed successfully")
+        logger.info("=" * 60)
+        logger.info("Application startup completed")
+        logger.info("=" * 60)
     except Exception as e:
-        logger.error(f"Startup failed: {e}", exc_info=True)
+        logger.error(f"✗ Startup failed: {e}", exc_info=True)
         # Don't raise - let the app start anyway
         logger.warning("Application will continue with limited functionality")
 
