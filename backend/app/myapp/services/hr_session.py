@@ -1,0 +1,287 @@
+"""
+HR Session Management with Conversation Memory.
+
+Manages active recruiter sessions with conversation memory.
+"""
+
+import logging
+from typing import Dict, Optional
+from datetime import datetime
+from uuid import uuid4
+
+from myapp.models.hr_models import (
+    RecruiterInfo,
+    RecruiterSession,
+    ChatMessage,
+    SessionMetadata
+)
+
+logger = logging.getLogger(__name__)
+
+
+class HRSessionManager:
+    """
+    Manages active HR assistant sessions with conversation memory.
+    
+    Each session maintains:
+    - Recruiter information
+    - Conversation history for context
+    - Chat history
+    - Session metadata
+    """
+    
+    def __init__(self, max_sessions: int = 100):
+        """
+        Initialize the session manager.
+        
+        Args:
+            max_sessions: Maximum number of concurrent sessions
+        """
+        self.max_sessions = max_sessions
+        self.active_sessions: Dict[str, dict] = {}
+        logger.info(f"HRSessionManager initialized (max sessions: {max_sessions})")
+    
+    def create_session(self, recruiter_info: RecruiterInfo) -> str:
+        """
+        Create a new HR session.
+        
+        Args:
+            recruiter_info: Information about the recruiter
+            
+        Returns:
+            Session ID (UUID string)
+        """
+        # Check session limit
+        if len(self.active_sessions) >= self.max_sessions:
+            self._remove_oldest_session()
+        
+        # Generate unique session ID
+        session_id = str(uuid4())
+        
+        # Create session object
+        session = {
+            "session_id": session_id,
+            "recruiter_info": recruiter_info,
+            "chat_history": [],
+            "start_time": datetime.utcnow(),
+            "model_used": "gemini",  # Default, can be updated
+            "message_count": 0
+        }
+        
+        self.active_sessions[session_id] = session
+        
+        logger.info(
+            f"Session created: {session_id} "
+            f"(recruiter: {recruiter_info.name}, company: {recruiter_info.company})"
+        )
+        
+        return session_id
+    
+    def get_session(self, session_id: str) -> Optional[dict]:
+        """
+        Get an active session.
+        
+        Args:
+            session_id: Session identifier
+            
+        Returns:
+            Session dict if found, None otherwise
+        """
+        session = self.active_sessions.get(session_id)
+        
+        if not session:
+            logger.warning(f"Session not found: {session_id}")
+        
+        return session
+    
+    def add_message(
+        self,
+        session_id: str,
+        role: str,
+        content: str,
+        model: Optional[str] = None
+    ) -> bool:
+        """
+        Add a message to the session.
+        
+        Args:
+            session_id: Session identifier
+            role: Message role ("user" or "assistant")
+            content: Message content
+            model: LLM model used (optional, for tracking)
+            
+        Returns:
+            True if successful, False if session not found
+        """
+        session = self.get_session(session_id)
+        
+        if not session:
+            return False
+        
+        # Create chat message
+        message = ChatMessage(
+            role=role,
+            content=content,
+            timestamp=datetime.utcnow()
+        )
+        
+        # Add to chat history
+        session["chat_history"].append(message)
+        session["message_count"] += 1
+        
+        # Update model if provided
+        if model:
+            session["model_used"] = model
+        
+        logger.debug(f"Message added to session {session_id}: {role}")
+        return True
+    
+    def get_chat_history(self, session_id: str) -> list:
+        """
+        Get the chat history for a session.
+        
+        Args:
+            session_id: Session identifier
+            
+        Returns:
+            List of ChatMessage objects
+        """
+        session = self.get_session(session_id)
+        
+        if not session:
+            return []
+        
+        return session["chat_history"]
+    
+    def get_memory_context(self, session_id: str) -> str:
+        """
+        Get the conversation context from chat history.
+        
+        Args:
+            session_id: Session identifier
+            
+        Returns:
+            Formatted conversation history string
+        """
+        session = self.get_session(session_id)
+        
+        if not session:
+            return ""
+        
+        try:
+            chat_history = session["chat_history"]
+            
+            # Format the history
+            formatted_history = []
+            for msg in chat_history:
+                role = "User" if msg.role == "user" else "Assistant"
+                formatted_history.append(f"{role}: {msg.content}")
+            
+            return "\n".join(formatted_history)
+            
+        except Exception as e:
+            logger.error(f"Failed to get memory context: {e}")
+            return ""
+    
+    def end_session(self, session_id: str) -> Optional[RecruiterSession]:
+        """
+        End a session and prepare it for storage.
+        
+        Args:
+            session_id: Session identifier
+            
+        Returns:
+            RecruiterSession object ready for storage, or None if session not found
+        """
+        session = self.get_session(session_id)
+        
+        if not session:
+            return None
+        
+        # Calculate session metadata
+        end_time = datetime.utcnow()
+        start_time = session["start_time"]
+        duration_seconds = int((end_time - start_time).total_seconds())
+        
+        metadata = SessionMetadata(
+            start_time=start_time,
+            end_time=end_time,
+            session_duration_seconds=duration_seconds,
+            total_messages=session["message_count"],
+            model_used=session["model_used"]
+        )
+        
+        # Create RecruiterSession object
+        recruiter_session = RecruiterSession(
+            session_id=session_id,
+            recruiter_info=session["recruiter_info"],
+            chat_history=session["chat_history"],
+            analysis=None,  # Will be added by analysis service
+            metadata=metadata
+        )
+        
+        # Remove from active sessions
+        del self.active_sessions[session_id]
+        
+        logger.info(
+            f"Session ended: {session_id} "
+            f"(duration: {duration_seconds}s, messages: {session['message_count']})"
+        )
+        
+        return recruiter_session
+    
+    def _remove_oldest_session(self):
+        """Remove the oldest session to make room for a new one."""
+        if not self.active_sessions:
+            return
+        
+        # Find oldest session by start_time
+        oldest_id = min(
+            self.active_sessions.keys(),
+            key=lambda sid: self.active_sessions[sid]["start_time"]
+        )
+        
+        oldest_session = self.active_sessions[oldest_id]
+        logger.warning(
+            f"Removing oldest session due to limit: {oldest_id} "
+            f"(recruiter: {oldest_session['recruiter_info'].name})"
+        )
+        
+        del self.active_sessions[oldest_id]
+    
+    def get_active_session_count(self) -> int:
+        """
+        Get the number of active sessions.
+        
+        Returns:
+            Number of active sessions
+        """
+        return len(self.active_sessions)
+    
+    def clear_all_sessions(self):
+        """Clear all active sessions (for testing/maintenance)."""
+        count = len(self.active_sessions)
+        self.active_sessions.clear()
+        logger.warning(f"Cleared all {count} active sessions")
+
+
+# Global session manager instance
+_session_manager: Optional[HRSessionManager] = None
+
+
+def get_session_manager(max_sessions: int = 100) -> HRSessionManager:
+    """
+    Get the global session manager instance.
+    
+    Args:
+        max_sessions: Maximum concurrent sessions
+        
+    Returns:
+        HRSessionManager instance
+    """
+    global _session_manager
+    
+    if _session_manager is None:
+        _session_manager = HRSessionManager(max_sessions=max_sessions)
+    
+    return _session_manager

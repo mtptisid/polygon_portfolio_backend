@@ -1,0 +1,22 @@
+[
+  {
+    "degree": "MCA - Master of Computer Applications",
+    "institution": "Acharya Institute of Technology, Bangalore",
+    "location": "Bangalore, India",
+    "duration": "July 2018 - September 2020",
+    "start_date": "2018-07",
+    "end_date": "2020-09",
+    "score": "CGPA: 7.2/10",
+    "level": "Masters"
+  },
+  {
+    "degree": "BCA - Bachelor of Computer Applications",
+    "institution": "B K College, Chikodi",
+    "location": "Chikodi, India",
+    "duration": "July 2015 - June 2018",
+    "start_date": "2015-07",
+    "end_date": "2018-06",
+    "score": "CGPA: 6.8/10",
+    "level": "Bachelors"
+  }
+]

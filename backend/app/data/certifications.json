@@ -1,0 +1,30 @@
+[
+  {
+    "name": "LLM Engineering: Master AI, Large Language Models & Agents",
+    "provider": "Udemy",
+    "category": "AI/ML",
+    "year": 2024,
+    "url": "https://www.udemy.com/certificate/UC-4d184c60-c27a-416a-9dbc-0e90d6aa4a40/"
+  },
+  {
+    "name": "MLOps Bootcamp: Mastering AI Operations for Success",
+    "provider": "Udemy",
+    "category": "MLOps",
+    "year": 2024,
+    "url": "https://www.udemy.com/certificate/UC-6365d961-4417-47d9-b108-5e0813d329ab/"
+  },
+  {
+    "name": "Python for Data Analysis & Visualization",
+    "provider": "Udemy",
+    "category": "Data Science",
+    "year": 2023,
+    "url": "https://www.udemy.com/certificate/UC-21b09042-d634-4947-a5ad-49d771d14d87/"
+  },
+  {
+    "name": "Deep Learning Masterclass with TensorFlow 2",
+    "provider": "Udemy",
+    "category": "Deep Learning",
+    "year": 2023,
+    "url": "https://www.udemy.com/certificate/UC-63701ca9-d9ed-468c-bda6-0c33d16aae9b/"
+  }
+]

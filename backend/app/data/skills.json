@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Python",
+    "proficiency": "95%",
+    "category": "Programming",
+    "description": "Expert in AI/ML, web development, automation, and system scripting. Primary language for LLM applications, RAG pipelines, and MLOps."
+  },
+  {
+    "name": "Bash/Shell Scripting",
+    "proficiency": "85%",
+    "category": "Programming",
+    "description": "Proficient in system automation, CI/CD scripting, and infrastructure management."
+  },
+  {
+    "name": "LangChain & LangGraph",
+    "proficiency": "95%",
+    "category": "AI Frameworks",
+    "description": "Expert in building production-grade LLM applications, multi-agent systems, and RAG pipelines. Extensive experience with LangChain orchestration and LangGraph state machines."
+  },
+  {
+    "name": "LangSmith",
+    "proficiency": "90%",
+    "category": "AI Frameworks",
+    "description": "Implements LLM observability, A/B prompt experimentation, statistical evals, human feedback annotation, and prompt versioning."
+  },
+  {
+    "name": "FastAPI",
+    "proficiency": "95%",
+    "category": "Web Frameworks",
+    "description": "Builds high-performance REST APIs for AI services, microservices architectures, and real-time inference endpoints."
+  },
+  {
+    "name": "Django",
+    "proficiency": "85%",
+    "category": "Web Frameworks",
+    "description": "Develops full-stack web applications with ORM, authentication, and admin interfaces."
+  },
+  {
+    "name": "PySpark",
+    "proficiency": "80%",
+    "category": "Big Data",
+    "description": "Processes large-scale datasets for ML training and distributed data pipelines."
+  },
+  {
+    "name": "TensorFlow & HuggingFace",
+    "proficiency": "90%",
+    "category": "AI/ML",
+    "description": "Fine-tunes LLMs, builds neural networks, and deploys models using HuggingFace Transformers and TensorFlow."
+  },
+  {
+    "name": "LLMs & RAG",
+    "proficiency": "95%",
+    "category": "AI/ML",
+    "description": "Builds production-grade LLM applications with Retrieval-Augmented Generation using FAISS, ChromaDB, and MongoDB Atlas vector stores."
+  },
+  {
+    "name": "Prompt Engineering & Model Evaluation",
+    "proficiency": "95%",
+    "category": "AI/ML",
+    "description": "Designs effective prompts, implements evals frameworks, and iteratively improves LLM accuracy and task alignment."
+  },
+  {
+    "name": "NLP & RLHF",
+    "proficiency": "90%",
+    "category": "AI/ML",
+    "description": "Applies Reinforcement Learning from Human Feedback to align fine-tuned LLMs with human preferences."
+  },
+  {
+    "name": "QLoRA & LoRA",
+    "proficiency": "90%",
+    "category": "AI/ML",
+    "description": "Fine-tunes LLMs using parameter-efficient methods for domain-specific adaptation in finance, healthcare, and cybersecurity."
+  },
+  {
+    "name": "MLOps",
+    "proficiency": "90%",
+    "category": "AI/ML",
+    "description": "Manages end-to-end ML lifecycle with MLflow, model serving, monitoring, and retraining pipelines."
+  },
+  {
+    "name": "Multi-Agent Systems",
+    "proficiency": "95%",
+    "category": "AI/ML",
+    "description": "Builds production multi-agent systems using LangGraph, AutoGen, and MCP for complex AI workflows."
+  },
+  {
+    "name": "Model Serving",
+    "proficiency": "90%",
+    "category": "AI/ML",
+    "description": "Deploys real-time inference pipelines using TensorRT, ONNX, and containerized serving with Docker and Kubernetes."
+  },
+  {
+    "name": "Git & Docker",
+    "proficiency": "95%",
+    "category": "DevOps",
+    "description": "Version control, containerization, and orchestration for AI workloads."
+  },
+  {
+    "name": "CI/CD",
+    "proficiency": "90%",
+    "category": "DevOps",
+    "description": "Automates build, test, and deployment pipelines for ML models and applications."
+  },
+  {
+    "name": "Kubernetes",
+    "proficiency": "85%",
+    "category": "DevOps",
+    "description": "Orchestrates containerized AI workloads for scalable, low-latency inference."
+  },
+  {
+    "name": "AWS (Bedrock, SageMaker)",
+    "proficiency": "90%",
+    "category": "Cloud",
+    "description": "Deploys LLM applications using AWS Bedrock (Mistral, Titan Embeddings) and SageMaker for model training and serving."
+  },
+  {
+    "name": "GCP & Azure",
+    "proficiency": "85%",
+    "category": "Cloud",
+    "description": "Deploys AI workloads on GCP and Azure with OpenAI API integration and cloud-native services."
+  },
+  {
+    "name": "OpenAI API",
+    "proficiency": "95%",
+    "category": "Cloud & APIs",
+    "description": "Integrates GPT models for production LLM applications with prompt engineering and fine-tuning."
+  },
+  {
+    "name": "MySQL & PostgreSQL",
+    "proficiency": "85%",
+    "category": "Databases",
+    "description": "Manages relational databases for application backends and data storage."
+  },
+  {
+    "name": "MongoDB Atlas",
+    "proficiency": "90%",
+    "category": "Databases",
+    "description": "Uses MongoDB Atlas as a vector store for RAG applications with semantic search."
+  },
+  {
+    "name": "VectorDB (FAISS, ChromaDB)",
+    "proficiency": "95%",
+    "category": "Databases",
+    "description": "Implements vector databases for semantic search, RAG pipelines, and hybrid retrieval systems."
+  },
+  {
+    "name": "MLflow",
+    "proficiency": "85%",
+    "category": "Tools",
+    "description": "Tracks experiments, manages model versions, and monitors ML pipelines."
+  },
+  {
+    "name": "Ollama",
+    "proficiency": "90%",
+    "category": "Tools",
+    "description": "Hosts and serves open-source LLMs (Qwen2.5, Gemma, Llama) for local and production deployments."
+  }
+]

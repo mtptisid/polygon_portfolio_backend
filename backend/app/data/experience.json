@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Senior Artificial Intelligence Engineer",
+    "company": "Maveric Systems Limited",
+    "location": "Bangalore, India",
+    "duration": "June 2025 - Present",
+    "start_date": "2025-06",
+    "end_date": null,
+    "category": "AI/ML",
+    "description": "As a Senior AI Engineer at Maveric Systems, mastered and applied LangChain, LangGraph, and multi-agent orchestration at production scale across multiple enterprise AI initiatives in the banking and financial services domain. Built a production-grade multi-agent AML investigation platform using LangGraph (8-node sequential pipeline) and AutoGen, ingesting real-time Kafka alert streams, performing behavioural analysis across 7 risk dimensions, and auto-generating SAR reports aligned with L1 AML investigation checklists. Integrated AWS Bedrock (Mistral + Titan Embeddings), MongoDB Atlas vector store, and LangSmith distributed tracing with PII redaction, per-agent latency instrumentation, and schema-validated JSON outputs to ensure full auditability of financial compliance decisions. Designed PRISM, an end-to-end AI pipeline converting regulatory PDFs into executable DMN/DRL rules deployed to Apache KIE/Drools; implemented a 7-stage async LLM workflow using Gemini 2.5 Flash with OpenTelemetry observability and four-eyes governance (90.6% complete, 18 certified gates). Architected CodeLens, a microservices-based code analysis platform with 7 independent FastAPI agent services (Ingestion, Parsing, Explainer, Quality, Dependency, Refactor, Coordinator) integrating Azure DevOps, GitHub, and SQL Server using Tree-Sitter AST parsing and Ollama-hosted LLMs. Built a spec-compliant MCP (Model Context Protocol) server exposing 10+ banking tools and 11 fraud-data resources over HTTP, WebSocket, and stdio; integrated with AutoGen multi-agent framework running Qwen2.5/Gemma3 models via Ollama for natural-language banking operations. Developed a real-time IT Operations Command Center in React 19 / TypeScript / Tailwind CSS with Server-Sent Events, geo-hotspot world-map visualisations (D3-Geo), auto-healing panels, and noise-filtration views with sub-second update latency. Implemented an LLM observability stack using LangSmith with @traceable decorators, A/B prompt testing with statistical confidence tracking, annotation queues for human-feedback collection, and LangSmith Hub for prompt versioning and rollback. Scoped and designed an AI-powered loan delinquency prediction system featuring 0–999 risk scoring, 3 contextual repayment strategy recommendations per customer, scenario taxonomy (Temporary Income Disruption vs. Chronic Financial Stress), and a multi-channel personalised communication framework targeting NPA reduction.",
+    "key_technologies": ["LangChain", "LangGraph", "AutoGen", "CrewAI", "MCP", "AWS Bedrock", "LangSmith", "OpenTelemetry", "Kafka", "MongoDB Atlas", "Apache Drools", "Tree-Sitter", "Ollama", "Gemini 2.5 Flash", "React 19", "D3-Geo"]
+  },
+  {
+    "title": "Senior Software Engineer",
+    "company": "Capgemini Technology Service Limited India",
+    "location": "Navi Mumbai, India",
+    "duration": "May 2021 - April 2025",
+    "start_date": "2021-05",
+    "end_date": "2025-04",
+    "category": "AI/ML/DevOps",
+    "description": "Spearheaded AI/ML projects, fine-tuning LLMs with QLoRA and LoRA for finance, healthcare, and cybersecurity, reducing memory usage by 30%. Designed RAG applications with FAISS and ChromaDB, improving response accuracy by 25%. Automated MLOps pipelines using Kubernetes, Docker, and AWS SageMaker, cutting deployment time by 50%. Developed real-time inference pipelines with TensorRT and ONNX for low-latency applications. Migrated legacy ML workloads to Spark and Kubernetes, enhancing scalability by 40%. Built model retraining pipelines with drift detection, reducing errors by 30%. Automated Linux system administration using Ansible and bash, optimizing server performance. Mentored junior engineers and led research internships.",
+    "key_technologies": ["QLoRA", "LoRA", "FAISS", "ChromaDB", "Kubernetes", "Docker", "AWS SageMaker", "TensorRT", "ONNX", "Spark", "Ansible", "bash"]
+  },
+  {
+    "title": "Project Intern",
+    "company": "X-Cencia Technology Solution Limited India",
+    "location": "Bengaluru, India",
+    "duration": "February 2020 - April 2021",
+    "start_date": "2020-02",
+    "end_date": "2021-04",
+    "category": "AI/ML/IoT",
+    "description": "Developed computer vision models with TensorFlow for real-time applications. Tuned Word2Vec models for recommendation systems. Built IoT solutions, including a smart school bus tracking system with RFID and GPS, and a car security system with facial recognition. Designed automated data pipelines for sensor data processing. Created bash scripts for system monitoring and resource management.",
+    "key_technologies": ["TensorFlow", "Word2Vec", "RFID", "GPS", "Raspberry Pi", "bash"]
+  }
+]

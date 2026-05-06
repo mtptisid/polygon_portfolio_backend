@@ -23,6 +23,9 @@ pip-wheel-metadata/
 .coverage
 .mypy_cache/
 
+# HR Assistant session data (contains PII)
+backend/app/data/recruiter_sessions/*.json
+
 # === VITE / REACT ===
 node_modules/
 dist/

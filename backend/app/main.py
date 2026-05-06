@@ -1,11 +1,18 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
-from myapp import models
+from myapp.models import db_models
 from myapp.database import engine
-from myapp.routers import user, authentication, ai_chat, contact, sendmail
+from myapp.routers import user, authentication, ai_chat, contact, sendmail, hr_assistant, admin
+from myapp.startup import startup_tasks
 
 app = FastAPI()
+
+# Register startup event handler
+@app.on_event("startup")
+async def on_startup():
+    """Run startup tasks when the application starts."""
+    await startup_tasks()
 
 # Define the allowed origins explicitly
 origins = [
@@ -27,12 +34,14 @@ app.add_middleware(
 )
 
 # Database setup
-#models.Base.metadata.drop_all(bind=engine)
-models.Base.metadata.create_all(engine)
+#db_models.Base.metadata.drop_all(bind=engine)
+db_models.Base.metadata.create_all(engine)
 
 # Include routers
 #app.include_router(authentication.router)
 app.include_router(sendmail.router)
 app.include_router(ai_chat.router)
 app.include_router(contact.router)
+app.include_router(hr_assistant.router)
+app.include_router(admin.router)
 #app.include_router(user.router)

@@ -1,0 +1,17 @@
+{
+  "full_name": "Siddharamayya Mathapati",
+  "dob": "April 14, 1997",
+  "languages": ["English", "Kannada", "Hindi", "Telugu", "Tamil", "Marathi", "Malayalam"],
+  "email": "msidrm455@gmail.com",
+  "phone": "+91 97406 71620",
+  "location": "Bengaluru, Karnataka, India",
+  "description": "Senior AI Engineer with 5+ years of experience building production-grade LLM applications, multi-agent systems, and RAG pipelines across banking and enterprise domains. Skilled in LangChain, LangGraph, AWS Bedrock, and MLOps with expertise in fine-tuning LLMs using QLoRA and LoRA, prompt engineering, model evaluation, and deploying AI workloads on AWS, GCP, and Azure using Docker and CI/CD pipelines.",
+  "professional_summary": "Senior AI Engineer with 5+ years of experience building production-grade LLM applications, multi-agent systems, and RAG pipelines across banking and enterprise domains. Skilled in LangChain, LangGraph, AWS Bedrock, and MLOps with expertise in fine-tuning LLMs using QLoRA and LoRA, prompt engineering, model evaluation, and deploying AI workloads on AWS, GCP, and Azure using Docker and CI/CD pipelines.",
+  "availability": "Immediately available for new opportunities",
+  "total_experience_years": 5,
+  "current_role": "Senior Artificial Intelligence Engineer",
+  "current_company": "Maveric Systems Limited",
+  "portfolio": "https://siddharamayya.in",
+  "github": "https://github.com/mtptisid",
+  "linkedin": "https://www.linkedin.com/in/siddharamayya-mathapati"
+}
