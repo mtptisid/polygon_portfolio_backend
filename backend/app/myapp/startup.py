@@ -19,12 +19,12 @@ async def initialize_rag_data():
     
     This function:
     1. Checks if the vector database has data
-    2. If empty, automatically runs data ingestion
-    3. If data exists, skips ingestion
-    4. Handles errors gracefully (app continues even if ingestion fails)
+    2. If empty, logs a warning (manual ingestion required)
+    3. If data exists, logs stats
+    4. Handles errors gracefully (app continues even if check fails)
     
-    This ensures data is automatically populated on first deployment to Render
-    without requiring manual script execution.
+    Note: Automatic ingestion is disabled to prevent startup timeouts.
+    Run manual ingestion after deployment: python scripts/ingest_profile_data.py
     """
     try:
         from myapp.services.vector_store import VectorStoreManager
@@ -35,74 +35,33 @@ async def initialize_rag_data():
         
         # Check if DATABASE_URL is set
         if not settings.DATABASE_URL:
-            logger.warning("DATABASE_URL not set - skipping RAG data initialization")
+            logger.warning("DATABASE_URL not set - skipping RAG data check")
             return
         
-        logger.info("Checking RAG data initialization status...")
+        logger.info("Checking RAG data status...")
         
         # Connect to vector store
         vector_store = VectorStoreManager(settings.DATABASE_URL)
         
         # Check if data already exists
-        stats = vector_store.get_stats()
-        total_embeddings = stats.get('total_embeddings', 0)
-        
-        if total_embeddings > 0:
-            logger.info(f"RAG data already initialized ({total_embeddings} embeddings found)")
-            logger.info(f"Categories: {stats.get('categories', {})}")
+        try:
+            stats = vector_store.get_stats()
+            total_embeddings = stats.get('total_embeddings', 0)
+            
+            if total_embeddings > 0:
+                logger.info(f"✓ RAG data found: {total_embeddings} embeddings")
+                logger.info(f"✓ Categories: {stats.get('categories', {})}")
+            else:
+                logger.warning("⚠ No RAG data found - RAG will use fallback mode")
+                logger.info("To ingest data: python scripts/ingest_profile_data.py")
+        except Exception as e:
+            logger.warning(f"Could not check RAG data: {e}")
+        finally:
             vector_store.close()
-            return
-        
-        logger.info("No RAG data found - starting automatic ingestion...")
-        
-        # Import ingestion module
-        sys.path.insert(0, str(Path(__file__).parent.parent))
-        from scripts.ingest_profile_data import ProfileDataIngestion
-        from myapp.services.embedding import EmbeddingService
-        
-        # Determine data directory
-        data_dir = Path(__file__).parent.parent / 'data'
-        
-        if not data_dir.exists():
-            logger.error(f"Data directory not found: {data_dir}")
-            vector_store.close()
-            return
-        
-        # Initialize services
-        logger.info("Initializing embedding service...")
-        embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
-        
-        # Create ingestion handler
-        logger.info("Creating ingestion handler...")
-        ingestion = ProfileDataIngestion(
-            data_dir=str(data_dir),
-            embedding_service=embedding_service,
-            vector_store=vector_store
-        )
-        
-        # Run ingestion
-        logger.info("Running data ingestion...")
-        result = ingestion.ingest(dry_run=False)
-        
-        if result['success']:
-            logger.info("=" * 60)
-            logger.info("RAG Data Initialization Complete!")
-            logger.info("=" * 60)
-            logger.info(f"Total chunks: {result['total_chunks']}")
-            logger.info(f"Categories: {', '.join(result['categories'])}")
-            logger.info(f"Rows inserted: {result['rows_inserted']}")
-            logger.info(f"Duration: {result['duration_seconds']:.2f} seconds")
-            logger.info("=" * 60)
-        else:
-            logger.error(f"RAG data ingestion failed: {result.get('error', 'Unknown error')}")
-        
-        # Close vector store
-        vector_store.close()
         
     except Exception as e:
-        logger.error(f"Error during RAG data initialization: {e}")
+        logger.error(f"Error during RAG data check: {e}")
         logger.warning("Application will continue with RAG in fallback mode")
-        # Don't raise - allow application to start even if ingestion fails
 
 
 async def startup_tasks():
