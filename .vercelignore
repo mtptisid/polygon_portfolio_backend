@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Documentation
+*.md
+!README.md
+
+# Data
+backend/app/data/recruiter_sessions/
+*.log
+
+# Environment
+.env
+.env.local
+.env.api_keys
+
+# Git
+.git/
+.gitignore
+
+# Kiro
+.kiro/

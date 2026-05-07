@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/app/main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "backend/app/main.py"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11.11"
+  },
+  "functions": {
+    "backend/app/main.py": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}
