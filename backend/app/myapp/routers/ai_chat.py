@@ -37,23 +37,6 @@ class MessageResponse(BaseModel):
     tool_used: Optional[str] = None
     retrieval_mode: Optional[str] = "rag"  # "rag" or "fallback"
 
-class SessionMessage(BaseModel):
-    content: str
-    is_bot: bool
-    timestamp: datetime
-    tool_used: Optional[str] = None
-
-class Session(BaseModel):
-    session_id: str
-    messages: List[SessionMessage]
-    created_at: datetime
-
-# Initialize DuckDuckGo Search Run tool
-search = DuckDuckGoSearchRun()
-
-# In-memory session store (replace with database for production)
-SESSIONS = {}
-
 # Define Pydantic models
 class MessageCreate(BaseModel):
     content: str
@@ -80,11 +63,20 @@ class Session(BaseModel):
     messages: List[SessionMessage]
     created_at: datetime
 
-# Initialize DuckDuckGo Search Run tool
-search = DuckDuckGoSearchRun()
+# Lazy initialization of DuckDuckGo Search tool
+_search = None
+
+def get_search_tool():
+    """Lazy initialization of DuckDuckGo search tool."""
+    global _search
+    if _search is None:
+        _search = DuckDuckGoSearchRun()
+    return _search
 
 # In-memory session store (replace with database for production)
 SESSIONS = {}
+
+# Lazy RAG initialization (initialized on first use, not at import time)
 
 # Lazy RAG initialization (initialized on first use, not at import time)
 _rag_retriever = None
@@ -177,6 +169,7 @@ async def search_web(query: str, model: str = "groq") -> str:
     logger.info(f"Performing search with query: {full_query}")
   
     try:
+        search = get_search_tool()  # Lazy load search tool
         search_results = await asyncio.to_thread(search.run, full_query)
         if not search_results or "No good" in search_results:
             return "Web Search Results: Limited or no specific results found. Rely on general knowledge for explanation."
@@ -220,6 +213,7 @@ async def get_gemini_response(messages: list) -> str:
         for m in messages
     ]
 
+    search = get_search_tool()  # Lazy load search tool
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     llm_with_tools = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=gemini_api_key).bind_tools([search])
     response = await llm_with_tools.ainvoke(lc_messages)

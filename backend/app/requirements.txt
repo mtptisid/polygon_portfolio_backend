@@ -64,6 +64,7 @@ langgraph-checkpoint==4.0.3
 langgraph-prebuilt==1.0.13
 langgraph-sdk==0.3.14
 langsmith==0.8.1
+ddgs  # DuckDuckGo search for LangChain
 
 # RAG & Vector Store
 pgvector==0.2.5
