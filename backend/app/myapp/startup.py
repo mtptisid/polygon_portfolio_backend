@@ -2,79 +2,83 @@
 Application Startup Module
 
 Handles initialization tasks that should run when the application starts,
-including automatic data ingestion for RAG profile retrieval.
+including background RAG initialization.
 """
 
 import logging
-import os
-import sys
-from pathlib import Path
+import asyncio
 
 logger = logging.getLogger(__name__)
 
+# Global state for RAG initialization
+_rag_initialized = False
+_rag_init_lock = asyncio.Lock()
 
-async def initialize_rag_data():
+
+async def initialize_rag_background():
     """
-    Initialize RAG data on application startup.
+    Initialize RAG components in the background after server starts.
     
-    This function:
-    1. Checks if the vector database has data
-    2. If empty, logs a warning (manual ingestion required)
-    3. If data exists, logs stats
-    4. Handles errors gracefully (app continues even if check fails)
-    
-    Note: Automatic ingestion is disabled to prevent startup timeouts.
-    Run manual ingestion after deployment: python scripts/ingest_profile_data.py
+    This runs AFTER uvicorn binds to the port, so it doesn't block startup.
+    Uses the same lazy initialization pattern as the routers.
     """
-    try:
-        from myapp.services.vector_store import VectorStoreManager
-        from myapp.core.config import get_settings
-        
-        # Get settings
-        settings = get_settings()
-        
-        # Check if DATABASE_URL is set
-        if not settings.DATABASE_URL:
-            logger.warning("DATABASE_URL not set - skipping RAG data check")
+    global _rag_initialized
+    
+    async with _rag_init_lock:
+        if _rag_initialized:
+            logger.info("RAG already initialized, skipping background init")
             return
         
-        logger.info("Checking RAG data status...")
-        
-        # Connect to vector store
-        vector_store = VectorStoreManager(settings.DATABASE_URL)
-        
-        # Check if data already exists
         try:
-            stats = vector_store.get_stats()
-            total_embeddings = stats.get('total_embeddings', 0)
+            logger.info("=" * 60)
+            logger.info("Starting background RAG initialization...")
+            logger.info("=" * 60)
             
-            if total_embeddings > 0:
-                logger.info(f"✓ RAG data found: {total_embeddings} embeddings")
-                logger.info(f"✓ Categories: {stats.get('categories', {})}")
-            else:
-                logger.warning("⚠ No RAG data found - RAG will use fallback mode")
-                logger.info("To ingest data: python scripts/ingest_profile_data.py")
+            from myapp.services.embedding import EmbeddingService
+            from myapp.services.vector_store import VectorStoreManager
+            from myapp.services.rag_retriever import RAGRetriever
+            from myapp.core.config import get_settings
+            
+            settings = get_settings()
+            
+            # Check if DATABASE_URL is set
+            if not settings.DATABASE_URL:
+                logger.warning("DATABASE_URL not set - RAG will use fallback mode")
+                _rag_initialized = True
+                return
+            
+            # Initialize embedding service (this downloads the model)
+            logger.info("Loading embedding model (this may take 2-5 minutes)...")
+            embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
+            
+            # Initialize vector store
+            logger.info("Connecting to vector store...")
+            vector_store = VectorStoreManager(settings.DATABASE_URL)
+            
+            # Create RAG retriever
+            logger.info("Creating RAG retriever...")
+            rag_retriever = RAGRetriever(vector_store, embedding_service)
+            
+            # Check data status
+            try:
+                stats = vector_store.get_stats()
+                total_embeddings = stats.get('total_embeddings', 0)
+                
+                if total_embeddings > 0:
+                    logger.info(f"✓ RAG data found: {total_embeddings} embeddings")
+                    logger.info(f"✓ Categories: {stats.get('categories', {})}")
+                else:
+                    logger.warning("⚠ No RAG data found - run: python scripts/ingest_profile_data.py")
+            except Exception as e:
+                logger.warning(f"Could not check RAG data: {e}")
+            
+            _rag_initialized = True
+            
+            logger.info("=" * 60)
+            logger.info("✓ Background RAG initialization complete")
+            logger.info("=" * 60)
+            
         except Exception as e:
-            logger.warning(f"Could not check RAG data: {e}")
-        finally:
-            vector_store.close()
-        
-    except Exception as e:
-        logger.error(f"Error during RAG data check: {e}")
-        logger.warning("Application will continue with RAG in fallback mode")
-
-
-async def startup_tasks():
-    """
-    Run all startup tasks.
-    
-    This function is called when the FastAPI application starts.
-    Add any additional startup tasks here.
-    """
-    logger.info("Running application startup tasks...")
-    
-    # Skip RAG data check on startup to ensure fast port binding
-    # RAG will initialize lazily on first use
-    logger.info("RAG components will initialize on first use (lazy loading)")
-    
-    logger.info("Startup tasks completed")
+            logger.error(f"✗ Background RAG initialization failed: {e}")
+            logger.warning("RAG endpoints will use fallback mode")
+            _rag_initialized = True  # Mark as attempted to avoid retries

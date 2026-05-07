@@ -44,17 +44,23 @@ session_store = get_session_store()
 _rag_retriever = None
 _rag_initialized = False
 _rag_init_lock = asyncio.Lock()
+_rag_initializing = False
 
 async def get_rag_retriever():
     """
     Lazy initialization of RAG components.
-    Only initializes on first use to avoid blocking app startup.
+    Returns None if still initializing (background task running).
     """
-    global _rag_retriever, _rag_initialized
+    global _rag_retriever, _rag_initialized, _rag_initializing
     
     # If already initialized, return cached instance
     if _rag_initialized:
         return _rag_retriever
+    
+    # If background initialization is running, return None (will use fallback)
+    if _rag_initializing:
+        logger.info("RAG initialization in progress (background task)")
+        return None
     
     # Use lock to prevent multiple simultaneous initializations
     async with _rag_init_lock:
@@ -62,9 +68,13 @@ async def get_rag_retriever():
         if _rag_initialized:
             return _rag_retriever
         
+        if _rag_initializing:
+            return None
+        
         try:
+            _rag_initializing = True
             settings = get_settings()
-            logger.info("Lazy-initializing RAG components for HR Assistant...")
+            logger.info("Initializing RAG components for HR Assistant on-demand...")
             
             # Initialize components
             embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
@@ -72,12 +82,14 @@ async def get_rag_retriever():
             _rag_retriever = RAGRetriever(vector_store, embedding_service)
             
             _rag_initialized = True
+            _rag_initializing = False
             logger.info("✓ RAG components initialized successfully for HR Assistant")
             return _rag_retriever
             
         except Exception as e:
             logger.error(f"✗ Failed to initialize RAG for HR Assistant: {e}")
             _rag_initialized = True  # Mark as initialized to avoid retrying
+            _rag_initializing = False
             _rag_retriever = None
             return None
 

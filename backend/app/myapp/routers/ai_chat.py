@@ -26,6 +26,36 @@ router = APIRouter(
     prefix="/api/ai_chat",
     tags=["Chat"]
 )
+class MessageCreate(BaseModel):
+    content: str
+    model: str
+    session_id: Optional[Union[str, int]] = None  # Allow str or int
+    tool: Optional[str] = None
+
+class MessageResponse(BaseModel):
+    content: str
+    is_bot: bool
+    session_id: str
+    timestamp: datetime
+    tool_used: Optional[str] = None
+    retrieval_mode: Optional[str] = "rag"  # "rag" or "fallback"
+
+class SessionMessage(BaseModel):
+    content: str
+    is_bot: bool
+    timestamp: datetime
+    tool_used: Optional[str] = None
+
+class Session(BaseModel):
+    session_id: str
+    messages: List[SessionMessage]
+    created_at: datetime
+
+# Initialize DuckDuckGo Search Run tool
+search = DuckDuckGoSearchRun()
+
+# In-memory session store (replace with database for production)
+SESSIONS = {}
 
 # Define Pydantic models
 class MessageCreate(BaseModel):
@@ -63,17 +93,23 @@ SESSIONS = {}
 _rag_retriever = None
 _rag_initialized = False
 _rag_init_lock = asyncio.Lock()
+_rag_initializing = False
 
 async def get_rag_retriever():
     """
     Lazy initialization of RAG components.
-    Only initializes on first use to avoid blocking app startup.
+    Returns None if still initializing (background task running).
     """
-    global _rag_retriever, _rag_initialized
+    global _rag_retriever, _rag_initialized, _rag_initializing
     
     # If already initialized, return cached instance
     if _rag_initialized:
         return _rag_retriever
+    
+    # If background initialization is running, return None (will use fallback)
+    if _rag_initializing:
+        logger.info("RAG initialization in progress (background task)")
+        return None
     
     # Use lock to prevent multiple simultaneous initializations
     async with _rag_init_lock:
@@ -81,9 +117,13 @@ async def get_rag_retriever():
         if _rag_initialized:
             return _rag_retriever
         
+        if _rag_initializing:
+            return None
+        
         try:
+            _rag_initializing = True
             settings = get_settings()
-            logger.info("Lazy-initializing RAG components...")
+            logger.info("Initializing RAG components on-demand...")
             
             # Initialize components
             embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
@@ -91,12 +131,14 @@ async def get_rag_retriever():
             _rag_retriever = RAGRetriever(vector_store, embedding_service)
             
             _rag_initialized = True
+            _rag_initializing = False
             logger.info("✓ RAG components initialized successfully")
             return _rag_retriever
             
         except Exception as e:
             logger.error(f"✗ Failed to initialize RAG: {e}")
             _rag_initialized = True  # Mark as initialized to avoid retrying
+            _rag_initializing = False
             _rag_retriever = None
             return None
 

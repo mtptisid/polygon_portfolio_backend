@@ -1,5 +1,7 @@
 import os
 import logging
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
 
@@ -33,47 +35,53 @@ except Exception as e:
     logger.error(f"✗ Failed to import routers: {e}", exc_info=True)
     raise
 
-# Import startup tasks
+# Import background initialization
 try:
-    from myapp.startup import startup_tasks
-    logger.info("✓ Startup tasks imported successfully")
+    from myapp.startup import initialize_rag_background
+    logger.info("✓ Background tasks imported successfully")
 except Exception as e:
-    logger.error(f"✗ Failed to import startup tasks: {e}")
-    startup_tasks = None
+    logger.error(f"✗ Failed to import background tasks: {e}")
+    initialize_rag_background = None
 
-app = FastAPI(title="Portfolio Backend API", version="1.0.0")
 
-# Register startup event handler
-@app.on_event("startup")
-async def on_startup():
-    """Run startup tasks when the application starts."""
-    try:
-        logger.info("Running startup tasks...")
-        
-        # Create database tables
-        if db_models and engine:
-            try:
-                logger.info("Creating database tables...")
-                db_models.Base.metadata.create_all(engine)
-                logger.info("✓ Database tables created successfully")
-            except Exception as e:
-                logger.error(f"✗ Database table creation failed: {e}")
-        
-        # Run startup tasks (RAG ingestion, etc.)
-        if startup_tasks:
-            try:
-                await startup_tasks()
-                logger.info("✓ Startup tasks completed")
-            except Exception as e:
-                logger.error(f"✗ Startup tasks failed: {e}")
-        
-        logger.info("=" * 60)
-        logger.info("Application startup completed")
-        logger.info("=" * 60)
-    except Exception as e:
-        logger.error(f"✗ Startup failed: {e}", exc_info=True)
-        # Don't raise - let the app start anyway
-        logger.warning("Application will continue with limited functionality")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Lifespan context manager for FastAPI.
+    Runs before server starts accepting requests and after it shuts down.
+    """
+    # STARTUP: Run before server starts
+    logger.info("Running startup tasks...")
+    
+    # Create database tables (fast, synchronous)
+    if db_models and engine:
+        try:
+            logger.info("Creating database tables...")
+            db_models.Base.metadata.create_all(engine)
+            logger.info("✓ Database tables created successfully")
+        except Exception as e:
+            logger.error(f"✗ Database table creation failed: {e}")
+    
+    # Schedule RAG initialization in background (non-blocking)
+    if initialize_rag_background:
+        logger.info("Scheduling RAG initialization in background...")
+        asyncio.create_task(initialize_rag_background())
+    
+    logger.info("=" * 60)
+    logger.info("✓ Server ready - port binding complete")
+    logger.info("=" * 60)
+    
+    yield  # Server runs here
+    
+    # SHUTDOWN: Cleanup tasks
+    logger.info("Shutting down...")
+
+
+app = FastAPI(
+    title="Portfolio Backend API",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 # Define the allowed origins explicitly
 origins = [
