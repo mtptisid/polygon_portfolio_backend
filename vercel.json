@@ -14,14 +14,5 @@
       "src": "/(.*)",
       "dest": "backend/app/main.py"
     }
-  ],
-  "env": {
-    "PYTHON_VERSION": "3.11.11"
-  },
-  "functions": {
-    "backend/app/main.py": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  }
+  ]
 }
