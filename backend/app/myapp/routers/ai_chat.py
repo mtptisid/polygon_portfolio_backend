@@ -13,9 +13,6 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 from myapp.services.ai import ai_manager
-from myapp.services.embedding import EmbeddingService
-from myapp.services.vector_store import VectorStoreManager
-from myapp.services.rag_retriever import RAGRetriever
 from myapp.core.config import get_settings
 
 # Set up logging
@@ -122,6 +119,12 @@ async def get_rag_retriever():
         
         try:
             _rag_initializing = True
+            
+            # Import here to avoid blocking at module import time
+            from myapp.services.embedding import EmbeddingService
+            from myapp.services.vector_store import VectorStoreManager
+            from myapp.services.rag_retriever import RAGRetriever
+            
             settings = get_settings()
             logger.info("Initializing RAG components on-demand...")
             

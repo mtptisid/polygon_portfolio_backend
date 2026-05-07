@@ -29,6 +29,7 @@ except Exception as e:
 
 # Import routers with error handling
 try:
+    logger.info("Importing routers...")
     from myapp.routers import user, authentication, ai_chat, contact, sendmail, hr_assistant, admin
     logger.info("✓ Routers imported successfully")
 except Exception as e:
@@ -37,10 +38,11 @@ except Exception as e:
 
 # Import background initialization
 try:
+    logger.info("Importing background tasks...")
     from myapp.startup import initialize_rag_background
     logger.info("✓ Background tasks imported successfully")
 except Exception as e:
-    logger.error(f"✗ Failed to import background tasks: {e}")
+    logger.error(f"✗ Failed to import background tasks: {e}", exc_info=True)
     initialize_rag_background = None
 
 
@@ -51,7 +53,9 @@ async def lifespan(app: FastAPI):
     Runs before server starts accepting requests and after it shuts down.
     """
     # STARTUP: Run before server starts
-    logger.info("Running startup tasks...")
+    logger.info("=" * 60)
+    logger.info("Lifespan startup beginning...")
+    logger.info("=" * 60)
     
     # Create database tables (fast, synchronous)
     if db_models and engine:
@@ -66,9 +70,10 @@ async def lifespan(app: FastAPI):
     if initialize_rag_background:
         logger.info("Scheduling RAG initialization in background...")
         asyncio.create_task(initialize_rag_background())
+        logger.info("✓ Background task scheduled")
     
     logger.info("=" * 60)
-    logger.info("✓ Server ready - port binding complete")
+    logger.info("✓ Lifespan startup complete - yielding to server")
     logger.info("=" * 60)
     
     yield  # Server runs here
@@ -77,11 +82,13 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down...")
 
 
+logger.info("Creating FastAPI app...")
 app = FastAPI(
     title="Portfolio Backend API",
     version="1.0.0",
     lifespan=lifespan
 )
+logger.info("✓ FastAPI app created")
 
 # Define the allowed origins explicitly
 origins = [
@@ -117,6 +124,7 @@ async def health_check():
     return {"status": "healthy"}
 
 # Include routers
+logger.info("Including routers in app...")
 #app.include_router(authentication.router)
 app.include_router(sendmail.router)
 app.include_router(ai_chat.router)
@@ -124,3 +132,7 @@ app.include_router(contact.router)
 app.include_router(hr_assistant.router)
 app.include_router(admin.router)
 #app.include_router(user.router)
+logger.info("✓ All routers included")
+logger.info("=" * 60)
+logger.info("✓ Application initialization complete")
+logger.info("=" * 60)

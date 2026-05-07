@@ -22,9 +22,6 @@ from myapp.models.hr_models import (
 from myapp.services.hr_session import get_session_manager
 from myapp.services.hr_analysis import get_analysis_generator
 from myapp.utils.session_store import get_session_store
-from myapp.services.embedding import EmbeddingService
-from myapp.services.vector_store import VectorStoreManager
-from myapp.services.rag_retriever import RAGRetriever
 from myapp.services.ai import ai_manager
 from myapp.core.config import get_settings
 
@@ -73,6 +70,12 @@ async def get_rag_retriever():
         
         try:
             _rag_initializing = True
+            
+            # Import here to avoid blocking at module import time
+            from myapp.services.embedding import EmbeddingService
+            from myapp.services.vector_store import VectorStoreManager
+            from myapp.services.rag_retriever import RAGRetriever
+            
             settings = get_settings()
             logger.info("Initializing RAG components for HR Assistant on-demand...")
             
