@@ -39,7 +39,42 @@ class HRSessionManager:
         """
         self.max_sessions = max_sessions
         self.active_sessions: Dict[str, dict] = {}
+        self.email_to_session: Dict[str, str] = {}  # Map email to active session_id
         logger.info(f"HRSessionManager initialized (max sessions: {max_sessions})")
+    
+    def get_or_create_session(self, recruiter_info: RecruiterInfo) -> tuple[str, bool]:
+        """
+        Get existing session for email or create new one.
+        
+        Args:
+            recruiter_info: Information about the recruiter
+            
+        Returns:
+            Tuple of (session_id, is_new_session)
+        """
+        email = recruiter_info.email.lower()
+        
+        # Check if active session exists for this email
+        if email in self.email_to_session:
+            existing_session_id = self.email_to_session[email]
+            
+            # Verify session still exists (might have been removed due to limit)
+            if existing_session_id in self.active_sessions:
+                logger.info(
+                    f"Reusing existing session for {recruiter_info.name} ({email}): {existing_session_id}"
+                )
+                return existing_session_id, False
+            else:
+                # Session was removed, clean up mapping
+                del self.email_to_session[email]
+        
+        # Create new session
+        session_id = self.create_session(recruiter_info)
+        
+        # Map email to session
+        self.email_to_session[email] = session_id
+        
+        return session_id, True
     
     def create_session(self, recruiter_info: RecruiterInfo) -> str:
         """
@@ -220,6 +255,11 @@ class HRSessionManager:
             metadata=metadata
         )
         
+        # Remove email mapping
+        email = session["recruiter_info"].email.lower()
+        if email in self.email_to_session and self.email_to_session[email] == session_id:
+            del self.email_to_session[email]
+        
         # Remove from active sessions
         del self.active_sessions[session_id]
         
@@ -242,6 +282,12 @@ class HRSessionManager:
         )
         
         oldest_session = self.active_sessions[oldest_id]
+        
+        # Remove email mapping
+        email = oldest_session["recruiter_info"].email.lower()
+        if email in self.email_to_session and self.email_to_session[email] == oldest_id:
+            del self.email_to_session[email]
+        
         logger.warning(
             f"Removing oldest session due to limit: {oldest_id} "
             f"(recruiter: {oldest_session['recruiter_info'].name})"
@@ -262,6 +308,7 @@ class HRSessionManager:
         """Clear all active sessions (for testing/maintenance)."""
         count = len(self.active_sessions)
         self.active_sessions.clear()
+        self.email_to_session.clear()
         logger.warning(f"Cleared all {count} active sessions")
 
 

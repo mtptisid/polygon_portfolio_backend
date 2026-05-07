@@ -100,10 +100,10 @@ async def get_rag_retriever():
 @router.post("/start_session", response_model=HRSessionStart)
 async def start_session(recruiter_info: RecruiterInfo):
     """
-    Start a new HR assistant session.
+    Start or resume an HR assistant session.
     
-    Creates a new session with the recruiter's information and initializes
-    conversation memory.
+    If an active session exists for the email, returns that session.
+    Otherwise, creates a new session.
     
     Args:
         recruiter_info: Recruiter information (name, email, company, role)
@@ -112,11 +112,12 @@ async def start_session(recruiter_info: RecruiterInfo):
         Session ID and welcome message
     """
     try:
-        # Create session
-        session_id = session_manager.create_session(recruiter_info)
+        # Get existing session or create new one
+        session_id, is_new = session_manager.get_or_create_session(recruiter_info)
         
-        # Generate welcome message
-        welcome_message = f"""Hello! I'm Siddharamayya Mathapati's AI hiring assistant. I'm here to help you learn about his background, skills, and experience.
+        # Generate appropriate message
+        if is_new:
+            welcome_message = f"""Hello! I'm Siddharamayya Mathapati's AI hiring assistant. I'm here to help you learn about his background, skills, and experience.
 
 **About Me:**
 I have comprehensive knowledge of Siddharamayya's:
@@ -129,11 +130,20 @@ I have comprehensive knowledge of Siddharamayya's:
 What role are you hiring for at {recruiter_info.company}? This will help me highlight the most relevant experience and skills for your needs.
 
 Feel free to ask me anything about Siddharamayya's profile!"""
-        
-        logger.info(
-            f"HR session started: {session_id} "
-            f"(recruiter: {recruiter_info.name}, company: {recruiter_info.company})"
-        )
+            
+            logger.info(
+                f"New HR session started: {session_id} "
+                f"(recruiter: {recruiter_info.name}, company: {recruiter_info.company})"
+            )
+        else:
+            welcome_message = f"""Welcome back! I've resumed your previous session.
+
+You can continue our conversation about Siddharamayya's profile. What would you like to know?"""
+            
+            logger.info(
+                f"Resumed HR session: {session_id} "
+                f"(recruiter: {recruiter_info.name}, email: {recruiter_info.email})"
+            )
         
         return HRSessionStart(
             session_id=session_id,
