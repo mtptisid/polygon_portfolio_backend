@@ -36,14 +36,10 @@ except Exception as e:
     logger.error(f"✗ Failed to import routers: {e}", exc_info=True)
     raise
 
-# Import background initialization
-try:
-    logger.info("Importing background tasks...")
-    from myapp.startup import initialize_rag_background
-    logger.info("✓ Background tasks imported successfully")
-except Exception as e:
-    logger.error(f"✗ Failed to import background tasks: {e}", exc_info=True)
-    initialize_rag_background = None
+# Import background initialization (disabled to prevent OOM on Render free tier)
+# RAG will initialize lazily on first request instead
+initialize_rag_background = None
+logger.info("✓ Background RAG initialization disabled (lazy loading on first request)")
 
 
 @asynccontextmanager
@@ -66,17 +62,15 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"✗ Database table creation failed: {e}")
     
-    # Schedule RAG initialization in background (non-blocking)
-    if initialize_rag_background:
-        logger.info("Scheduling RAG initialization in background...")
-        asyncio.create_task(initialize_rag_background())
-        logger.info("✓ Background task scheduled")
-    
     logger.info("=" * 60)
-    logger.info("✓ Lifespan startup complete - yielding to server")
+    logger.info("✓ Lifespan startup complete - server will bind to port now")
     logger.info("=" * 60)
     
-    yield  # Server runs here
+    yield  # Server binds to port and starts accepting requests HERE
+    
+    logger.info("=" * 60)
+    logger.info("Server is now running and accepting requests")
+    logger.info("=" * 60)
     
     # SHUTDOWN: Cleanup tasks
     logger.info("Shutting down...")
