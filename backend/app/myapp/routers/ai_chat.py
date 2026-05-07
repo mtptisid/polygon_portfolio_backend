@@ -59,21 +59,46 @@ search = DuckDuckGoSearchRun()
 # In-memory session store (replace with database for production)
 SESSIONS = {}
 
-# Initialize RAG components
-RAG_ENABLED = False
-rag_retriever = None
-try:
-    settings = get_settings()
-    logger.info("Initializing RAG components...")
-    embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
-    vector_store = VectorStoreManager(settings.DATABASE_URL)
-    rag_retriever = RAGRetriever(vector_store, embedding_service)
-    RAG_ENABLED = True
-    logger.info("RAG components initialized successfully")
-except Exception as e:
-    logger.error(f"Failed to initialize RAG: {e}")
-    logger.warning("RAG disabled - using fallback mode")
-    RAG_ENABLED = False
+# Lazy RAG initialization (initialized on first use, not at import time)
+_rag_retriever = None
+_rag_initialized = False
+_rag_init_lock = asyncio.Lock()
+
+async def get_rag_retriever():
+    """
+    Lazy initialization of RAG components.
+    Only initializes on first use to avoid blocking app startup.
+    """
+    global _rag_retriever, _rag_initialized
+    
+    # If already initialized, return cached instance
+    if _rag_initialized:
+        return _rag_retriever
+    
+    # Use lock to prevent multiple simultaneous initializations
+    async with _rag_init_lock:
+        # Double-check after acquiring lock
+        if _rag_initialized:
+            return _rag_retriever
+        
+        try:
+            settings = get_settings()
+            logger.info("Lazy-initializing RAG components...")
+            
+            # Initialize components
+            embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
+            vector_store = VectorStoreManager(settings.DATABASE_URL)
+            _rag_retriever = RAGRetriever(vector_store, embedding_service)
+            
+            _rag_initialized = True
+            logger.info("✓ RAG components initialized successfully")
+            return _rag_retriever
+            
+        except Exception as e:
+            logger.error(f"✗ Failed to initialize RAG: {e}")
+            _rag_initialized = True  # Mark as initialized to avoid retrying
+            _rag_retriever = None
+            return None
 
 # Fallback profile (minimal profile data for when RAG is unavailable)
 FALLBACK_PROFILE = {
@@ -195,7 +220,10 @@ async def send_message(request: Request, message: MessageCreate):
     retrieval_mode = "fallback"
     context = ""
     
-    if RAG_ENABLED and rag_retriever:
+    # Get RAG retriever (lazy initialization)
+    rag_retriever = await get_rag_retriever()
+    
+    if rag_retriever:
         try:
             logger.info("Attempting RAG retrieval...")
             settings = get_settings()
@@ -212,7 +240,7 @@ async def send_message(request: Request, message: MessageCreate):
             context = json.dumps(FALLBACK_PROFILE, indent=2)
             retrieval_mode = "fallback"
     else:
-        logger.info("RAG not enabled, using fallback profile")
+        logger.info("RAG not available, using fallback profile")
         context = json.dumps(FALLBACK_PROFILE, indent=2)
         retrieval_mode = "fallback"
     

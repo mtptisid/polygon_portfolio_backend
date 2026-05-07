@@ -6,10 +6,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from typing import List, Dict
 import os
+import logging
 from dotenv import load_dotenv
 
 # Load .env file for local development
 load_dotenv()
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # --------------------------
 # OpenAI GPT Service

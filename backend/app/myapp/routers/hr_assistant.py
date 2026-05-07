@@ -9,6 +9,7 @@ import logging
 from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from datetime import datetime
+import asyncio
 
 from myapp.models.hr_models import (
     RecruiterInfo,
@@ -39,20 +40,46 @@ session_manager = get_session_manager()
 analysis_generator = get_analysis_generator()
 session_store = get_session_store()
 
-# Initialize RAG components
-RAG_ENABLED = False
-rag_retriever = None
+# Lazy RAG initialization (initialized on first use, not at import time)
+_rag_retriever = None
+_rag_initialized = False
+_rag_init_lock = asyncio.Lock()
 
-try:
-    settings = get_settings()
-    embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
-    vector_store = VectorStoreManager(settings.DATABASE_URL)
-    rag_retriever = RAGRetriever(vector_store, embedding_service)
-    RAG_ENABLED = True
-    logger.info("RAG enabled for HR Assistant")
-except Exception as e:
-    logger.error(f"Failed to initialize RAG for HR Assistant: {e}")
-    RAG_ENABLED = False
+async def get_rag_retriever():
+    """
+    Lazy initialization of RAG components.
+    Only initializes on first use to avoid blocking app startup.
+    """
+    global _rag_retriever, _rag_initialized
+    
+    # If already initialized, return cached instance
+    if _rag_initialized:
+        return _rag_retriever
+    
+    # Use lock to prevent multiple simultaneous initializations
+    async with _rag_init_lock:
+        # Double-check after acquiring lock
+        if _rag_initialized:
+            return _rag_retriever
+        
+        try:
+            settings = get_settings()
+            logger.info("Lazy-initializing RAG components for HR Assistant...")
+            
+            # Initialize components
+            embedding_service = EmbeddingService(model_name=settings.EMBEDDING_MODEL)
+            vector_store = VectorStoreManager(settings.DATABASE_URL)
+            _rag_retriever = RAGRetriever(vector_store, embedding_service)
+            
+            _rag_initialized = True
+            logger.info("✓ RAG components initialized successfully for HR Assistant")
+            return _rag_retriever
+            
+        except Exception as e:
+            logger.error(f"✗ Failed to initialize RAG for HR Assistant: {e}")
+            _rag_initialized = True  # Mark as initialized to avoid retrying
+            _rag_retriever = None
+            return None
 
 
 @router.post("/start_session", response_model=HRSessionStart)
@@ -141,7 +168,9 @@ async def chat(request: HRChatRequest):
         
         # Retrieve context using RAG
         context = ""
-        if RAG_ENABLED and rag_retriever:
+        rag_retriever = await get_rag_retriever()
+        
+        if rag_retriever:
             try:
                 logger.info(f"Retrieving RAG context for: {request.content[:50]}...")
                 settings = get_settings()
@@ -154,6 +183,9 @@ async def chat(request: HRChatRequest):
             except Exception as e:
                 logger.error(f"RAG retrieval failed: {e}")
                 context = "Profile information temporarily unavailable."
+        else:
+            logger.warning("RAG not available, using limited context")
+            context = "Profile information temporarily unavailable."
         
         # Get conversation history from memory
         memory_context = session_manager.get_memory_context(request.session_id)
@@ -345,9 +377,12 @@ async def end_session(request: EndSessionRequest):
 @router.get("/")
 async def hr_home():
     """Health check endpoint for HR Assistant."""
+    # Check if RAG is initialized (without triggering initialization)
+    rag_status = "initialized" if _rag_initialized and _rag_retriever else "not_initialized"
+    
     return {
         "service": "HR Assistant",
         "status": "active",
-        "rag_enabled": RAG_ENABLED,
+        "rag_status": rag_status,
         "active_sessions": session_manager.get_active_session_count()
     }

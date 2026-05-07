@@ -73,7 +73,8 @@ async def startup_tasks():
     """
     logger.info("Running application startup tasks...")
     
-    # Initialize RAG data
-    await initialize_rag_data()
+    # Skip RAG data check on startup to ensure fast port binding
+    # RAG will initialize lazily on first use
+    logger.info("RAG components will initialize on first use (lazy loading)")
     
     logger.info("Startup tasks completed")
