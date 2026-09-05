@@ -2,8 +2,7 @@ from fastapi import APIRouter, HTTPException, Request, Depends, UploadFile, File
 from pydantic import BaseModel, EmailStr, ValidationError
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content, Cc, Bcc, Attachment
+from myapp.utils.email_sender import send_email, EmailSendError
 from jose import JWTError, jwt
 import os
 import logging
@@ -11,7 +10,6 @@ from html import escape
 import random
 from datetime import datetime, timedelta
 from typing import Optional, List
-import base64
 
 # Set up logging (commented out for production)
 #logging.basicConfig(level=logging.INFO)
@@ -342,50 +340,35 @@ async def sendmail(
             if file.content_type not in ALLOWED_MIME_TYPES:
                 raise HTTPException(status_code=400, detail=f"File {file.filename} has unsupported type: {file.content_type}")
 
-        # Initialize SendGrid client
-        api_key = os.environ.get("SENDGRID_API_KEY")
-        if not api_key:
-            #logger.error("SENDGRID_API_KEY not configured")
-            raise HTTPException(status_code=500, detail="Server configuration error: SENDGRID_API_KEY missing")
-
-        sg = SendGridAPIClient(api_key=api_key)
-
-        # Randomly select sender email
+        # Initialize SMTP-based sender
         sender_emails = ["siddharamayya@siddharamayya.in", "me@siddharamayya.in"]
         sender = random.choice(sender_emails)
 
-        # Email to user
-        mail_to_user = Mail(
-            from_email=Email(sender, "Siddharamayya Mathapati"),
-            to_emails=To(email),
-            subject=subject,
-            html_content=Content("text/html", get_email_html(name, subject, message, sender)),
-            plain_text_content=Content("text/plain", get_email_plain(name, subject, message, sender))
-        )
-
-        # Add CC and BCC if provided
-        if cc:
-            mail_to_user.add_cc(Cc(cc))
-        if bcc:
-            mail_to_user.add_bcc(Bcc(bcc))
-
-        # Add attachments
+        # Build attachments
+        email_attachments = []
         for file in files:
             content = await file.read()
-            encoded_file = base64.b64encode(content).decode()
-            attachment = Attachment()
-            attachment.file_content = encoded_file
-            attachment.file_name = file.filename
-            attachment.file_type = file.content_type
-            attachment.disposition = 'attachment'
-            mail_to_user.add_attachment(attachment)
+            email_attachments.append({
+                "filename": file.filename,
+                "content": content,
+                "mimetype": file.content_type,
+            })
 
         # Send email
         #logger.info(f"Sending email to {email} from {sender} with {len(files)} attachments")
-        response_to_user = sg.send(mail_to_user)
-
-        if response_to_user.status_code != 202:
-            #logger.error(f"SendGrid failed: to_user={response_to_user.status_code}")
+        try:
+            send_email(
+                to_email=email,
+                subject=subject,
+                html_content=get_email_html(name, subject, message, sender),
+                plain_content=get_email_plain(name, subject, message, sender),
+                from_email=sender,
+                cc=cc,
+                bcc=bcc,
+                attachments=email_attachments,
+            )
+        except EmailSendError as e:
+            #logger.error(f"Email send failed: {str(e)}")
             raise HTTPException(status_code=500, detail="Failed to send email")
 
         #logger.info("Email sent successfully")
@@ -394,6 +377,8 @@ async def sendmail(
     except ValidationError as ve:
         #logger.error(f"Validation error: {str(ve)}")
         raise HTTPException(status_code=422, detail=f"Invalid input: {str(ve)}")
+    except HTTPException:
+        raise
     except Exception as e:
         #logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error sending email: {str(e)}")

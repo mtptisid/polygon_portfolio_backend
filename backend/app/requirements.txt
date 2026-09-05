@@ -150,5 +150,4 @@ annotated-doc==0.0.4
 hf-xet==1.5.0
 filetype==1.2.0
 
-# Email & Communication (if needed)
-sendgrid
+# Email & Communication: sent via Gmail SMTP (smtplib, stdlib) - see myapp/utils/email_sender.py
