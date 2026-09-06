@@ -8,11 +8,17 @@ Designed for CPU-only inference with memory constraints (<128MB).
 
 from sentence_transformers import SentenceTransformer
 from typing import List, Optional
+from pathlib import Path
 import logging
 import os
 from groq import Groq
 
 logger = logging.getLogger(__name__)
+
+# Vendored copy of the model (backend/app/ml_models/<name>), committed to the repo so
+# Cloud Run never needs to reach huggingface.co at runtime — the buildpacks pipeline
+# just copies it in like any other source file, no build-process changes needed.
+VENDORED_MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "ml_models"
 
 
 class EmbeddingService:
@@ -49,9 +55,11 @@ class EmbeddingService:
         """
         if self._model is None:
             try:
-                self.logger.info(f"Loading embedding model: {self.model_name}")
-                self._model = SentenceTransformer(self.model_name)
-                self.logger.info(f"Successfully loaded embedding model: {self.model_name}")
+                vendored_path = VENDORED_MODELS_DIR / self.model_name.split("/")[-1]
+                load_path = str(vendored_path) if vendored_path.is_dir() else self.model_name
+                self.logger.info(f"Loading embedding model: {load_path}")
+                self._model = SentenceTransformer(load_path)
+                self.logger.info(f"Successfully loaded embedding model: {load_path}")
             except Exception as e:
                 self.logger.error(f"Failed to load model {self.model_name}: {e}")
                 raise
