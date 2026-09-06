@@ -17,7 +17,8 @@ from myapp.models.hr_models import (
     HRChatRequest,
     HRChatResponse,
     EndSessionRequest,
-    SessionAnalysis
+    SessionAnalysis,
+    RecruiterSession
 )
 from myapp.services.hr_session import get_session_manager
 from myapp.services.hr_analysis import get_analysis_generator
@@ -159,6 +160,53 @@ You can continue our conversation about Siddharamayya's profile. What would you 
         )
 
 
+@router.get("/session/{session_id}/resume")
+async def resume_session(session_id: str):
+    """
+    Rehydrate a session for the frontend after a page refresh/reload.
+
+    Looks in active memory first, then falls back to persisted storage
+    (covers Cloud Run instance restarts/redeploys/multi-instance routing).
+    Lets the frontend restore the visible chat history using only the
+    session_id it already has saved (e.g. in localStorage).
+
+    Args:
+        session_id: Session identifier
+
+    Returns:
+        recruiter_info and chat_history for the session
+    """
+    try:
+        session = session_manager.get_session(session_id)
+        
+        if not session:
+            persisted = await session_store.load_session(session_id)
+            if persisted:
+                session_manager.restore_session(persisted)
+                session = session_manager.get_session(session_id)
+        
+        if not session:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Session not found: {session_id}"
+            )
+        
+        return {
+            "session_id": session_id,
+            "recruiter_info": session["recruiter_info"],
+            "chat_history": session["chat_history"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to resume session {session_id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to resume session: {str(e)}"
+        )
+
+
 @router.post("/chat", response_model=HRChatResponse)
 async def chat(request: HRChatRequest):
     """
@@ -174,8 +222,15 @@ async def chat(request: HRChatRequest):
         AI assistant response
     """
     try:
-        # Get session
+        # Get session (fall back to persisted storage if this instance lost it,
+        # e.g. after a Cloud Run restart or a request routed to another instance)
         session = session_manager.get_session(request.session_id)
+        
+        if not session:
+            persisted = await session_store.load_session(request.session_id)
+            if persisted:
+                session_manager.restore_session(persisted)
+                session = session_manager.get_session(request.session_id)
         
         if not session:
             raise HTTPException(
@@ -301,6 +356,18 @@ Respond to the recruiter's question professionally and helpfully."""
             selected_model
         )
         
+        # Autosave an in-progress snapshot so the session survives instance
+        # restarts/redeploys/multi-instance routing even before it's formally ended.
+        try:
+            snapshot = RecruiterSession(
+                session_id=request.session_id,
+                recruiter_info=recruiter_info,
+                chat_history=session_manager.get_chat_history(request.session_id),
+            )
+            await session_store.save_session(snapshot)
+        except Exception as e:
+            logger.error(f"Failed to autosave session {request.session_id}: {e}")
+        
         # Generate message ID
         message_id = str(uuid4())
         
@@ -343,8 +410,14 @@ async def end_session(request: EndSessionRequest):
         Session analysis
     """
     try:
-        # Get session
+        # Get session (fall back to persisted storage if this instance lost it)
         session = session_manager.get_session(request.session_id)
+        
+        if not session:
+            persisted = await session_store.load_session(request.session_id)
+            if persisted:
+                session_manager.restore_session(persisted)
+                session = session_manager.get_session(request.session_id)
         
         if not session:
             raise HTTPException(

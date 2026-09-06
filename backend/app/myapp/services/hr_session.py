@@ -270,6 +270,43 @@ class HRSessionManager:
         
         return recruiter_session
     
+    def restore_session(self, recruiter_session: "RecruiterSession") -> str:
+        """
+        Rehydrate a persisted session back into active memory.
+
+        Used when a session_id sent by the frontend isn't in this instance's
+        memory (e.g. Cloud Run restarted or routed the request to a different
+        instance) but was previously autosaved to the database.
+
+        Args:
+            recruiter_session: RecruiterSession loaded from storage
+
+        Returns:
+            The session_id (for convenience/chaining)
+        """
+        if len(self.active_sessions) >= self.max_sessions:
+            self._remove_oldest_session()
+        
+        session_id = recruiter_session.session_id
+        session = {
+            "session_id": session_id,
+            "recruiter_info": recruiter_session.recruiter_info,
+            "chat_history": list(recruiter_session.chat_history),
+            "start_time": (
+                recruiter_session.metadata.start_time if recruiter_session.metadata else datetime.utcnow()
+            ),
+            "model_used": recruiter_session.metadata.model_used if recruiter_session.metadata else "gemini",
+            "message_count": len(recruiter_session.chat_history),
+        }
+        
+        self.active_sessions[session_id] = session
+        
+        email = recruiter_session.recruiter_info.email.lower()
+        self.email_to_session[email] = session_id
+        
+        logger.info(f"Session restored from storage: {session_id}")
+        return session_id
+    
     def _remove_oldest_session(self):
         """Remove the oldest session to make room for a new one."""
         if not self.active_sessions:
