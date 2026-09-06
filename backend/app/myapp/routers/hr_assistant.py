@@ -92,7 +92,9 @@ async def get_rag_retriever():
             
         except Exception as e:
             logger.error(f"✗ Failed to initialize RAG for HR Assistant: {e}")
-            _rag_initialized = True  # Mark as initialized to avoid retrying
+            # Don't cache the failure as "initialized" — retry on the next request
+            # instead of permanently disabling profile context for this instance's lifetime.
+            _rag_initialized = False
             _rag_initializing = False
             _rag_retriever = None
             return None
